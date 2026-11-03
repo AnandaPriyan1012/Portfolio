@@ -1,0 +1,6 @@
+docs/
+tests/
+test-results/
+playwright-report/
+.netlify/
+.git/

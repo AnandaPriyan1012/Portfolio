@@ -6,7 +6,7 @@ The preview uses the supplied AP brush signature, a full smoked-glass hero, the 
 
 ## Run locally
 
-Node 22+ and npm are required; the build was validated with Node 24.
+Node 24 and npm are required; local and Vercel builds use the same major version.
 
 ```sh
 npm ci
