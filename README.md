@@ -1,6 +1,6 @@
 # Ananda Priyan — Glass Atelier
 
-This repository contains Ananda's **Glass Atelier portfolio**. Publication to GitHub and Vercel is authorized; deployment status is recorded in [the Vercel handoff](docs/vercel-deployment.md). The existing [Netlify site](https://anandapriyan.netlify.app) remains the earlier production version and is preserved separately.
+This repository contains Ananda's **Glass Atelier portfolio**, live at **https://anandapriyan.vercel.app**. Vercel is connected to this repository's `main` branch for automatic deployments. Verification is recorded in [the deployment notes](docs/vercel-deployment.md). The existing [Netlify site](https://anandapriyan.netlify.app) remains the earlier production version and is preserved separately.
 
 The preview uses the supplied AP brush signature, a full smoked-glass hero, the chosen thin Film Strip navigation and an implemented scroll story. [Review screenshots, actual scroll recordings and test results](docs/local-atelier-review.md) show the current desktop and phone designs. [Design and asset notes](docs/glass-atelier-design.md) explain the visual treatment and remaining content needs.
 

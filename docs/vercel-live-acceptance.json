@@ -1,0 +1,95 @@
+{
+  "origin": "https://anandapriyan.vercel.app",
+  "checkedAt": "2026-11-03T10:35:03.328Z",
+  "desktop": {
+    "initial": {
+      "width": 1440,
+      "documentWidth": 1440,
+      "engine": "gsap-lenis",
+      "images": [
+        {
+          "selector": ".hero-room img",
+          "source": "https://anandapriyan.vercel.app/media/atelier-room-wide.webp",
+          "naturalWidth": 1672,
+          "complete": true
+        },
+        {
+          "selector": "header .ap-signature",
+          "source": "https://anandapriyan.vercel.app/media/ap-signature.png",
+          "naturalWidth": 768,
+          "complete": true
+        },
+        {
+          "selector": ".cirs-browser-image",
+          "source": "https://anandapriyan.vercel.app/media/cirs-home-desktop.webp",
+          "naturalWidth": 1440,
+          "complete": true
+        }
+      ]
+    },
+    "cirsExpansion": {
+      "initial": {
+        "x": 993.59375,
+        "y": 690,
+        "width": 345.59375,
+        "height": 220
+      },
+      "expanded": {
+        "x": 86.390625,
+        "y": 150,
+        "width": 1267.1875,
+        "height": 660
+      }
+    },
+    "reversed": true,
+    "viewWorkTop": 153
+  },
+  "mobile": {
+    "initial": {
+      "width": 390,
+      "documentWidth": 390,
+      "engine": "gsap-native",
+      "images": [
+        {
+          "selector": ".hero-room img",
+          "source": "https://anandapriyan.vercel.app/media/atelier-room-portrait.webp",
+          "naturalWidth": 720,
+          "complete": true
+        },
+        {
+          "selector": "header .ap-signature",
+          "source": "https://anandapriyan.vercel.app/media/ap-signature.png",
+          "naturalWidth": 768,
+          "complete": true
+        },
+        {
+          "selector": ".cirs-browser-image",
+          "source": "https://anandapriyan.vercel.app/media/cirs-home-mobile.webp",
+          "naturalWidth": 390,
+          "complete": true
+        }
+      ]
+    },
+    "menu": true,
+    "viewWorkTop": 160
+  },
+  "routes": [
+    {
+      "path": "/projects/cirs/",
+      "status": 200,
+      "heading": "CIRS Website."
+    },
+    {
+      "path": "/projects/__missing-check",
+      "status": 404,
+      "heading": "This page isn’t in the story."
+    },
+    {
+      "path": "/__missing-check",
+      "status": 404,
+      "heading": "This page isn’t in the story."
+    }
+  ],
+  "errors": [],
+  "passed": true
+}
