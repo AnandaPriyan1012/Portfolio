@@ -9,14 +9,16 @@ export default function Signature({ className = "" }: { className?: string }) {
       AP
     </span>
   ) : (
-    <img
-      className={`ap-signature ${className}`}
-      src="/media/ap-signature.png"
-      alt="Ananda Priyan — AP signature"
-      width="96"
-      height="64"
-      decoding="async"
-      onError={() => setFailed(true)}
-    />
+    <span className="signature-graphic">
+      <img
+        className={`ap-signature ${className}`}
+        src="/media/ap-signature.png"
+        alt="Ananda Priyan — AP signature"
+        width="96"
+        height="64"
+        decoding="async"
+        onError={() => setFailed(true)}
+      />
+    </span>
   );
 }

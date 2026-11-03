@@ -147,10 +147,9 @@ export const siteContent = {
     eyebrow: "The next idea starts with a conversation",
     title: "Let’s build something that matters.",
     cta: "Let’s connect",
-    heading: "A conversation, soon.",
-    description:
-      "Verified contact details haven’t been added yet. Email and social links will appear here once supplied.",
-    email: null as string | null,
+    heading: "Let’s talk.",
+    description: "For a project, a collaboration or a conversation, email me.",
+    email: "anandapriyan1012@gmail.com" as string | null,
     socials: [] as { label: string; url: string }[],
     emailPlaceholder: "Email · to be added",
     socialPlaceholder: "Social links · to be added",
@@ -194,7 +193,7 @@ export const editorialCopy = {
     title: "Let’s build something that matters.",
     description: "A good conversation is a place to start.",
     cta: "Let’s connect",
-    note: "Verified email and social links will be added here.",
+    note: "anandapriyan1012@gmail.com",
     credit: "Built with AI assistance for Ananda Priyan.",
   },
 };
@@ -220,7 +219,7 @@ export const heroQuestions = [
     id: "accuflow",
     question: "What happens when an idea becomes something real?",
     response:
-      "Open AccuFlow’s project story. Its description, contribution details and current stage are awaiting confirmation.",
+      "Explore AccuFlow, a product website and interaction prototype for pressure-point information.",
     action: "Explore AccuFlow",
     target: "accuflow",
   },
@@ -231,7 +230,7 @@ export const openingQuestions = heroQuestions;
 export const projectStatus: Record<Project["id"], string> = {
   cirs: "Live website",
   community: "Volunteer work · since 2023",
-  accuflow: "Details awaiting confirmation",
+  accuflow: "Product & interaction prototype",
   creative: "Work collection",
   airkart: "Student project",
 };
@@ -240,37 +239,22 @@ export const accuflowStages = [
   {
     id: "idea",
     title: "The idea",
-    body: "AccuFlow’s verified description has not yet been supplied. This space will introduce the idea in Ananda’s own words.",
+    body: "AccuFlow is an exploratory product website and interaction prototype for pressure-point information. It brings a product story and a conversational guide into one web experience.",
   },
   {
     id: "problem",
-    title: "The problem",
-    body: "The intended audience, problem statement and supporting context are awaiting confirmation.",
-  },
-  {
-    id: "contribution",
-    title: "My contribution",
-    body: "Exact responsibilities, individual contributions and any collaborators are awaiting confirmation.",
+    title: "The design question",
+    body: "How can a visitor move from a broad product introduction to a focused interaction? The prototype explores that journey across an overview, product information, an explanation of the concept and a Try interface.",
   },
   {
     id: "how-it-works",
-    title: "How it works",
-    body: "Verified features and an explanation of how the project works have not yet been supplied. No capabilities are claimed here.",
-  },
-  {
-    id: "process",
-    title: "The process",
-    body: "Genuine drafts, project decisions, iterations and process notes will be added when supplied.",
+    title: "In the prototype",
+    body: "Six pages organise Home, Product, How It Works, Try It, Business and About. Scroll-linked presentation leads into a conversational pressure-point guide interface. These are prototype interactions, not verified health outcomes.",
   },
   {
     id: "stage",
     title: "Current stage",
-    body: "The current project stage is awaiting confirmation. This page does not imply a live product, completed build or measured results.",
-  },
-  {
-    id: "lessons",
-    title: "What I learned",
-    body: "Personal reflections and lessons will be added in Ananda’s own words when supplied.",
+    body: "A publicly viewable website prototype. The screens shown here come from the running prototype; they are not a fabricated product render.",
   },
 ];
 
@@ -299,14 +283,13 @@ export const projects: Project[] = [
       "Live public website captures · cirschool.org · 3 November 2026.",
     story: {
       challenge:
-        "A website for CIRS, with the Admissions page among the details to explore. The original brief and specific constraints are awaiting verified project notes.",
-      role: "Web-development and creative work for the official CIRS website, including the Admissions page. Exact contribution details and collaborators will be added with the full project notes.",
+        "The school website presents CIRS to prospective families and its wider community. Admissions is a practical part of that experience: it brings the application portal, process and key enquiries into one place.",
+      role: "Web development and creative work for the official CIRS website, including the Admissions page.",
       process:
-        "The homepage and Admissions screens shown here were captured from the live public website on 3 November 2026. Original process notes and earlier iterations have not been supplied.",
+        "The Admissions page places the registered portal login beside a route to understand the process. It separates entry-class availability, application access, and dates or assessment enquiries, with current arrangements directed to the Admissions Office.",
       outcome:
-        "The website is available at cirschool.org. No traffic, admission or conversion results have been provided.",
-      lessons:
-        "Personal reflections and specific lessons will be added with the project write-up.",
+        "The official website is live at cirschool.org, with a dedicated Admissions Guide at cirschool.org/admissions.html.",
+      lessons: "",
     },
   },
   {
@@ -319,17 +302,17 @@ export const projects: Project[] = [
       "Voluntary Social Media & Technology Head since 2023. Digital storytelling, social media and work on the organisation’s website, in service of a community.",
     tags: ["Community service", "Website & storytelling"],
     accent: "#c5a06b",
-    mediaStatus: "Approved community photographs and work samples pending.",
+    link: "https://vallalar-sathya-dharmasalai.vercel.app/en/about/",
+    mediaStatus: "Actual About-page capture from the website review preview.",
     story: {
       challenge:
         "Support community service at Vallalar Sathya Dharmasalai through digital storytelling, social media and the organization’s website.",
       role: "Social Media & Technology Head, serving voluntarily since 2023. My work includes digital storytelling, social media and work on the organisation’s website.",
       process:
-        "Digital storytelling, social-media work and work on the organisation’s website. Approved samples and specific process notes will show the work in more detail.",
+        "My contribution spans digital storytelling, social-media work and the organisation’s website. These are different ways of communicating the same community commitment.",
       outcome:
-        "Ongoing volunteer involvement since 2023. Work includes the organisation’s website; its verified URL and project stage have not been supplied. No donation, reach or beneficiary statistics are claimed.",
-      lessons:
-        "Personal reflections on this volunteer work will be added after confirmation. The guiding idea here is to place digital tools in service of people.",
+        "Ongoing voluntary involvement since 2023. The organisation’s website work is available as a public review preview, alongside the digital-storytelling and social-media commitment.",
+      lessons: "",
     },
   },
   {
@@ -337,22 +320,23 @@ export const projects: Project[] = [
     chapter: "03",
     category: "EXPLORE",
     title: "AccuFlow",
-    subtitle: "Project documentation in progress.",
+    subtitle: "An exploratory product website and interaction prototype.",
     description:
-      "AccuFlow is a featured project. Its purpose, my contribution and its current stage still need to be confirmed.",
-    tags: ["Project", "Details pending"],
+      "A six-page product website and conversational interface prototype for pressure-point information.",
+    tags: ["Interaction design", "Prototype"],
     accent: "#8da99e",
-    mediaStatus: "Verified project visuals and description pending.",
+    link: "https://accuflow-premium-ai.netlify.app",
+    mediaStatus:
+      "Actual screens from the publicly viewable AccuFlow website prototype.",
     story: {
       challenge:
-        "The project’s purpose, intended audience and problem statement have not yet been supplied.",
-      role: "My exact contribution, responsibilities and collaborators are awaiting confirmation.",
+        "An exploratory product website and interaction prototype for pressure-point information, connecting a product introduction to a conversational guide interface.",
+      role: "",
       process:
-        "Genuine drafts, decisions and process notes will be added when supplied.",
+        "Six pages organise the product story: Home, Product, How It Works, Try It, Business and About. The Try page presents the prototype’s conversational interface.",
       outcome:
-        "The current stage and any verified outcomes are awaiting confirmation. No capabilities or results are claimed.",
-      lessons:
-        "Personal reflections and lessons will be added in my own words when supplied.",
+        "A publicly viewable website prototype. It is an interaction exploration, with no clinical effectiveness or product results claimed.",
+      lessons: "",
     },
   },
   {
@@ -558,6 +542,7 @@ export const projectAssets: Record<
     previewUrl: string | null;
     mobilePreviewUrl?: string | null;
     admissionsUrl?: string | null;
+    previewCaption?: string;
     draftUrl: string | null;
     beforeUrl: string | null;
     afterUrl: string | null;
@@ -572,7 +557,9 @@ export const projectAssets: Record<
     admissionsUrl: "/media/cirs-admissions.webp",
   },
   accuflow: {
-    previewUrl: null,
+    previewUrl: "/media/accuflow-prototype-desktop.webp",
+    mobilePreviewUrl: "/media/accuflow-prototype-mobile.webp",
+    previewCaption: "Actual guide interface · internal website prototype",
     draftUrl: null,
     beforeUrl: null,
     afterUrl: null,
@@ -590,7 +577,9 @@ export const projectAssets: Record<
     afterUrl: null,
   },
   community: {
-    previewUrl: null,
+    previewUrl: "/media/vallalar-website-desktop.webp",
+    mobilePreviewUrl: "/media/vallalar-website-mobile.webp",
+    previewCaption: "Existing website review preview · About page",
     draftUrl: null,
     beforeUrl: null,
     afterUrl: null,
@@ -700,7 +689,7 @@ export const discoveryContent = {
         y: 25,
         title: "Making an idea tangible.",
         description:
-          "A student developer, with the CIRS website, website work for Vallalar Sathya Dharmasalai and the featured AccuFlow project. AccuFlow’s details are awaiting confirmation.",
+          "A student developer, with the CIRS website, website work for Vallalar Sathya Dharmasalai and the exploratory AccuFlow prototype.",
         action: "Explore CIRS",
         project: "cirs",
       },
@@ -785,7 +774,7 @@ export const discoveryContent = {
         label: "Explore",
         title: "An idea deserves its own story.",
         description:
-          "AccuFlow is one of the featured projects. Its verified description, contribution details and current stage are awaiting confirmation.",
+          "AccuFlow is a product website and interaction prototype for pressure-point information. Explore its actual prototype screens.",
         action: "Open AccuFlow",
         project: "accuflow",
       },
@@ -827,9 +816,9 @@ export const interfaceCopy = {
       "Smaller projects, open questions and ideas still taking shape.",
   },
   accuflow: {
-    note: "The idea, the thinking, the process. A dedicated place for the full story, once the details are confirmed.",
-    eyebrow: "A key project · details to come",
-    stage: "Project stage awaiting confirmation",
+    note: "A product story that leads into an interaction prototype.",
+    eyebrow: "Product & interaction design",
+    stage: "Website prototype",
   },
   questions: {
     eyebrow: "It starts with a question.",
@@ -876,7 +865,7 @@ export const scrollStoryCopy = {
   cirsRole:
     "My work spans web development and creative work for my school, including the Admissions page.",
   cirsContext:
-    "The full story will document my exact contributions, decisions and lessons. The screens here are captured from the live website; they are not invented mockups.",
+    "Admissions brings the registered portal, the application process and key enquiries into one guide, with current availability and assessment arrangements confirmed by the school.",
   captions: [
     { label: "The work", text: "Web development and creative work for CIRS." },
     {

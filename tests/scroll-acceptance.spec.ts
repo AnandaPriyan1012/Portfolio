@@ -87,7 +87,7 @@ test('desktop wheel scrolling expands and reverses the real CIRS scene and captu
   await expect(page.locator('main')).toHaveAttribute('data-scroll-engine', 'gsap-lenis')
   await expect(page.locator('.scroll-opening')).toHaveAttribute('data-progress', '0.000')
   const initial = (await page.locator('.cirs-visual-frame').boundingBox())!
-  const prefix = browserName === 'chromium' ? 'local-regression-scroll-desktop' : `local-regression-scroll-${browserName}-desktop`
+  const prefix = browserName === 'chromium' ? 'refinement-regression-scroll-desktop' : `refinement-regression-scroll-${browserName}-desktop`
   await page.mouse.move(1410, 950)
   await page.screenshot({ path: `docs/${prefix}-start.png` })
   await page.mouse.wheel(0, 850)
@@ -106,8 +106,9 @@ test('desktop wheel scrolling expands and reverses the real CIRS scene and captu
   await expect(page.locator('#community')).toContainText('Social Media & Technology Head')
   await page.screenshot({ path: `docs/${prefix}-community.png` })
   await wheelTo(page, '#accuflow')
+  await wheelTo(page, '#accuflow [data-flow-stage]:first-child', 180)
   await expect(page.locator('#accuflow [data-flow-stage]').first()).toBeVisible()
-  await expect(page.locator('#accuflow')).toContainText('have not yet been confirmed')
+  await expect(page.locator('#accuflow')).toContainText('prototype')
   await page.screenshot({ path: `docs/${prefix}-end.png` })
   await testInfo.attach('measured-cirs-expansion', { body: JSON.stringify({ initial, expanded, verifiedAsset: 'cirs-home-desktop.webp' }, null, 2), contentType: 'application/json' })
 })
@@ -120,7 +121,7 @@ test('mobile retains native scrolling and captures school, community and AccuFlo
   await expect(page.locator('.pin-spacer')).toHaveCount(0)
   expect(await page.locator('.cirs-visual-frame').evaluate(node => getComputedStyle(node).position)).toBe('absolute')
   expect(await page.locator('.hero-room img').evaluate(node => (node as HTMLImageElement).currentSrc)).toContain('atelier-room-portrait.webp')
-  const prefix = browserName === 'chromium' ? 'local-regression-scroll-mobile' : `local-regression-scroll-${browserName}-mobile`
+  const prefix = browserName === 'chromium' ? 'refinement-regression-scroll-mobile' : `refinement-regression-scroll-${browserName}-mobile`
   await page.screenshot({ path: `docs/${prefix}-start.png` })
   await wheelTo(page, '#community', 88)
   await page.screenshot({ path: `docs/${prefix}-middle.png` })

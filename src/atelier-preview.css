@@ -1,5 +1,6 @@
-/* Local Glass Atelier revision. This stylesheet does not publish the live site. */
+/* Glass Atelier: physical materials, quiet light and responsive composition. */
 :root {
+  --header-height: 76px;
   --bg: #14100d;
   --surface: #211a14;
   --raised: #2b2118;
@@ -19,16 +20,16 @@ body {
   right: 0;
   z-index: 80;
   width: 100%;
-  height: 116px;
-  min-height: 116px;
-  padding: 14px 6% 17px;
+  height: var(--header-height);
+  min-height: var(--header-height);
+  padding: 6px 6%;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 55px;
+  gap: 36px;
   border: 0;
-  background: #130e0994;
-  backdrop-filter: blur(10px);
+  background: #130e09ed;
+  backdrop-filter: none;
   box-shadow: 0 1px 0 #dfbc8a13;
   isolation: isolate;
 }
@@ -43,16 +44,16 @@ body {
   pointer-events: none;
 }
 .site-header .wordmark {
-  width: 100px;
-  min-width: 100px;
-  height: 78px;
-  min-height: 60px;
+  width: 96px;
+  min-width: 96px;
+  height: 54px;
+  min-height: 44px;
   padding: 0;
   display: flex;
   justify-content: center;
   align-items: center;
   border-right: 1px solid #c7a47746;
-  padding-right: 24px;
+  padding-right: 18px;
   letter-spacing: 0;
   flex-shrink: 0;
 }
@@ -61,7 +62,7 @@ body {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  max-height: 78px;
+  max-height: 60px;
   filter: none;
   opacity: 0.98;
 }
@@ -71,12 +72,32 @@ body {
   letter-spacing: -7px;
   display: block;
 }
+/* Paint the supplied alpha directly, avoiding filtered-image first-frame loss. */
+.signature-graphic {
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+@supports (mask-image: url("/media/ap-signature.png")) {
+  .signature-graphic::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: #e6cfab;
+    mask: url("/media/ap-signature.png") center / contain no-repeat;
+    pointer-events: none;
+  }
+  .signature-graphic > .ap-signature {
+    opacity: 0;
+  }
+}
 .site-header .main-nav {
   position: relative;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  width: min(800px, 78%);
-  gap: 25px;
+  width: min(760px, 78%);
+  gap: 24px;
   margin: 0;
   padding: 0;
   align-self: center;
@@ -90,7 +111,7 @@ body {
   position: absolute;
   left: 9%;
   right: 9%;
-  top: 13px;
+  top: 10px;
   height: 1px;
   background: linear-gradient(90deg, #b58a5544, #d6ae7685, #b58a5544);
   pointer-events: none;
@@ -100,12 +121,12 @@ body {
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  min-height: 64px;
-  padding: 29px 10px 8px;
+  min-height: 52px;
+  padding: 22px 10px 7px;
   color: #ecdec9;
-  font: 400 16px var(--font-display);
+  font: 400 14px var(--font-display);
   text-transform: uppercase;
-  letter-spacing: 2.2px;
+  letter-spacing: 1.8px;
   text-align: center;
   white-space: nowrap;
   line-height: 1.2;
@@ -119,7 +140,7 @@ body {
   height: 8px;
   border: 1px solid #d0a771;
   box-shadow: inset 0 0 0 2px #20160e;
-  top: 9px;
+  top: 6px;
   left: 50%;
   transform: translateX(-50%);
   background: #4b352245;
@@ -134,6 +155,25 @@ body {
 .site-header .main-nav > a:focus-visible .film-nav-node {
   border-color: #f1ca95;
   background: #c7a16d45;
+}
+.site-header .main-nav > a[aria-current="location"] {
+  color: #ffe1b9;
+  text-shadow: 0 0 16px #d9a76420;
+}
+.site-header .main-nav > a[aria-current="location"] .film-nav-node {
+  background: #dbb784;
+  border-color: #f0cca0;
+  box-shadow: inset 0 0 0 2px #5b4128;
+}
+.site-header .main-nav > a[aria-current="location"]:after {
+  display: block;
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 1px;
+  left: calc(50% - 9px);
+  bottom: 0;
+  background: #d4ac79;
 }
 .menu-button {
   display: none;
@@ -300,7 +340,7 @@ main[data-scroll-engine="static"] .scroll-opening {
   filter: saturate(0.85);
 }
 .cirs-scene-title {
-  top: 12%;
+  top: calc(var(--header-height) + 16px);
   left: 6%;
   right: 6%;
   z-index: 6;
@@ -543,26 +583,27 @@ main[data-scroll-engine="static"] .scroll-opening {
 }
 /* A portrait composition rather than a crop of the laptop scene. */
 @media (min-width: 768px) and (max-width: 1023px) {
+  :root {
+    --header-height: 72px;
+  }
   .site-header {
-    padding: 10px 5% 16px;
-    height: 100px;
-    min-height: 100px;
-    gap: 30px;
+    padding: 5px 5%;
+    gap: 24px;
   }
   .site-header .wordmark {
     width: 88px;
     min-width: 88px;
     padding-right: 19px;
-    height: 66px;
+    height: 52px;
   }
   .site-header .main-nav {
     width: 78%;
     gap: 10px;
   }
   .site-header .main-nav > a {
-    font-size: 15px;
+    font-size: 13px;
     letter-spacing: 1.7px;
-    min-height: 60px;
+    min-height: 50px;
   }
   .scroll-opening,
   main[data-scroll-engine="static"] .scroll-opening {
@@ -602,26 +643,27 @@ main[data-scroll-engine="static"] .scroll-opening {
   }
 }
 @media (max-width: 767px) {
+  :root {
+    --header-height: 64px;
+  }
   .site-header {
-    height: 82px;
-    min-height: 82px;
-    padding: 7px 6% 10px;
+    padding: 5px 6%;
     gap: 20px;
-    background: #170f09bf;
-    backdrop-filter: blur(9px);
+    background: #170f09ed;
+    backdrop-filter: none;
   }
   .site-header .wordmark {
     width: 74px;
     min-width: 74px;
-    height: 62px;
+    height: 48px;
     min-height: 44px;
     padding-right: 16px;
     border-right: 1px solid #c7a47736;
   }
   .site-header .wordmark .ap-signature {
-    width: 58px;
-    height: 58px;
-    max-height: 58px;
+    width: 54px;
+    height: 48px;
+    max-height: 48px;
   }
   .menu-button {
     display: flex;
@@ -639,7 +681,7 @@ main[data-scroll-engine="static"] .scroll-opening {
     position: absolute;
     left: 6%;
     right: 6%;
-    top: 81px;
+    top: calc(var(--header-height) - 1px);
     width: 88%;
     grid-template-columns: repeat(2, 1fr);
     gap: 10px 15px;
@@ -967,8 +1009,8 @@ main[data-motion-fallback="device"] .glass-material {
   gap: 0.16em;
 }
 .site-header .wordmark {
-  width: 112px;
-  min-width: 112px;
+  width: 96px;
+  min-width: 96px;
 }
 .ap-signature,
 .state-opening-mark > img,
@@ -1017,5 +1059,311 @@ main[data-scroll-engine="static"] .scroll-opening .cirs-scene-captions {
   .lab input[type="range"] {
     height: 44px;
     min-height: 44px;
+  }
+}
+
+/* The navigation occupies one compact film track, with a shared anchor inset. */
+#work,
+#cirs,
+#community,
+#accuflow,
+#studio,
+#experiments,
+#about,
+#recognition,
+#contact {
+  scroll-margin-top: calc(var(--header-height) + 20px);
+}
+
+/* Warm light passes between separated panes; the work remains the front plane. */
+.feature-community,
+.feature-accuflow {
+  position: relative;
+  isolation: isolate;
+}
+.feature-community::before {
+  content: "";
+  position: absolute;
+  inset: 15% -4% 8%;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 83% 47%, #c18a3e13, transparent 56%),
+    linear-gradient(133deg, transparent 33%, #d3a66408 49%, transparent 68%);
+}
+.community-image-reservation {
+  position: relative;
+  isolation: isolate;
+}
+.community-image-reservation::before,
+.community-image-reservation::after {
+  content: "";
+  position: absolute;
+  inset: 9px -12px -12px 15px;
+  z-index: -1;
+  border: 1px solid #d5b17c32;
+  border-radius: 2px;
+  background: linear-gradient(135deg, #c09b5c0c, #271b0d08 60%, #e8c48714);
+  box-shadow: 12px 18px 24px #00000020;
+  transform: rotate(2.5deg);
+  pointer-events: none;
+}
+.community-image-reservation::after {
+  inset: 17px -19px -18px 28px;
+  border-color: #d5b17c1c;
+  background: transparent;
+  box-shadow: none;
+  transform: rotate(4deg);
+}
+.feature-community .feature-media {
+  border-color: #d5b17c50;
+  background: #231b12;
+  box-shadow:
+    0 22px 42px #00000030,
+    inset 0 1px 0 #ffe5b728;
+}
+.reservation-community {
+  background:
+    radial-gradient(ellipse at 13% 0%, #bc8a3d23, transparent 64%),
+    linear-gradient(145deg, #2c2116, #191510 68%, #342416);
+}
+.transition-glass {
+  background: linear-gradient(112deg, #c69a5c12, #e9d8b407 45%, #d0a06416);
+  border-left-color: #f0d09c70;
+  box-shadow:
+    -10px 0 24px #08060324,
+    inset 1px 0 0 #fff0d51a;
+  backdrop-filter: blur(4px);
+}
+.service-step {
+  border-left-color: #dfb97c2e;
+}
+.feature-community[data-story-step="purpose"] [data-service-step="purpose"],
+.feature-community[data-story-step="contribution"]
+  [data-service-step="contribution"] {
+  border-left-color: #e8c387;
+}
+
+/* AccuFlow uses a cooler optical edge and an underlit experimental frame. */
+.feature-accuflow::before {
+  content: "";
+  position: absolute;
+  inset: 15% -4% 7%;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 65% 62%, #4a9f9914, transparent 62%),
+    linear-gradient(170deg, transparent 65%, #6caaa90a 78%, transparent 91%);
+}
+.feature-accuflow .feature-media {
+  border-color: #a0ccc648;
+  background: #101b1b;
+  box-shadow:
+    0 24px 42px #00000038,
+    inset 0 1px 0 #d3f5ec22,
+    0 1px 0 #a9dbd51a;
+}
+.reservation-accuflow {
+  background:
+    radial-gradient(ellipse at 72% 110%, #61a5a72b, transparent 59%),
+    linear-gradient(125deg, #142422, #111918 57%, #1b302c);
+}
+.feature-accuflow .reservation-top,
+.feature-accuflow .reservation-bottom {
+  color: #b8d0c9;
+}
+.feature-accuflow .flowing-outline {
+  opacity: 0.9;
+}
+.feature-accuflow .flowing-outline path {
+  stroke: #addbd082;
+  stroke-width: 1.1px;
+}
+.feature-accuflow .accuflow-stage-info {
+  border-bottom-color: #9bc5b83d;
+  padding-left: 22px;
+  border-left: 1px solid #8bb7ac47;
+  background: linear-gradient(90deg, #87b3a809, transparent 85%);
+}
+
+/* The Studio's dark emulsion and physical film edges form its own material. */
+.studio-section {
+  isolation: isolate;
+  background:
+    radial-gradient(ellipse at 87% 4%, #aa825318, transparent 49%),
+    linear-gradient(160deg, #0d0d0c, #18130e 62%, #100e0d);
+  border-top: 1px solid #cda67536;
+  border-bottom: 1px solid #d6b48024;
+}
+.studio-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(
+    112deg,
+    transparent 46%,
+    #e1c69c08 47%,
+    transparent 65%
+  );
+}
+.studio-section .section-heading {
+  position: relative;
+  z-index: 1;
+  padding-bottom: 40px;
+}
+.studio-section .section-heading > div:last-child {
+  max-width: none;
+}
+.studio-collection-index {
+  position: relative;
+  padding-top: 31px;
+  border-top-color: #e2bd8652;
+}
+.studio-collection-index::before,
+.studio-collection-index::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 6px;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    90deg,
+    #cfaa7135 0 9px,
+    transparent 9px 28px
+  );
+}
+.studio-collection-index::before {
+  top: 7px;
+}
+.studio-collection-index::after {
+  bottom: -14px;
+}
+.studio-collection-index ol {
+  gap: 18px;
+}
+.studio-collection-index li {
+  min-height: 168px;
+  padding: 24px 22px;
+  border: 1px solid #c9a87a26;
+  background:
+    linear-gradient(125deg, #ddbb8510, transparent 46%),
+    linear-gradient(170deg, #211b15, #12110f);
+  box-shadow:
+    inset 0 1px 0 #f1d5ae0b,
+    0 12px 22px #00000026;
+}
+.studio-collection-index li > small {
+  color: #baa38a;
+}
+.studio-index-number {
+  color: #d2ac7c;
+}
+.studio-reel-window {
+  border-top: 1px solid #d1ad7847;
+  border-bottom: 1px solid #d1ad7833;
+  background: #100e0b;
+  box-shadow: 0 25px 40px #00000030;
+}
+.reel-frame {
+  border-color: #d6b58550;
+  box-shadow:
+    inset 0 1px 0 #f2d5aa16,
+    0 10px 25px #00000036;
+}
+
+@media (max-width: 767px) {
+  .community-image-reservation::before {
+    inset: 7px -6px -8px 10px;
+    transform: rotate(1.4deg);
+    box-shadow: 5px 10px 18px #00000020;
+  }
+  .community-image-reservation::after {
+    display: none;
+  }
+  .feature-community::before,
+  .feature-accuflow::before {
+    inset-inline: -2%;
+  }
+  .transition-glass {
+    backdrop-filter: none;
+  }
+  .feature-accuflow .accuflow-stage-info {
+    padding-left: 16px;
+  }
+  .studio-collection-index ol {
+    gap: 0;
+    border-top: 1px solid #d0ab7830;
+  }
+  .studio-collection-index li {
+    min-height: 108px;
+    padding: 22px 16px;
+    border: 0;
+    border-bottom: 1px solid #c9a87a32;
+    box-shadow: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .transition-glass {
+    backdrop-filter: none;
+  }
+  .community-image-reservation::before,
+  .community-image-reservation::after {
+    transform: none;
+  }
+}
+main[data-motion-fallback="device"] .transition-glass {
+  backdrop-filter: none;
+}
+.project-media-picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.project-media-picture .real-project-media {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+.feature-accuflow .feature-media {
+  height: clamp(480px, 52vw, 720px);
+}
+.project-media-caption {
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+.contact-action {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.feature-accuflow .accuflow-stage-info {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 28px;
+  width: 100%;
+  max-width: none;
+  padding: 26px 22px;
+}
+.feature-accuflow .accuflow-stage-info > p {
+  min-width: 0;
+  margin: 0;
+}
+@media (max-width: 767px) {
+  .feature-accuflow .feature-media {
+    height: clamp(480px, 160vw, 620px);
+  }
+  .feature-accuflow .accuflow-stage-info {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 24px 16px;
+  }
+  .contact-action {
+    font-size: clamp(15px, 4.6vw, 20px);
   }
 }

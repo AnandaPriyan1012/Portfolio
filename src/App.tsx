@@ -10,7 +10,6 @@ import {
   aboutLanes,
   achievements,
   experienceContent,
-  accuflowChecklist,
   interfaceCopy,
   directorsCut,
   editorialCopy,
@@ -26,6 +25,7 @@ import AtelierLoader from "./components/AtelierLoader";
 import NotFound from "./components/NotFound";
 import Signature from "./components/Signature";
 import useScrollStory from "./animation/useScrollStory";
+import useActiveSection from "./animation/useActiveSection";
 import { GuidedTour } from "./components/Discovery";
 
 type ModalState =
@@ -134,13 +134,18 @@ function ProjectMedia({
   const [failed, setFailed] = useState<string | null>(null);
   if (src && failed !== src)
     return (
-      <img
-        onError={() => setFailed(src)}
-        src={src}
-        alt={`${project.title} — ${draft ? "original process material" : "approved project visual"}`}
-        loading={hero ? "eager" : "lazy"}
-        className="real-project-media"
-      />
+      <picture className="project-media-picture">
+        {!draft && asset.mobilePreviewUrl && (
+          <source media="(max-width:767px)" srcSet={asset.mobilePreviewUrl} />
+        )}
+        <img
+          onError={() => setFailed(src)}
+          src={src}
+          alt={`${project.title} — ${draft ? "original process material" : "actual project visual"}`}
+          loading={hero ? "eager" : "lazy"}
+          className="real-project-media"
+        />
+      </picture>
     );
   return (
     <div
@@ -160,7 +165,9 @@ function ProjectMedia({
                 : "AccuFlow"}
         </span>
         <span>
-          {draft
+          {src
+            ? "The project image could not load."
+            : draft
             ? "Genuine drafts and process material to be added."
             : project.id === "community"
               ? "Community photographs have not been supplied."
@@ -168,7 +175,9 @@ function ProjectMedia({
         </span>
       </div>
       <span className="reservation-bottom">
-        {draft
+        {src
+          ? "Project details remain available."
+          : draft
           ? "No process has been recreated or invented."
           : "A labelled space for the real work."}
       </span>
@@ -391,6 +400,9 @@ function ProcessMedia({
           </svg>
         )}
       </button>
+      {projectAssets[project.id].previewUrl && projectAssets[project.id].previewCaption && (
+        <p className="project-media-caption">{projectAssets[project.id].previewCaption}</p>
+      )}
       {hasDraft && (
         <div className="process-controls">
           <span>{showing ? "Original process material" : "Project image"}</span>
@@ -495,9 +507,13 @@ function Feature({
       {project.id === "accuflow" && (
         <div className="accuflow-stage-info">
           <p data-flow-stage>
-            <span>Project documentation in progress</span>The idea, my
-            contribution and the current stage have not yet been confirmed. This
-            frame is reserved for original project material.
+            <span>The idea</span>{project.story.challenge}
+          </p>
+          <p data-flow-stage>
+            <span>The interaction</span>{project.story.process}
+          </p>
+          <p data-flow-stage>
+            <span>Current stage</span>{project.story.outcome}
           </p>
         </div>
       )}
@@ -767,6 +783,7 @@ export default function App() {
     (project) => route === `/projects/${project.id}`,
   );
   const isNotFound = route !== "/" && !currentProject;
+  const activeSection = useActiveSection(!currentProject && !isNotFound);
   const project =
     modal?.type === "project"
       ? projects.find((item) => item.id === modal.id)
@@ -902,6 +919,7 @@ export default function App() {
             <a
               key={item.id}
               href={`#${item.id}`}
+              aria-current={activeSection === item.id ? "location" : undefined}
               onClick={(event) => {
                 event.preventDefault();
                 scrollTo(item.id);
@@ -969,8 +987,8 @@ export default function App() {
               {readyFilms.length === 0 ? (
                 <div className="studio-collection-index">
                   <p className="studio-draft-note">
-                    Original films, stills and confirmed credits have not been
-                    supplied for this preview.
+                    A selection of trailers, films and event work.
+                    The films will open here when the originals and credits are ready.
                   </p>
                   <ol>
                     {creativeMedia.map((film, index) => (
@@ -979,7 +997,7 @@ export default function App() {
                           0{index + 1}
                         </span>
                         <span>{film.title}</span>
-                        <small>Original work to be added</small>
+                        <small>{film.type}</small>
                       </li>
                     ))}
                   </ol>
@@ -1083,12 +1101,15 @@ export default function App() {
             <p className="section-label">Contact</p>
             <h2>Let’s talk.</h2>
             {contactReady ? (
-              <button
-                className="contact-action"
-                onClick={() => setModal({ type: "contact" })}
-              >
-                Let’s connect
-              </button>
+              copy.contact.email ? (
+                <a className="contact-action" href={`mailto:${copy.contact.email}`}>
+                  {copy.contact.email}
+                </a>
+              ) : (
+                <button className="contact-action" onClick={() => setModal({ type: "contact" })}>
+                  Let’s connect
+                </button>
+              )
             ) : (
               <p>Contact details have not been supplied yet.</p>
             )}
@@ -1177,9 +1198,9 @@ export default function App() {
               <div className="case-study">
                 {Object.entries(project.story)
                   .filter(
-                    ([key]) =>
-                      cut === "director" ||
-                      ["challenge", "role", "outcome"].includes(key),
+                    ([key, value]) =>
+                      Boolean(value) && (cut === "director" ||
+                      ["challenge", "role", "outcome"].includes(key)),
                   )
                   .map(([key, value]) => (
                     <section key={key}>
@@ -1209,7 +1230,7 @@ export default function App() {
                   Ask the work
                   <Plus size={16} />
                 </summary>
-                {interfaceCopy.askWork.map((item) => (
+                {interfaceCopy.askWork.filter((item) => project.story[item.key]).map((item) => (
                   <button
                     key={item.key}
                     aria-expanded={question === item.key}
@@ -1226,19 +1247,6 @@ export default function App() {
                   </p>
                 )}
               </details>
-              {project.id === "accuflow" && (
-                <details className="publication-checklist">
-                  <summary>
-                    Details needed before publication
-                    <Plus size={16} />
-                  </summary>
-                  <ul>
-                    {accuflowChecklist.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </details>
-              )}
               <a
                 className="case-page-link"
                 href={`/projects/${project.id}`}
@@ -1256,7 +1264,7 @@ export default function App() {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  Visit cirschool.org
+                  Visit {new URL(project.link).hostname}
                 </a>
               )}
             </>
@@ -1293,7 +1301,7 @@ export default function App() {
               <h2 className="dialog-title">
                 A conversation,
                 <br />
-                <em>soon.</em>
+                <em>starts here.</em>
               </h2>
               <p className="dialog-introduction">{copy.contact.description}</p>
               {copy.contact.email ? (
@@ -1321,14 +1329,7 @@ export default function App() {
                     </a>
                   ))}
                 </div>
-              ) : (
-                <p className="contact-pending">
-                  Social links <span>To be added</span>
-                </p>
-              )}
-              <p className="contact-privacy">
-                No form or data collection is active.
-              </p>
+              ) : null}
             </>
           )}
         </Dialog>

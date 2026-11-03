@@ -1,0 +1,147 @@
+{
+  "desktop": {
+    "scenes": [
+      {
+        "stage": "start",
+        "y": 0,
+        "overflow": 0,
+        "engine": "gsap-lenis",
+        "active": "Work",
+        "headerHeight": 76,
+        "material": "hero"
+      },
+      {
+        "stage": "expanded-cirs",
+        "y": 980,
+        "overflow": 0,
+        "engine": "gsap-lenis",
+        "active": "Work",
+        "headerHeight": 76,
+        "material": "cirs"
+      },
+      {
+        "stage": "cirs",
+        "y": 2203,
+        "overflow": 0,
+        "engine": "gsap-lenis",
+        "active": "Work",
+        "headerHeight": 76,
+        "material": "community"
+      },
+      {
+        "stage": "community",
+        "y": 2664,
+        "overflow": 0,
+        "engine": "gsap-lenis",
+        "active": "Work",
+        "headerHeight": 76,
+        "material": "community"
+      },
+      {
+        "stage": "accuflow",
+        "y": 3492,
+        "overflow": 0,
+        "engine": "gsap-lenis",
+        "active": "Work",
+        "headerHeight": 76,
+        "material": "accuflow"
+      },
+      {
+        "stage": "studio",
+        "y": 4699,
+        "overflow": 0,
+        "engine": "gsap-lenis",
+        "active": "Studio",
+        "headerHeight": 76,
+        "material": "studio"
+      },
+      {
+        "stage": "about",
+        "y": 6365,
+        "overflow": 0,
+        "engine": "gsap-lenis",
+        "active": "About",
+        "headerHeight": 76,
+        "material": "none"
+      },
+      {
+        "stage": "contact",
+        "y": 6882,
+        "overflow": 0,
+        "engine": "gsap-lenis",
+        "active": "Contact",
+        "headerHeight": 76,
+        "material": "none"
+      }
+    ],
+    "errors": []
+  },
+  "mobile": {
+    "scenes": [
+      {
+        "stage": "start",
+        "y": 0,
+        "overflow": 0,
+        "engine": "gsap-native",
+        "active": "Work",
+        "headerHeight": 64,
+        "material": "hero"
+      },
+      {
+        "stage": "cirs",
+        "y": 676,
+        "overflow": 0,
+        "engine": "gsap-native",
+        "active": "Work",
+        "headerHeight": 64,
+        "material": "cirs"
+      },
+      {
+        "stage": "community",
+        "y": 1522,
+        "overflow": 0,
+        "engine": "gsap-native",
+        "active": "Work",
+        "headerHeight": 64,
+        "material": "community"
+      },
+      {
+        "stage": "accuflow",
+        "y": 2694,
+        "overflow": 0,
+        "engine": "gsap-native",
+        "active": "Work",
+        "headerHeight": 64,
+        "material": "accuflow"
+      },
+      {
+        "stage": "studio",
+        "y": 4163,
+        "overflow": 0,
+        "engine": "gsap-native",
+        "active": "Studio",
+        "headerHeight": 64,
+        "material": "studio"
+      },
+      {
+        "stage": "about",
+        "y": 6468,
+        "overflow": 0,
+        "engine": "gsap-native",
+        "active": "About",
+        "headerHeight": 64,
+        "material": "none"
+      },
+      {
+        "stage": "contact",
+        "y": 7569,
+        "overflow": 0,
+        "engine": "gsap-native",
+        "active": "Contact",
+        "headerHeight": 64,
+        "material": "none"
+      }
+    ],
+    "errors": []
+  }
+}

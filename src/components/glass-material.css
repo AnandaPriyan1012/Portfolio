@@ -17,6 +17,21 @@
   stroke-width: 0.45px;
   opacity: 0.45;
 }
+.glass-material[data-world="community"] .material-pane {
+  stroke-width: 1.25px;
+}
+.glass-material[data-world="community"] .material-inner-edge {
+  opacity: 0.68;
+}
+.glass-material[data-world="accuflow"] .material-pane {
+  stroke-width: 1.05px;
+}
+.glass-material[data-world="accuflow"] .material-inner-edge {
+  opacity: 0.3;
+}
+.glass-material[data-world="studio"] .material-pane {
+  stroke-width: 1.2px;
+}
 .material-film-edge {
   stroke-width: 5px;
   stroke-dasharray: 7px 14px;

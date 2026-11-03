@@ -4,14 +4,12 @@ import {
   ArrowLeft,
   ArrowRight,
   ArrowUpRight,
-  FileText,
   FileImage,
   Layers,
   List,
   Play,
 } from "lucide-react";
 import {
-  accuflowChecklist,
   accuflowStages,
   projectAssets,
   projects,
@@ -25,7 +23,7 @@ type Props = { project: Project; onBack: () => void; onContact: () => void };
 const stateLabel: Record<string, string> = {
   cirs: "Live website",
   airkart: "Concept exploration",
-  accuflow: "Project details pending",
+  accuflow: "Product & interaction prototype",
   creative: "Creative collection",
   community: "Volunteer work · since 2023",
 };
@@ -35,16 +33,16 @@ export function AccuFlowVisual() {
     <div
       className="accuflow-product-visual"
       role="img"
-      aria-label="AccuFlow. Project visuals to be added."
+      aria-label="AccuFlow product and interaction prototype"
     >
-      <span className="accuflow-frame-label">Project media</span>
+      <span className="accuflow-frame-label">Product & interaction design</span>
       <div className="accuflow-frame-content">
         <span className="accuflow-wordmark">AccuFlow</span>
-        <strong>Project visuals to be added.</strong>
-        <span>Reserved for original screenshots and approved media.</span>
+        <strong>An interaction prototype.</strong>
+        <span>Explore the project through the prototype link below.</span>
       </div>
       <span className="accuflow-frame-caption">
-        AccuFlow / A project to be documented.
+        AccuFlow / Website prototype
       </span>
     </div>
   );
@@ -53,6 +51,7 @@ export function AccuFlowVisual() {
 export default function CaseStudyPage({ project, onBack, onContact }: Props) {
   const [cut, setCut] = useState<"quick" | "director">("director");
   const [active, setActive] = useState("");
+  const [mediaFailed, setMediaFailed] = useState(false);
   const isAccuFlow = project.id === "accuflow";
   const index = projects.findIndex((item) => item.id === project.id);
   const assets = projectAssets[project.id];
@@ -64,11 +63,15 @@ export default function CaseStudyPage({ project, onBack, onContact }: Props) {
     : [
         {
           id: "challenge",
-          title: "The challenge",
+          title: project.id === "cirs" ? "The context" : "The challenge",
           body: project.story.challenge,
         },
-        { id: "role", title: "My role", body: project.story.role },
-        { id: "process", title: "The process", body: project.story.process },
+        { id: "role", title: "My contribution", body: project.story.role },
+        {
+          id: "process",
+          title: project.id === "cirs" ? "In the interface" : "The work",
+          body: project.story.process,
+        },
         {
           id: "outcome",
           title: "Where it stands",
@@ -76,25 +79,27 @@ export default function CaseStudyPage({ project, onBack, onContact }: Props) {
         },
         { id: "lessons", title: "What I learned", body: project.story.lessons },
       ];
-  const sections =
+  const sections = (
     cut === "director"
       ? detailed
       : [
           {
             id: "mission",
-            title: "The mission",
+            title: project.id === "cirs" ? "The context" : "The idea",
             body: project.story.challenge,
           },
-          { id: "role", title: "My role", body: project.story.role },
+          { id: "role", title: "My contribution", body: project.story.role },
           {
             id: "outcome",
             title: "Where it stands",
             body: project.story.outcome,
           },
-        ];
+        ]
+  ).filter((section) => section.body.trim());
   const anchor = (id: string) => `case-${project.id}-${id}`;
 
   useEffect(() => {
+    setMediaFailed(false);
     const previous = document.title;
     document.title = `${project.title} — Ananda Priyan`;
     window.scrollTo({ top: 0, behavior: "instant" });
@@ -188,27 +193,41 @@ export default function CaseStudyPage({ project, onBack, onContact }: Props) {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    Visit the live website <ArrowUpRight size={12} />
+                    {isAccuFlow ? "Open the prototype" : "Visit the website"}{" "}
+                    <ArrowUpRight size={12} />
                   </a>
                 ) : (
-                  "Verified project materials pending"
+                  stateLabel[project.id]
                 )}
               </strong>
             </div>
           </div>
         </section>
         <section className="case-media" aria-label="Project media">
-          {assets?.previewUrl ? (
+          {assets?.previewUrl && !mediaFailed ? (
             <figure>
-              <img
-                src={assets.previewUrl}
-                alt={
-                  project.id === "cirs"
-                    ? "CIRS homepage — screenshot of the public school website"
-                    : `${project.title} — original project visual`
-                }
-                fetchPriority="high"
-              />
+              <picture>
+                {assets.mobilePreviewUrl && (
+                  <source
+                    media="(max-width: 767px)"
+                    srcSet={assets.mobilePreviewUrl}
+                  />
+                )}
+                <img
+                  src={assets.previewUrl}
+                  alt={
+                    project.id === "cirs"
+                      ? "CIRS homepage — screenshot of the public school website"
+                      : project.id === "community"
+                        ? "Vallalar website review preview — About page"
+                        : project.id === "accuflow"
+                          ? "AccuFlow website prototype — guide interface"
+                          : `${project.title} — project visual`
+                  }
+                  fetchPriority="high"
+                  onError={() => setMediaFailed(true)}
+                />
+              </picture>
               <figcaption>
                 {project.id === "cirs" ? (
                   <>
@@ -222,7 +241,10 @@ export default function CaseStudyPage({ project, onBack, onContact }: Props) {
                     </a>
                   </>
                 ) : (
-                  <>Original project media · {project.title}</>
+                  <>
+                    {assets.previewCaption ??
+                      `Project website · ${project.title}`}
+                  </>
                 )}
               </figcaption>
             </figure>
@@ -264,11 +286,6 @@ export default function CaseStudyPage({ project, onBack, onContact }: Props) {
                   <span>↳</span>The Admissions page
                 </a>
               )}
-              {isAccuFlow && (
-                <a href="#case-evidence">
-                  <span>+</span>Evidence to add
-                </a>
-              )}
             </nav>
             <span className="case-sidebar-bottom">
               Ananda Priyan
@@ -308,16 +325,6 @@ export default function CaseStudyPage({ project, onBack, onContact }: Props) {
                 </button>
               </div>
             </div>
-            {isAccuFlow && (
-              <div className="case-truth-note">
-                <FileText size={18} />
-                <p>
-                  This case study is an honest open frame. AccuFlow’s verified
-                  product description, role, process and outcomes are still to
-                  be supplied.
-                </p>
-              </div>
-            )}
             <div className="case-stages">
               {sections.map((section, i) => (
                 <section
@@ -339,6 +346,14 @@ export default function CaseStudyPage({ project, onBack, onContact }: Props) {
               <section id="case-cirs-admissions" className="case-admissions">
                 <span className="case-micro">The Admissions page</span>
                 <h2>A closer look.</h2>
+                <p>
+                  The Admissions Guide groups three practical questions:
+                  entry-class availability, access to the application portal,
+                  and dates or assessment arrangements. The page directs current
+                  enquiries to the Admissions Office, while keeping the
+                  registered portal and the process guide close to the
+                  introduction.
+                </p>
                 <figure>
                   <img
                     src={assets.admissionsUrl!}
@@ -351,36 +366,12 @@ export default function CaseStudyPage({ project, onBack, onContact }: Props) {
                   </figcaption>
                 </figure>
                 <a
-                  href="https://cirschool.org"
+                  href="https://cirschool.org/admissions.html"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Visit the CIRS website <ArrowUpRight size={16} />
+                  Visit the Admissions Guide <ArrowUpRight size={16} />
                 </a>
-              </section>
-            )}
-            {isAccuFlow && (
-              <section id="case-evidence" className="case-evidence">
-                <span className="case-micro">
-                  Before this story is complete
-                </span>
-                <h2>The details make the difference.</h2>
-                <p>
-                  These are the materials needed to turn an open frame into a
-                  verified case study.
-                </p>
-                <ul>
-                  {accuflowChecklist.map((item) => (
-                    <li key={item}>
-                      <span className="case-check" aria-hidden="true" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-                <span className="case-evidence-caption">
-                  No invented product screens, capabilities, testimonials or
-                  results.
-                </span>
               </section>
             )}
             {project.link && (
@@ -391,8 +382,16 @@ export default function CaseStudyPage({ project, onBack, onContact }: Props) {
                 rel="noopener noreferrer"
               >
                 <div>
-                  <span className="case-micro">The live project</span>
-                  <strong>See it in the world.</strong>
+                  <span className="case-micro">
+                    {isAccuFlow
+                      ? "The website prototype"
+                      : "The project website"}
+                  </span>
+                  <strong>
+                    {isAccuFlow
+                      ? "Explore the interface."
+                      : "See it in the world."}
+                  </strong>
                 </div>
                 <span>
                   {new URL(project.link).hostname}

@@ -17,6 +17,21 @@ type ScrollTarget = Element | string | number;
 
 type MaterialBox = { x: number; y: number; width: number; height: number };
 
+// Read the actual fixed header rather than letting anchor positions drift when
+// the phone, tablet and desktop navigation use different heights.
+function headerClearance() {
+  const header = document.querySelector<HTMLElement>(".site-header");
+  const configured = Number.parseFloat(
+    getComputedStyle(document.documentElement).getPropertyValue(
+      "--header-height",
+    ),
+  );
+  const height =
+    header?.getBoundingClientRect().height ??
+    (Number.isFinite(configured) ? configured : 76);
+  return Math.ceil(height) + 20;
+}
+
 // Every state uses eight cubic curves so GSAP can interpolate the actual pane
 // geometry without a morph plugin, image swaps, a canvas or an extra RAF loop.
 function roundedPane(box: MaterialBox, radius = 12) {
@@ -142,7 +157,7 @@ function coordinateMaterial(element: HTMLElement, desktop: boolean) {
         ? gsap.utils.interpolate(
             sculpture,
             roundedPane(frame),
-            clamp((progress - 0.04) / 0.67),
+            clamp(progress / 0.58),
           )
         : roundedPane(frame, 7);
       opacity = desktop
@@ -286,7 +301,7 @@ export default function useScrollStory({ root, enabled, route }: Options) {
       if (!target) return;
       const top = Math.max(
         0,
-        target.getBoundingClientRect().top + window.scrollY - 100,
+        target.getBoundingClientRect().top + window.scrollY - headerClearance(),
       );
       const lenis = lenisRef.current;
       if (lenis) {
@@ -395,9 +410,9 @@ export default function useScrollStory({ root, enabled, route }: Options) {
           };
           const lowPower = Boolean(
             device.connection?.saveData ||
-              (navigator.hardwareConcurrency > 0 &&
-                navigator.hardwareConcurrency <= 2) ||
-              (device.deviceMemory && device.deviceMemory <= 2),
+            (navigator.hardwareConcurrency > 0 &&
+              navigator.hardwareConcurrency <= 2) ||
+            (device.deviceMemory && device.deviceMemory <= 2),
           );
           reduceRef.current = reduced || lowPower;
           element.dataset.motionFallback = lowPower
@@ -433,7 +448,7 @@ export default function useScrollStory({ root, enabled, route }: Options) {
               autoRaf: false,
               smoothWheel: true,
               syncTouch: false,
-              anchors: { offset: -100, duration: 0.85 },
+              anchors: { offset: -headerClearance(), duration: 0.85 },
               prevent: (node) =>
                 Boolean(node.closest("dialog, .ap-os, [data-lenis-prevent]")),
             });
@@ -502,6 +517,8 @@ export default function useScrollStory({ root, enabled, route }: Options) {
             const scene = select<HTMLElement>(".scroll-opening");
             const frame = select<HTMLElement>(".cirs-visual-frame");
             const hero = select(".hero-story-copy");
+            const heroName = select(".hero-story-copy > h1");
+            const heroSupportingCopy = selectAll(".hero-story-copy > :not(h1)");
             const room = select(".hero-room");
             const title = select(".cirs-scene-title");
             const captions = select(".cirs-scene-captions");
@@ -515,8 +532,27 @@ export default function useScrollStory({ root, enabled, route }: Options) {
                 height: `${(frameBounds.height / Math.max(sceneBounds.height, 1)) * 100}%`,
               };
               gsap.set(frame, { left: initialFrame.left, right: "auto" });
-              if (title) gsap.set(title, { autoAlpha: 0 });
+              if (title)
+                gsap.set(title, { autoAlpha: 0, top: headerClearance() });
               if (captions) gsap.set(captions, { autoAlpha: 0 });
+              const frameTop = () =>
+                Math.max(
+                  headerClearance() +
+                    (title?.getBoundingClientRect().height ?? 24) +
+                    18,
+                  innerHeight * 0.15,
+                );
+              const frameHeight = () =>
+                Math.min(
+                  scene.clientHeight * 0.66,
+                  Math.max(
+                    240,
+                    innerHeight -
+                      frameTop() -
+                      (captions?.getBoundingClientRect().height ?? 90) -
+                      32,
+                  ),
+                );
               const opening = gsap.timeline({
                 defaults: { ease: "none" },
                 scrollTrigger: {
@@ -535,18 +571,23 @@ export default function useScrollStory({ root, enabled, route }: Options) {
                     syncAmbient();
                   },
                   onRefresh: (trigger) => {
+                    if (title) gsap.set(title, { top: headerClearance() });
                     scene.dataset.progress = trigger.progress.toFixed(3);
                     ambientInOpening = trigger.progress < 0.48;
                     syncAmbient();
                   },
                 },
               });
-              if (hero)
+              if (heroSupportingCopy.length)
                 opening.to(
-                  hero,
-                  { autoAlpha: 0, y: -12, duration: 0.22 },
-                  0.03,
+                  heroSupportingCopy,
+                  { autoAlpha: 0, y: -8, duration: 0.14 },
+                  0.08,
                 );
+              if (heroName)
+                opening.to(heroName, { y: -160, duration: 0.24 }, 0.16);
+              if (hero)
+                opening.to(hero, { autoAlpha: 0, y: -12, duration: 0.24 }, 0.2);
               if (room)
                 opening.fromTo(
                   room,
@@ -559,9 +600,9 @@ export default function useScrollStory({ root, enabled, route }: Options) {
                     autoAlpha: 0,
                     scale: 0.98,
                     clipPath: "inset(13% 5% 17% 5% round 18px)",
-                    duration: 0.43,
+                    duration: 0.4,
                   },
-                  0.05,
+                  0.18,
                 );
               opening.fromTo(
                 frame,
@@ -572,17 +613,19 @@ export default function useScrollStory({ root, enabled, route }: Options) {
                 },
                 {
                   left: "6%",
-                  top: "15%",
+                  top: frameTop,
                   width: "88%",
-                  height: "66%",
+                  height: frameHeight,
                   autoAlpha: 1,
                   clipPath: "inset(0% 0% 0% 0% round 0px)",
-                  duration: 0.66,
+                  duration: 0.58,
                 },
-                0.08,
+                0,
               );
-              if (title) opening.set(title, { autoAlpha: 1 }, 0.5);
-              if (captions) opening.set(captions, { autoAlpha: 1 }, 0.6);
+              if (title)
+                opening.to(title, { autoAlpha: 1, duration: 0.12 }, 0.42);
+              if (captions)
+                opening.to(captions, { autoAlpha: 1, duration: 0.12 }, 0.58);
               // Keep normalized progress at 0–1 and reserve the final quarter for
               // the fully expanded view and fully opaque, stationary captions.
               opening.to({}, { duration: 0.26 }, 0.74);
@@ -598,9 +641,11 @@ export default function useScrollStory({ root, enabled, route }: Options) {
             if (community && glass) {
               gsap.fromTo(
                 glass,
-                { xPercent: 0 },
+                { xPercent: -3, rotationY: -3, opacity: 0.8 },
                 {
-                  xPercent: 105,
+                  xPercent: 112,
+                  rotationY: 8,
+                  opacity: 0,
                   ease: "none",
                   scrollTrigger: {
                     id: "atelier-community-glass",
@@ -625,6 +670,9 @@ export default function useScrollStory({ root, enabled, route }: Options) {
             const flowStages = selectAll("#accuflow [data-flow-stage]");
             const flowPath = select<SVGPathElement>("#accuflow .accuflow-path");
             const flowMedia = select<HTMLElement>("#accuflow .feature-media");
+            const flowVisual = flowMedia?.querySelector<HTMLElement>(
+              ".real-project-media, .media-reservation",
+            );
             if (flow && flowPath) {
               gsap.fromTo(
                 flowPath,
@@ -642,6 +690,24 @@ export default function useScrollStory({ root, enabled, route }: Options) {
                   },
                 },
               );
+              if (flowVisual)
+                gsap.fromTo(
+                  flowVisual,
+                  { y: 16, scale: 0.985 },
+                  {
+                    y: 0,
+                    scale: 1,
+                    ease: "none",
+                    scrollTrigger: {
+                      id: "atelier-accuflow-frame",
+                      trigger: flowMedia ?? flow,
+                      start: "top 90%",
+                      end: "top 35%",
+                      scrub: true,
+                      invalidateOnRefresh: true,
+                    },
+                  },
+                );
             }
             if (flowStageInfo && flowStages.length) {
               gsap.fromTo(
@@ -783,7 +849,9 @@ export default function useScrollStory({ root, enabled, route }: Options) {
             lenis.scrollTo(
               Math.max(
                 0,
-                destination.getBoundingClientRect().top + window.scrollY - 100,
+                destination.getBoundingClientRect().top +
+                  window.scrollY -
+                  headerClearance(),
               ),
               { duration: 0.85 },
             );
@@ -795,9 +863,27 @@ export default function useScrollStory({ root, enabled, route }: Options) {
       if (typeof target === "number")
         window.scrollTo({ top: target, behavior });
       else {
-        const destination =
-          typeof target === "string" ? document.querySelector(target) : target;
-        destination?.scrollIntoView({ behavior, block: "start" });
+        let destination: Element | null =
+          target instanceof Element ? target : null;
+        if (typeof target === "string") {
+          try {
+            destination = target.startsWith("#")
+              ? document.getElementById(decodeURIComponent(target.slice(1)))
+              : document.querySelector(target);
+          } catch {
+            destination = null;
+          }
+        }
+        if (destination)
+          window.scrollTo({
+            top: Math.max(
+              0,
+              destination.getBoundingClientRect().top +
+                window.scrollY -
+                headerClearance(),
+            ),
+            behavior,
+          });
       }
     },
     [enabled],

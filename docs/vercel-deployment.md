@@ -28,4 +28,12 @@ Evidence: [desktop](vercel-live-desktop.png), [expanded CIRS](vercel-live-deskto
 
 The existing Netlify site is preserved. A read-only Netlify inspection found no connected repository or build branch, and no Netlify settings or deployments were changed. Its public HTML still matched the saved production SHA-256 after GitHub publication and Vercel deployment.
 
-The local production build passes. Existing browser validation and missing personal assets are documented in `local-atelier-review.md`. Provider credential directories, build output, local environment files and compiled ZIP bundles are excluded by `.gitignore`.
+## Scroll and content refinement
+
+The latest revision uses a 76px desktop / 72px tablet / 64px phone Film Strip header, measured heading clearance and active-section navigation. The CIRS frame begins moving immediately and occupies the centre before the name retires. Warm layered Vallalar surfaces, a cooler AccuFlow frame and dark Studio film rails continue the material treatment beyond the hero.
+
+Actual public Vallalar website-preview and AccuFlow internal-prototype captures replace their reserved visuals. The captures, prototype stages and limits are documented in [project-source-evidence.md](project-source-evidence.md). The owner-confirmed public email is a direct `mailto:` destination. CIRS uses the supplied contribution and observed Admissions structure; personal decisions or lessons were not fabricated. Films, documentary community photos and exact creative credits remain unavailable.
+
+Latest screenshots, scroll samples, browser checks and limits are in [refinement-review.md](refinement-review.md). The earlier evidence above records the first deployment rather than these refinements.
+
+The local production build passes. Provider credential directories, build output, local environment files and compiled ZIP bundles are excluded by `.gitignore`.
