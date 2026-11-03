@@ -1,0 +1,148 @@
+{
+  "mode": "Local development preview only; no deployment",
+  "browser": "Chromium headless in cloud",
+  "scenes": [
+    {
+      "name": "desktop-start",
+      "scrollY": 0,
+      "world": "hero",
+      "engine": "gsap-lenis",
+      "width": 1440,
+      "overflow": 0
+    },
+    {
+      "name": "desktop-middle",
+      "scrollY": 850,
+      "world": "cirs",
+      "engine": "gsap-lenis",
+      "width": 1440,
+      "overflow": 0
+    },
+    {
+      "name": "desktop-cirs",
+      "scrollY": 1927,
+      "world": "cirs",
+      "engine": "gsap-lenis",
+      "width": 1440,
+      "overflow": 0
+    },
+    {
+      "name": "desktop-community",
+      "scrollY": 2615,
+      "world": "community",
+      "engine": "gsap-lenis",
+      "width": 1440,
+      "overflow": 0
+    },
+    {
+      "name": "desktop-accuflow",
+      "scrollY": 3656,
+      "world": "accuflow",
+      "engine": "gsap-lenis",
+      "width": 1440,
+      "overflow": 0
+    },
+    {
+      "name": "desktop-studio",
+      "scrollY": 4216,
+      "world": "studio",
+      "engine": "gsap-lenis",
+      "width": 1440,
+      "overflow": 0
+    },
+    {
+      "name": "desktop-about",
+      "scrollY": 5892,
+      "world": "none",
+      "engine": "gsap-lenis",
+      "width": 1440,
+      "overflow": 0
+    },
+    {
+      "name": "desktop-end",
+      "scrollY": 6413,
+      "world": "none",
+      "engine": "gsap-lenis",
+      "width": 1440,
+      "overflow": 0
+    },
+    {
+      "name": "mobile-start",
+      "scrollY": 0,
+      "world": "hero",
+      "engine": "gsap-native",
+      "width": 390,
+      "overflow": 0
+    },
+    {
+      "name": "mobile-cirs",
+      "scrollY": 660,
+      "world": "cirs",
+      "engine": "gsap-native",
+      "width": 390,
+      "overflow": 0
+    },
+    {
+      "name": "mobile-community",
+      "scrollY": 1506,
+      "world": "community",
+      "engine": "gsap-native",
+      "width": 390,
+      "overflow": 0
+    },
+    {
+      "name": "mobile-middle",
+      "scrollY": 1506,
+      "world": "community",
+      "engine": "gsap-native",
+      "width": 390,
+      "overflow": 0
+    },
+    {
+      "name": "mobile-accuflow",
+      "scrollY": 2645,
+      "world": "accuflow",
+      "engine": "gsap-native",
+      "width": 390,
+      "overflow": 0
+    },
+    {
+      "name": "mobile-studio",
+      "scrollY": 3432,
+      "world": "studio",
+      "engine": "gsap-native",
+      "width": 390,
+      "overflow": 0
+    },
+    {
+      "name": "mobile-about",
+      "scrollY": 5670,
+      "world": "none",
+      "engine": "gsap-native",
+      "width": 390,
+      "overflow": 0
+    },
+    {
+      "name": "mobile-end",
+      "scrollY": 6750,
+      "world": "none",
+      "engine": "gsap-native",
+      "width": 390,
+      "overflow": 0
+    }
+  ],
+  "expansion": {
+    "before": {
+      "x": 993.59375,
+      "y": 690,
+      "width": 345.59375,
+      "height": 220
+    },
+    "after": {
+      "x": 86.390625,
+      "y": 150,
+      "width": 1267.1875,
+      "height": 660
+    }
+  }
+}

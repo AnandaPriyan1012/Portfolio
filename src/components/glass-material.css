@@ -1,0 +1,44 @@
+.glass-material {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100dvh;
+  z-index: 4;
+  pointer-events: none;
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  contain: layout style;
+}
+.material-pane {
+  stroke-width: 1.1px;
+}
+.material-inner-edge {
+  stroke-width: 0.45px;
+  opacity: 0.45;
+}
+.material-film-edge {
+  stroke-width: 5px;
+  stroke-dasharray: 7px 14px;
+  opacity: 0;
+}
+main[data-scroll-engine="static"] .glass-material {
+  display: none;
+}
+@media (max-width: 1023px), (pointer: coarse) {
+  .material-pane {
+    stroke-width: 0.8px;
+  }
+  .material-inner-edge,
+  .material-film-edge {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .glass-material {
+    display: none !important;
+  }
+}
+:root[data-motion="off"] .glass-material {
+  display: none !important;
+}

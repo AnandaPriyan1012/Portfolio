@@ -1,0 +1,451 @@
+import { useEffect, useState, type CSSProperties } from "react";
+import {
+  ArrowDown,
+  ArrowLeft,
+  ArrowRight,
+  ArrowUpRight,
+  FileText,
+  FileImage,
+  Layers,
+  List,
+  Play,
+} from "lucide-react";
+import {
+  accuflowChecklist,
+  accuflowStages,
+  projectAssets,
+  projects,
+  siteContent,
+  type Project,
+} from "../content";
+import "./case-study.css";
+import Signature from "./Signature";
+
+type Props = { project: Project; onBack: () => void; onContact: () => void };
+const stateLabel: Record<string, string> = {
+  cirs: "Live website",
+  airkart: "Concept exploration",
+  accuflow: "Project details pending",
+  creative: "Creative collection",
+  community: "Volunteer work · since 2023",
+};
+
+export function AccuFlowVisual() {
+  return (
+    <div
+      className="accuflow-product-visual"
+      role="img"
+      aria-label="AccuFlow. Project visuals to be added."
+    >
+      <span className="accuflow-frame-label">Project media</span>
+      <div className="accuflow-frame-content">
+        <span className="accuflow-wordmark">AccuFlow</span>
+        <strong>Project visuals to be added.</strong>
+        <span>Reserved for original screenshots and approved media.</span>
+      </div>
+      <span className="accuflow-frame-caption">
+        AccuFlow / A project to be documented.
+      </span>
+    </div>
+  );
+}
+
+export default function CaseStudyPage({ project, onBack, onContact }: Props) {
+  const [cut, setCut] = useState<"quick" | "director">("director");
+  const [active, setActive] = useState("");
+  const isAccuFlow = project.id === "accuflow";
+  const index = projects.findIndex((item) => item.id === project.id);
+  const assets = projectAssets[project.id];
+  const hasAdmissions = project.id === "cirs" && !!assets.admissionsUrl;
+  const hasContact =
+    !!siteContent.contact.email || siteContent.contact.socials.length > 0;
+  const detailed = isAccuFlow
+    ? accuflowStages
+    : [
+        {
+          id: "challenge",
+          title: "The challenge",
+          body: project.story.challenge,
+        },
+        { id: "role", title: "My role", body: project.story.role },
+        { id: "process", title: "The process", body: project.story.process },
+        {
+          id: "outcome",
+          title: "Where it stands",
+          body: project.story.outcome,
+        },
+        { id: "lessons", title: "What I learned", body: project.story.lessons },
+      ];
+  const sections =
+    cut === "director"
+      ? detailed
+      : [
+          {
+            id: "mission",
+            title: "The mission",
+            body: project.story.challenge,
+          },
+          { id: "role", title: "My role", body: project.story.role },
+          {
+            id: "outcome",
+            title: "Where it stands",
+            body: project.story.outcome,
+          },
+        ];
+  const anchor = (id: string) => `case-${project.id}-${id}`;
+
+  useEffect(() => {
+    const previous = document.title;
+    document.title = `${project.title} — Ananda Priyan`;
+    window.scrollTo({ top: 0, behavior: "instant" });
+    return () => {
+      document.title = previous;
+    };
+  }, [project.id, project.title]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setActive(entry.target.id);
+        });
+      },
+      { rootMargin: "-15% 0px -55% 0px", threshold: 0 },
+    );
+    sections.forEach((section) => {
+      const element = document.getElementById(anchor(section.id));
+      if (element) observer.observe(element);
+    });
+    return () => observer.disconnect();
+  }, [project.id, cut]);
+
+  return (
+    <div
+      className={`case-page${isAccuFlow ? " case-accuflow" : ""}`}
+      style={{ "--case-accent": project.accent } as CSSProperties}
+    >
+      <a className="case-skip" href="#case-body">
+        Skip to case study
+      </a>
+      <header className="case-topbar">
+        <button className="case-back" onClick={onBack}>
+          <ArrowLeft size={15} />
+          <span>Back to portfolio</span>
+        </button>
+        <a
+          className="case-wordmark"
+          href="#case-top"
+          aria-label="Back to case-study beginning"
+        >
+          <Signature />
+        </a>
+        <span className="case-topbar-caption">
+          Ananda Priyan <span>/ Selected work</span>
+        </span>
+      </header>
+      <main id="case-top">
+        <section className="case-hero">
+          <div className="case-eyebrow">
+            Selected project{" "}
+            <span className="case-eyebrow-index">
+              {String(index + 1).padStart(2, "0")} /{" "}
+              {String(projects.length).padStart(2, "0")}
+            </span>
+          </div>
+          <div className="case-hero-grid">
+            <div>
+              <h1>
+                {project.title}
+                <span className="case-title-dot">.</span>
+              </h1>
+              <p className="case-subtitle">{project.subtitle}</p>
+            </div>
+            <div className="case-hero-note">
+              <span className="case-status">
+                {stateLabel[project.id] ?? "Details to be confirmed"}
+              </span>
+              <p>{project.description}</p>
+              <a className="case-read-link" href="#case-body">
+                Follow the story <ArrowDown size={14} />
+              </a>
+            </div>
+          </div>
+          <div className="case-passport-strip">
+            <div>
+              <span>Discipline</span>
+              <strong>{project.category}</strong>
+            </div>
+            <div>
+              <span>Focus</span>
+              <strong>{project.tags.join(" / ")}</strong>
+            </div>
+            <div>
+              <span>Project status</span>
+              <strong>
+                {project.link ? (
+                  <a
+                    href={project.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Visit the live website <ArrowUpRight size={12} />
+                  </a>
+                ) : (
+                  "Verified project materials pending"
+                )}
+              </strong>
+            </div>
+          </div>
+        </section>
+        <section className="case-media" aria-label="Project media">
+          {assets?.previewUrl ? (
+            <figure>
+              <img
+                src={assets.previewUrl}
+                alt={
+                  project.id === "cirs"
+                    ? "CIRS homepage — screenshot of the public school website"
+                    : `${project.title} — original project visual`
+                }
+                fetchPriority="high"
+              />
+              <figcaption>
+                {project.id === "cirs" ? (
+                  <>
+                    Screenshot captured from the public CIRS website.{" "}
+                    <a
+                      href="https://cirschool.org"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      View the live site <ArrowUpRight size={13} />
+                    </a>
+                  </>
+                ) : (
+                  <>Original project media · {project.title}</>
+                )}
+              </figcaption>
+            </figure>
+          ) : isAccuFlow ? (
+            <AccuFlowVisual />
+          ) : (
+            <div className="case-media-pending">
+              <FileImage size={28} strokeWidth={1} />
+              <span className="case-media-title">The work, in focus.</span>
+              <strong>Verified project visuals pending.</strong>
+              <p>{project.mediaStatus}</p>
+              <span className="case-media-index">
+                {project.title} / Original media to be added
+              </span>
+            </div>
+          )}
+        </section>
+        <div id="case-body" className="case-body">
+          <aside className="case-sidebar">
+            <span className="case-micro">
+              <List size={12} /> In this story
+            </span>
+            <nav aria-label="Case study chapters">
+              {sections.map((section, i) => (
+                <a
+                  key={section.id}
+                  href={`#${anchor(section.id)}`}
+                  className={active === anchor(section.id) ? "active" : ""}
+                  aria-current={
+                    active === anchor(section.id) ? "location" : undefined
+                  }
+                >
+                  <span>{String(i + 1).padStart(2, "0")}</span>
+                  {section.title}
+                </a>
+              ))}
+              {hasAdmissions && (
+                <a href="#case-cirs-admissions">
+                  <span>↳</span>The Admissions page
+                </a>
+              )}
+              {isAccuFlow && (
+                <a href="#case-evidence">
+                  <span>+</span>Evidence to add
+                </a>
+              )}
+            </nav>
+            <span className="case-sidebar-bottom">
+              Ananda Priyan
+              <br />A project in context.
+            </span>
+          </aside>
+          <div className="case-story-column">
+            <div className="case-cut-controls">
+              <div>
+                <span className="case-micro">Choose your cut</span>
+                <p>A quick look, or the whole thread.</p>
+              </div>
+              <div
+                className="case-cut-toggle"
+                role="group"
+                aria-label="Case study reading mode"
+              >
+                <button
+                  aria-pressed={cut === "quick"}
+                  onClick={() => {
+                    setCut("quick");
+                    setActive("");
+                  }}
+                >
+                  <Play size={12} />
+                  Quick cut
+                </button>
+                <button
+                  aria-pressed={cut === "director"}
+                  onClick={() => {
+                    setCut("director");
+                    setActive("");
+                  }}
+                >
+                  <Layers size={12} />
+                  Director’s cut
+                </button>
+              </div>
+            </div>
+            {isAccuFlow && (
+              <div className="case-truth-note">
+                <FileText size={18} />
+                <p>
+                  This case study is an honest open frame. AccuFlow’s verified
+                  product description, role, process and outcomes are still to
+                  be supplied.
+                </p>
+              </div>
+            )}
+            <div className="case-stages">
+              {sections.map((section, i) => (
+                <section
+                  id={anchor(section.id)}
+                  key={`${cut}-${section.id}`}
+                  className="case-stage"
+                >
+                  <span className="case-stage-number">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <div>
+                    <h2>{section.title}</h2>
+                    <p>{section.body}</p>
+                  </div>
+                </section>
+              ))}
+            </div>
+            {hasAdmissions && (
+              <section id="case-cirs-admissions" className="case-admissions">
+                <span className="case-micro">The Admissions page</span>
+                <h2>A closer look.</h2>
+                <figure>
+                  <img
+                    src={assets.admissionsUrl!}
+                    alt="Admissions page — screenshot captured from the public CIRS website"
+                    loading="lazy"
+                  />
+                  <figcaption>
+                    Screenshot captured from the public Admissions page at
+                    cirschool.org.
+                  </figcaption>
+                </figure>
+                <a
+                  href="https://cirschool.org"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Visit the CIRS website <ArrowUpRight size={16} />
+                </a>
+              </section>
+            )}
+            {isAccuFlow && (
+              <section id="case-evidence" className="case-evidence">
+                <span className="case-micro">
+                  Before this story is complete
+                </span>
+                <h2>The details make the difference.</h2>
+                <p>
+                  These are the materials needed to turn an open frame into a
+                  verified case study.
+                </p>
+                <ul>
+                  {accuflowChecklist.map((item) => (
+                    <li key={item}>
+                      <span className="case-check" aria-hidden="true" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+                <span className="case-evidence-caption">
+                  No invented product screens, capabilities, testimonials or
+                  results.
+                </span>
+              </section>
+            )}
+            {project.link && (
+              <a
+                className="case-live-link"
+                href={project.link}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <div>
+                  <span className="case-micro">The live project</span>
+                  <strong>See it in the world.</strong>
+                </div>
+                <span>
+                  {new URL(project.link).hostname}
+                  <ArrowUpRight size={24} />
+                </span>
+              </a>
+            )}
+          </div>
+        </div>
+        <section className="case-closing">
+          {hasContact ? (
+            <>
+              <span className="case-micro">
+                Every project starts a conversation
+              </span>
+              <h2>
+                What could we
+                <br />
+                build <em>together?</em>
+              </h2>
+              <button onClick={onContact}>
+                Let’s connect <ArrowUpRight size={18} />
+              </button>
+            </>
+          ) : (
+            <>
+              <span className="case-micro">Follow another thread</span>
+              <h2>
+                There’s more
+                <br />
+                to <em>explore.</em>
+              </h2>
+              <button onClick={onBack}>
+                Back to selected work <ArrowUpRight size={18} />
+              </button>
+            </>
+          )}
+        </section>
+      </main>
+      <footer className="case-footer">
+        <button onClick={onBack}>
+          <ArrowLeft size={14} />
+          Back to selected work
+        </button>
+        <span>
+          Designed around curiosity.
+          <br />
+          <small>Built with AI assistance for Ananda Priyan.</small>
+        </span>
+        <a href="#case-top" aria-label="Back to top of case study">
+          <ArrowRight size={16} />
+        </a>
+      </footer>
+    </div>
+  );
+}

@@ -1,0 +1,264 @@
+/* These states share the atelier's materials without blocking its content. */
+.state-opening {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  background: transparent;
+  animation: state-title-leave 0.18s 1.2s ease-out both;
+}
+.state-opening-pane {
+  position: relative;
+  width: 238px;
+  min-height: 196px;
+  padding: 22px 26px 42px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid #d9c09a38;
+  border-radius: 4px;
+  background: #1b1713d9;
+  box-shadow:
+    0 16px 40px #0003,
+    inset 0 1px 0 #f8e0b31a;
+  backdrop-filter: blur(10px);
+}
+.state-opening-edge {
+  position: absolute;
+  top: 0;
+  left: -50%;
+  width: 50%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #f8deb6, transparent);
+  animation: state-edge-light 0.85s cubic-bezier(0.2, 0.6, 0.2, 1) both;
+}
+.state-opening-mark {
+  width: 120px;
+  height: 96px;
+  display: grid;
+  place-items: center;
+  clip-path: inset(0 100% 0 0);
+  animation: state-signature-reveal 0.8s 0.04s cubic-bezier(0.2, 0.6, 0.2, 1)
+    forwards;
+}
+.state-opening-mark > img {
+  display: block;
+  width: 120px;
+  height: 96px;
+  object-fit: contain;
+}
+.state-signature-fallback {
+  color: #e6cfab;
+  font: italic 400 44px/1 var(--font-display, Georgia, serif);
+  letter-spacing: -6px;
+}
+.state-opening-name {
+  color: #e6cfab;
+  font: 400 13px/1.6 var(--font-body, sans-serif);
+  margin-top: 9px;
+  opacity: 0;
+  animation: state-title-arrive 0.25s 0.45s ease-out forwards;
+}
+.state-opening-skip {
+  position: absolute;
+  right: 12px;
+  bottom: 2px;
+  min-width: 76px;
+  min-height: 44px;
+  padding: 8px;
+  color: #d3bfa4;
+  font: 400 11px/1.4 var(--font-body, sans-serif);
+  pointer-events: auto;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+.state-opening-skip:hover {
+  color: #fff0dc;
+}
+.state-opening-skip:focus-visible {
+  outline: 2px solid #e6cfab;
+  outline-offset: -4px;
+}
+.notfound-page {
+  min-height: 100svh;
+  padding: 32px 6% 25px;
+  display: flex;
+  flex-direction: column;
+  background: #14110e;
+  color: #ede2d2;
+}
+.notfound-signature {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 78px;
+  min-height: 62px;
+  align-self: flex-start;
+}
+.notfound-signature > img {
+  width: 72px;
+  height: 58px;
+  object-fit: contain;
+}
+.notfound-pane {
+  position: relative;
+  width: min(760px, 100%);
+  margin: auto;
+  padding: 54px 8% 56px;
+  border: 1px solid #d8ba8e2e;
+  background: #3a302124;
+  box-shadow:
+    0 20px 80px #0002,
+    inset 0 1px 0 #f8e0b310;
+  text-align: center;
+}
+.notfound-pane::before {
+  content: "";
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #d1aa7966, transparent);
+}
+.notfound-number {
+  margin: 0;
+  color: #c4a47d;
+  font: 350 clamp(105px, 13vw, 165px) / 1 var(--font-display, Georgia, serif);
+  letter-spacing: -7px;
+}
+.notfound-pane > h1 {
+  margin: 28px 0 0;
+  font: 350 clamp(26px, 3.5vw, 39px) / 1.2 var(--font-display, Georgia, serif);
+  letter-spacing: -1.2px;
+  color: #ede2d2;
+}
+.notfound-pane > h1:focus {
+  outline: none;
+}
+.notfound-description {
+  max-width: 430px;
+  margin: 22px auto 0;
+  color: #b9a996;
+  font: 400 14px/1.85 var(--font-body, sans-serif);
+}
+.notfound-home {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 105px;
+  min-height: 48px;
+  margin-top: 30px;
+  padding: 12px 20px;
+  border: 1px solid #ceb08b61;
+  border-radius: 2px;
+  color: #f3dfc4;
+  background: #59432d20;
+  font: 400 14px/1.5 var(--font-body, sans-serif);
+  text-decoration: none;
+}
+.notfound-home:hover {
+  background: #a9804924;
+  border-color: #ceb08b;
+}
+.notfound-home:focus-visible,
+.notfound-signature:focus-visible {
+  outline: 2px solid #e6cfab;
+  outline-offset: 5px;
+}
+.notfound-credit {
+  margin: 26px 0 0;
+  color: #a59077;
+  font: 400 11px/1.6 var(--font-body, sans-serif);
+  text-align: right;
+}
+@keyframes state-edge-light {
+  to {
+    left: 100%;
+  }
+}
+@keyframes state-signature-reveal {
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+@keyframes state-title-arrive {
+  to {
+    opacity: 1;
+  }
+}
+@keyframes state-title-leave {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+@media (max-width: 767px) {
+  .state-opening-pane {
+    width: 204px;
+    min-height: 170px;
+    padding-top: 15px;
+  }
+  .state-opening-mark {
+    width: 100px;
+    height: 80px;
+  }
+  .state-opening-mark > img {
+    width: 100px;
+    height: 80px;
+  }
+  .state-opening-name {
+    font-size: 12px;
+    margin-top: 5px;
+  }
+  .notfound-page {
+    padding: 20px 6% max(22px, env(safe-area-inset-bottom));
+  }
+  .notfound-signature {
+    width: 64px;
+    min-height: 54px;
+  }
+  .notfound-signature > img {
+    width: 60px;
+    height: 48px;
+  }
+  .notfound-pane {
+    padding: 42px 7% 44px;
+  }
+  .notfound-number {
+    font-size: 112px;
+    letter-spacing: -5px;
+  }
+  .notfound-pane > h1 {
+    margin-top: 24px;
+    font-size: 29px;
+    line-height: 1.2;
+    letter-spacing: -0.8px;
+  }
+  .notfound-description {
+    font-size: 13px;
+    line-height: 1.9;
+    margin-top: 20px;
+  }
+  .notfound-home {
+    margin-top: 26px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .state-opening {
+    display: none !important;
+  }
+  .notfound-page *,
+  .notfound-page *::before {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+:root[data-motion="off"] .state-opening {
+  display: none !important;
+}
