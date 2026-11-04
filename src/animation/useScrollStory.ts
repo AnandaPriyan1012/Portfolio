@@ -529,6 +529,15 @@ export default function useScrollStory({ root, enabled, route }: Options) {
     window.addEventListener("pointerdown", markInteraction, { passive: true });
     window.addEventListener("keydown", markInteraction);
     const hashChange = () => {
+      // A history return can retain a film-selection fragment while restoring
+      // its source link. Do not reinterpret that traversal as a fresh anchor.
+      const restoration = pendingRestore.current;
+      if (restoration?.route === route && restoration.preserveHash) {
+        initialHashPending = false;
+        cancelAnimationFrame(anchorFrame);
+        refresh();
+        return;
+      }
       // A new hash is an explicit navigation, including native back/forward.
       // It is independent of the one-time loading correction above.
       initialHashPending = false;
@@ -545,6 +554,10 @@ export default function useScrollStory({ root, enabled, route }: Options) {
 
     const refresh = () => {
       if (!alive) return;
+      if (pendingRestore.current?.route === route && pendingRestore.current.preserveHash) {
+        initialHashPending = false;
+        cancelAnimationFrame(anchorFrame);
+      }
       cancelAnimationFrame(refreshFrame);
       refreshFrame = requestAnimationFrame(() => {
         if (!alive) return;

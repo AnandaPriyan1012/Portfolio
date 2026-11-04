@@ -6,6 +6,7 @@ import StudioAtmosphere from "./StudioAtmosphere";
 import { isApprovedDriveEmbed } from "./DriveFilmPlayer";
 import { hasApprovedNativePlayback } from "../media-readiness";
 import FilmMoments from "./FilmMoments";
+import { findFilmMoment } from "../film-moments";
 
 type Film = (typeof creativeMedia)[number];
 
@@ -32,6 +33,7 @@ export default function ScreeningRoom({
   asPage = false,
   onContact,
   onSelectFilm,
+  onRelatedProject,
 }: {
   films: Film[];
   onPlay: (id: string, startAt?: number) => void;
@@ -39,11 +41,13 @@ export default function ScreeningRoom({
   asPage?: boolean;
   onContact?: () => void;
   onSelectFilm?: (id: string) => void;
+  onRelatedProject?: (anchor: HTMLAnchorElement) => void;
 }) {
   const choiceGroup = useId();
   const Heading = asPage ? "h1" : "h2";
   const programmeRef = useRef<HTMLDivElement>(null);
   const projectionRef = useRef<HTMLDivElement>(null);
+  const selectedContextRef = useRef<HTMLDivElement>(null);
   const reelPointerDown = useRef(false);
   const reelFocusFrame = useRef(0);
   const [selectedId, setSelectedId] = useState(() =>
@@ -169,9 +173,11 @@ export default function ScreeningRoom({
       // opener remains mounted for the dialog's focus restoration.
       // Focused programme controls also take precedence over scrolling.
       if (
+        document.documentElement.dataset.opening === "active" ||
         document.querySelector("dialog[open]") ||
         programme.contains(document.activeElement) ||
-        projectionRef.current?.contains(document.activeElement)
+        projectionRef.current?.contains(document.activeElement) ||
+        selectedContextRef.current?.contains(document.activeElement)
       ) return;
       const midpoint = innerHeight / 2;
       const row = rows.find((item) => {
@@ -203,16 +209,21 @@ export default function ScreeningRoom({
     };
     observe();
     window.addEventListener("resize", resize, { passive: true });
+    window.addEventListener("ap:openingchange", focusOut);
     programme.addEventListener("focusout", focusOut);
     projectionRef.current?.addEventListener("focusout", focusOut);
+    selectedContextRef.current?.addEventListener("focusout", focusOut);
     const projection = projectionRef.current;
+    const selectedContext = selectedContextRef.current;
     return () => {
       observer?.disconnect();
       cancelAnimationFrame(resizeFrame);
       cancelAnimationFrame(focusFrame);
       window.removeEventListener("resize", resize);
+      window.removeEventListener("ap:openingchange", focusOut);
       programme.removeEventListener("focusout", focusOut);
       projection?.removeEventListener("focusout", focusOut);
+      selectedContext?.removeEventListener("focusout", focusOut);
     };
   }, [films, scrollProgramme]);
 
@@ -372,8 +383,25 @@ export default function ScreeningRoom({
           </div>
         </div>
 
-        {selected && <FilmMoments key={selected.id} film={selected}
-          onOpen={(seconds) => { selectFilm(selected); onPlay(selected.id, seconds); }} />}
+        <div className="screening-selected-context" ref={selectedContextRef}>
+          {selected && <FilmMoments key={selected.id} film={selected}
+            relatedWork={selected.id === "cirs-website-launch" && findFilmMoment(selected, 26) ? (
+              <div className="film-moments-related">
+                <p>The film shows an Admissions Guide view at 00:26. The related case covers my website work with the school’s team.</p>
+                <a href="/projects/cirs" onClick={(event) => {
+                  if (event.defaultPrevented || event.button !== 0 || event.metaKey ||
+                    event.ctrlKey || event.shiftKey || event.altKey) return;
+                  selectFilm(selected);
+                  if (!onRelatedProject) return;
+                  event.preventDefault();
+                  onRelatedProject(event.currentTarget);
+                }}>
+                  Read the CIRS website case study <ArrowRight size={15} aria-hidden="true" />
+                </a>
+              </div>
+            ) : undefined}
+            onOpen={(seconds) => { selectFilm(selected); onPlay(selected.id, seconds); }} />}
+        </div>
 
         {readyFilms.length > 0 && (
           <div

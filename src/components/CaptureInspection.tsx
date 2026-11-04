@@ -21,28 +21,34 @@ export default function CaptureInspection({ src, mobileSrc, alt, title, caption 
   const opener = useRef<HTMLButtonElement>(null);
   const viewport = useRef<HTMLDivElement>(null);
   const closeTouch = useRef<{ id: number; x: number; y: number; moved: boolean } | null>(null);
+  const restoreFocusOnClose = useRef(true);
   const [source, setSource] = useState<string | null>(null);
   const [zoomed, setZoomed] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [failed, setFailed] = useState(false);
 
-  function close() {
+  function close(restoreFocus = true) {
     const modal = dialog.current;
     if (!modal) return;
+    restoreFocusOnClose.current = restoreFocus;
     if (modal.open) modal.close();
+    // Native close may synchronously restore the old opener. A navigation's
+    // own history target, not that obsolete control, owns the next focus move.
+    if (!restoreFocus && document.activeElement === opener.current) opener.current?.blur();
     setSource(null);
     setZoomed(false);
     // close events are queued; React may unmount the dialog before they run.
-    if (opener.current?.isConnected) opener.current.focus({ preventScroll: true });
+    if (restoreFocus && opener.current?.isConnected) opener.current.focus({ preventScroll: true });
   }
 
   useLayoutEffect(() => {
     const cover = (event: Event) => {
-      if ((event as CustomEvent<{ active: boolean }>).detail?.active) close();
+      if ((event as CustomEvent<{ active: boolean }>).detail?.active) close(false);
     };
     window.addEventListener("ap:openingchange", cover);
     return () => {
       // Remove the top layer synchronously before a route's AP opening.
+      restoreFocusOnClose.current = false;
       dialog.current?.close();
       window.removeEventListener("ap:openingchange", cover);
     };
@@ -54,7 +60,14 @@ export default function CaptureInspection({ src, mobileSrc, alt, title, caption 
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     modal.showModal();
+    // Same-document history does not create an AP opening. Dismiss before
+    // navigation restores its own reading position and native focus.
+    const navigation = () => close(false);
+    window.addEventListener("popstate", navigation, true);
+    window.addEventListener("hashchange", navigation, true);
     return () => {
+      window.removeEventListener("popstate", navigation, true);
+      window.removeEventListener("hashchange", navigation, true);
       if (modal.open) modal.close();
       document.body.style.overflow = previousOverflow;
     };
@@ -70,6 +83,7 @@ export default function CaptureInspection({ src, mobileSrc, alt, title, caption 
         type="button"
         aria-label={`View larger capture: ${title}`}
         onClick={() => {
+          restoreFocusOnClose.current = true;
           setLoaded(false);
           setFailed(false);
           setZoomed(false);
@@ -90,7 +104,7 @@ export default function CaptureInspection({ src, mobileSrc, alt, title, caption 
             setZoomed(false);
             // Native close already restores focus in most browsers. This
             // preventScroll fallback also preserves the case reading position.
-            if (opener.current?.isConnected) opener.current.focus({ preventScroll: true });
+            if (restoreFocusOnClose.current && opener.current?.isConnected) opener.current.focus({ preventScroll: true });
           }}
           onClick={(event) => {
             if (event.target === event.currentTarget) close();
@@ -100,7 +114,7 @@ export default function CaptureInspection({ src, mobileSrc, alt, title, caption 
             <h2 id={`${id}-title`}>{title}</h2>
             <button
               type="button"
-              onClick={close}
+              onClick={() => close()}
               aria-label="Close capture"
               onTouchStart={(event) => {
                 const touch = event.touches[0];

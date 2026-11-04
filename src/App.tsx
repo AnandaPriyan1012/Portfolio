@@ -566,8 +566,8 @@ export default function App() {
   const contactReady = Boolean(
     copy.contact.email || copy.contact.socials.length,
   );
-  function saveHistoryPosition(persist = true) {
-    const position = { ...activeHistory.current, top: window.scrollY, focus: historyFocus() };
+  function saveHistoryPosition(persist = true, focus = historyFocus()) {
+    const position = { ...activeHistory.current, top: window.scrollY, focus };
     historyPositions.current.set(position.key, position);
     // Keep the cache bounded by history entries, rather than by pathname: two
     // visits to Studio can have different positions and native origin links.
@@ -628,7 +628,9 @@ export default function App() {
       setTourOpen(false);
       requestAnimationFrame(() => {
         if (sequence !== navigationSequence.current || activeHistory.current.key !== saved.key || intent.cancelled) return;
-        if (location.hash) {
+        const studioProjectReturn = next === "/studio" && location.hash === "#cirs-website-launch" &&
+          saved.focus?.href === "/projects/cirs";
+        if (location.hash && !studioProjectReturn) {
           historyIntent.current = null;
           if (next.startsWith("/projects/")) {
             // Keep the reader's native section focus and CSS scroll margin.
@@ -646,7 +648,7 @@ export default function App() {
             historyIntent.current = null;
             restoreHistoryFocus(saved.focus);
           }
-        });
+        }, { preserveHash: studioProjectReturn });
       });
     };
     window.addEventListener("popstate", back);
@@ -724,7 +726,7 @@ export default function App() {
         return;
       }
     }
-    if (originFocus && !window.location.hash && restoreHistoryFocus(originFocus)) return;
+    if (originFocus && (!window.location.hash || originToken === "studio-project") && restoreHistoryFocus(originFocus)) return;
     // Legacy/programmatic origins retain their existing project-link fallback.
     // A missing exact native origin must not select a different duplicate.
     if (!originFocus && originHref && main && ["about", "work"].includes(main.dataset.page ?? "") && !window.location.hash) {
@@ -761,9 +763,17 @@ export default function App() {
       focusTarget.focus({ preventScroll: true });
     }
   }
-  function navigate(destination: string, restoreTop = 0, originHref?: string, originToken?: string, originFocus?: HistoryFocus) {
+  function navigate(destination: string, {
+    restoreTop = 0, originHref, originToken, originFocus, departureFocus,
+  }: {
+    restoreTop?: number;
+    originHref?: string;
+    originToken?: string;
+    originFocus?: HistoryFocus;
+    departureFocus?: HistoryFocus;
+  } = {}) {
     const next = destination.split("#")[0].replace(/\/+$/, "") || "/";
-    saveHistoryPosition();
+    saveHistoryPosition(true, departureFocus);
     historyIntent.current = null;
     const sequence = ++navigationSequence.current;
     if (next !== route) storyMotion.beforeNavigate();
@@ -779,20 +789,19 @@ export default function App() {
     window.dispatchEvent(new Event("ap:pathnamechange"));
     requestAnimationFrame(() => {
       if (sequence !== navigationSequence.current) return;
-      // A tour return retains the film fragment as selection state while
-      // restoring the footer. Ordinary fragment links still reach their anchor.
-      const returningToTour = originToken === "tour-launcher";
+      // These returns keep a film fragment as selection state and restore the
+      // original reading position. Fresh fragment links still reach their anchor.
+      const preservingSelection = originToken === "tour-launcher" || originToken === "studio-project";
       const restoringOrigin = Boolean(originToken || originFocus);
-      if (window.location.hash && !returningToTour) {
+      if (window.location.hash && !preservingSelection) {
         // Selecting another lane changes its height and refreshes the layout.
         // A direct same-page handoff survives that refresh on native scrollers.
         const laneHandoff = next === route && next === "/about" && window.location.hash === "#about";
         storyMotion.scrollTo(window.location.hash, { immediate: laneHandoff });
-      }
-      else storyMotion.restoreTo(restoreTop, next, restoringOrigin ? () => {
+      } else storyMotion.restoreTo(restoreTop, next, restoringOrigin ? () => {
         if (sequence === navigationSequence.current) focusDestination(originHref, originToken, originFocus);
-      } : undefined, { preserveHash: returningToTour });
-      if (!restoringOrigin || (window.location.hash && !returningToTour)) focusDestination(originHref);
+      } : undefined, { preserveHash: preservingSelection });
+      if (!restoringOrigin || (window.location.hash && !preservingSelection)) focusDestination(originHref);
     });
   }
   function navigateSection(id: string) {
@@ -817,18 +826,20 @@ export default function App() {
       focused.closest(".work-page") && focused.getAttribute("href") === `/projects/${id}`
       ? focused.getAttribute("href")! : undefined;
     const originHref = route === "/about" ? aboutHref : workHref;
-    const nativeOrigin = ["/about", "/work"].includes(route)
+    const studioProject = route === "/studio" && originToken === "studio-project";
+    const nativeOrigin = (["/about", "/work"].includes(route) || studioProject)
       ? historyFocus(actualOriginAnchor ?? focused) : undefined;
     const originFocus = nativeOrigin?.href === `/projects/${id}` ? nativeOrigin : undefined;
-    caseReturn.current = { path: originToken === "tour-launcher" ? `${route}${window.location.hash}` : route,
+    caseReturn.current = { path: originToken === "tour-launcher" || studioProject ? `${route}${window.location.hash}` : route,
       top: scrollY, ...(originHref ? { originHref } : {}),
       ...(originFocus ? { originFocus } : {}),
       ...((route === "/" && (originToken === "selected-preview" || originToken === "cirs-scene")) ||
-        (mainRoutes.includes(route) && originToken === "tour-launcher") ? { originToken } : {}) };
-    navigate(`/projects/${id}`);
+        (mainRoutes.includes(route) && originToken === "tour-launcher") || studioProject ? { originToken } : {}) };
+    navigate(`/projects/${id}`, { departureFocus: originFocus });
   }
   function home() {
-    navigate(caseReturn.current.path, caseReturn.current.top, caseReturn.current.originHref, caseReturn.current.originToken, caseReturn.current.originFocus);
+    const { path, top, originHref, originToken, originFocus } = caseReturn.current;
+    navigate(path, { restoreTop: top, originHref, originToken, originFocus });
   }
   function quick(id: Project["id"]) {
     setOsOpen(false);
@@ -1006,6 +1017,7 @@ export default function App() {
             asPage
             onContact={() => navigate("/about#contact")}
             onSelectFilm={selectStudioFilm}
+            onRelatedProject={(anchor) => page("cirs", undefined, "studio-project", anchor)}
             onPlay={(id, startAt) => setModal({ type: "media", id, startAt })}
           />
         )}

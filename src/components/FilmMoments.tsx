@@ -1,4 +1,4 @@
-import { useId } from "react";
+import { useId, type ReactNode } from "react";
 import { ArrowRight, Play } from "lucide-react";
 import type { creativeMedia } from "../content";
 import { filmMoments, formatFilmTime } from "../film-moments";
@@ -7,21 +7,22 @@ import "./film-moments.css";
 type Film = (typeof creativeMedia)[number];
 
 /** Real frames are an index into the supplied film, never substitute footage. */
-export default function FilmMoments({ film, onOpen }: {
+export default function FilmMoments({ film, onOpen, relatedWork }: {
   film: Film;
   onOpen: (seconds: number) => void;
+  relatedWork?: ReactNode;
 }) {
   const id = useId();
   const moments = filmMoments(film);
   if (!moments.length) return null;
   return (
-    <section className="film-moments" aria-labelledby={`${id}-title`} data-film={film.id}>
+    <section className="film-moments" aria-labelledby={`${id}-title`} data-film={film.id} data-has-related={Boolean(relatedWork) || undefined}>
       <header>
         <div>
           <p className="film-moments-kicker">Studio / Frame by frame</p>
           <h2 id={`${id}-title`}>{film.title}, in three frames.</h2>
         </div>
-        <p>Three frames from the film.<br />Open a moment, then press Play.</p>
+        {relatedWork ?? <p>Three frames from the film.<br />Open a moment, then press Play.</p>}
       </header>
       <ol className="film-moments-track" aria-label={`Frames from ${film.title}`}>
         {moments.map((moment, index) => (

@@ -3,6 +3,12 @@
 .film-moments-kicker { margin: 0 0 12px; color: var(--accent); font-size: 10px; letter-spacing: .06em; }
 .film-moments h2 { margin: 0; font: 500 clamp(26px,3vw,40px)/1.2 var(--font-display); letter-spacing: -.04em; }
 .film-moments > header > p, .film-moments-source { color: var(--muted); font-size: 11px; line-height: 1.8; }
+.film-moments[data-has-related] > header { align-items: start; }
+.film-moments[data-has-related] > header > div:first-child { flex: 1; min-width: 0; }
+.film-moments-related { flex: 0 1 385px; }
+.film-moments-related > p { margin: 0; color: #b8c1b4; font-size: 12px; line-height: 1.8; }
+.film-moments-related > a { display: inline-flex; align-items: center; gap: 18px; min-height: 48px; margin-top: 8px; padding: 12px 0; border-bottom: 1px solid #d4b78170; color: #eee9de; font-size: 12px; line-height: 1.5; }
+.film-moments-related > a:focus-visible { outline: 2px solid #d4b781; outline-offset: 4px; }
 .film-moments-track { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 18px; list-style: none; padding: 0; margin: 0; }
 .film-moments-track > li { min-width: 0; }
 .film-moment { display: block; width: 100%; padding: 0; text-align: left; color: var(--text); border: 1px solid var(--line); border-radius: 3px; overflow: hidden; background: linear-gradient(130deg,#e8d4a411,transparent 60%),#0a1010; }
@@ -28,6 +34,7 @@
   .film-moments { margin-top: 40px; padding-top: 24px; }
   .film-moments > header { display: block; }
   .film-moments > header > p { margin-top: 16px; }
+  .film-moments-related { margin-top: 18px; }
   .film-moments-track { display: flex; gap: 12px; overflow-x: auto; padding: 6px 4px 16px; margin-inline: -4px; scroll-snap-type: x proximity; scroll-padding-inline: 4px; }
   .film-moments-track > li { flex: 0 0 min(76vw,320px); scroll-snap-align: start; }
   .film-moment-caption { padding-inline: 12px; }
@@ -36,4 +43,7 @@
   .film-moments, .film-moment, .film-moment-caption { background: Canvas; color: CanvasText; border-color: CanvasText; box-shadow: none; }
   .film-moment-play { background: Canvas; color: CanvasText; border-color: CanvasText; }
   .film-moment:focus-visible { outline-color: Highlight; }
+  .film-moments-related > p { color: CanvasText; }
+  .film-moments-related > a { color: LinkText; border-color: LinkText; }
+  .film-moments-related > a:focus-visible { outline-color: Highlight; }
 }
