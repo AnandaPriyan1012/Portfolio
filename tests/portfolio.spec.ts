@@ -28,7 +28,10 @@ test('real school work leads, confirmed contact is public, and unavailable films
   await page.goto('/studio')
   await expect(page.locator('h1')).toHaveCount(1)
   await expect(page.locator('.studio-collection-index li')).toHaveCount(6)
-  await expect(page.locator('#studio button:not(.studio-atmosphere-toggle), #studio video:not(.studio-atmosphere-film), .draft-toggle, .process-reveal, .atelier-opening')).toHaveCount(0)
+  await expect(page.locator('#studio video:not(.studio-atmosphere-film), iframe, .draft-toggle, .process-reveal, .atelier-opening')).toHaveCount(0)
+  await expect(page.locator('#studio .reel-frame')).toHaveCount(2)
+  await page.getByRole('radio', { name: 'Masquerade trailer', exact: true }).check()
+  await expect(page.locator('#studio .screening-play')).toHaveCount(0)
   await expect(page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Studio', exact: true })).toBeVisible()
   await page.goto('/about')
   await expect(page.locator('#contact').getByRole('link', { name: 'anandapriyan1012@gmail.com' })).toHaveAttribute('href', 'mailto:anandapriyan1012@gmail.com')
@@ -180,18 +183,12 @@ test('silent tour can be paused and followed to the actual community story', asy
   await expect(page.getByRole('dialog', { name: 'Vallalar Sathya Dharmasalai', exact: true })).toBeVisible()
 })
 
-test('glass cursor is optical, retains the native cursor and obeys reduced motion', async ({ page }) => {
+test('interactive media retains the native cursor without an overlay', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' })
   await page.goto('/')
   await page.locator('.cirs-visual-frame').hover()
-  const lens = page.locator('.glass-cursor')
-  await expect(lens).toHaveAttribute('data-mode', 'view')
-  await expect(lens).toHaveAttribute('data-visible', 'true')
-  await expect(lens).toHaveText('')
-  const ring = (await lens.locator('.glass-cursor-ring').boundingBox())!
-  expect(ring.width).toBeLessThanOrEqual(22)
-  expect(await lens.evaluate(node => getComputedStyle(node).pointerEvents)).toBe('none')
+  await expect(page.locator('.glass-cursor')).toHaveCount(0)
   expect(await page.locator('.cirs-browser-body').evaluate(node => getComputedStyle(node).cursor)).not.toBe('none')
   await page.emulateMedia({ reducedMotion: 'reduce' })
-  await expect(lens).toHaveCount(0)
+  await expect(page.locator('.glass-cursor')).toHaveCount(0)
 })

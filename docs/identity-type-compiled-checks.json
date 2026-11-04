@@ -1,0 +1,108 @@
+{
+  "origin": "Local compiled Vite preview; not published",
+  "routes": [
+    {
+      "view": "desktop",
+      "path": "/",
+      "status": 200,
+      "h1": "Ananda\nPriyan",
+      "scrollWidth": 1440,
+      "viewport": 1440,
+      "displayFont": "\"Syne Variable\", Arial, sans-serif",
+      "bodyFont": "\"Instrument Sans Variable\", Arial, sans-serif"
+    },
+    {
+      "view": "desktop",
+      "path": "/work",
+      "status": 200,
+      "h1": "Selected work.",
+      "scrollWidth": 1440,
+      "viewport": 1440,
+      "displayFont": "\"Syne Variable\", Arial, sans-serif",
+      "bodyFont": "\"Instrument Sans Variable\", Arial, sans-serif"
+    },
+    {
+      "view": "desktop",
+      "path": "/studio",
+      "status": 200,
+      "h1": "The screening room.",
+      "scrollWidth": 1440,
+      "viewport": 1440,
+      "displayFont": "\"Syne Variable\", Arial, sans-serif",
+      "bodyFont": "\"Instrument Sans Variable\", Arial, sans-serif"
+    },
+    {
+      "view": "desktop",
+      "path": "/about",
+      "status": 200,
+      "h1": "There\u2019s a person\nbehind every project.",
+      "scrollWidth": 1440,
+      "viewport": 1440,
+      "displayFont": "\"Syne Variable\", Arial, sans-serif",
+      "bodyFont": "\"Instrument Sans Variable\", Arial, sans-serif"
+    },
+    {
+      "view": "phone",
+      "path": "/",
+      "status": 200,
+      "h1": "Ananda\nPriyan",
+      "scrollWidth": 390,
+      "viewport": 390,
+      "displayFont": "\"Syne Variable\", Arial, sans-serif",
+      "bodyFont": "\"Instrument Sans Variable\", Arial, sans-serif"
+    },
+    {
+      "view": "phone",
+      "path": "/work",
+      "status": 200,
+      "h1": "Selected work.",
+      "scrollWidth": 390,
+      "viewport": 390,
+      "displayFont": "\"Syne Variable\", Arial, sans-serif",
+      "bodyFont": "\"Instrument Sans Variable\", Arial, sans-serif"
+    },
+    {
+      "view": "phone",
+      "path": "/studio",
+      "status": 200,
+      "h1": "The screening room.",
+      "scrollWidth": 390,
+      "viewport": 390,
+      "displayFont": "\"Syne Variable\", Arial, sans-serif",
+      "bodyFont": "\"Instrument Sans Variable\", Arial, sans-serif"
+    },
+    {
+      "view": "phone",
+      "path": "/about",
+      "status": 200,
+      "h1": "There\u2019s a person\nbehind every project.",
+      "scrollWidth": 390,
+      "viewport": 390,
+      "displayFont": "\"Syne Variable\", Arial, sans-serif",
+      "bodyFont": "\"Instrument Sans Variable\", Arial, sans-serif"
+    }
+  ],
+  "interactions": [
+    {
+      "view": "desktop",
+      "action": "Compiled CCK Watch mounts approved iframe only after activation; Escape removes it",
+      "iframeResponse": "Isolated fixture; public endpoints independently verified"
+    },
+    {
+      "view": "desktop",
+      "action": "Compiled card turns and exposes verified contact while direct email remains available"
+    },
+    {
+      "view": "phone",
+      "action": "Compiled CCK Watch mounts approved iframe only after activation; Escape removes it",
+      "iframeResponse": "Isolated fixture; public endpoints independently verified"
+    },
+    {
+      "view": "phone",
+      "action": "Compiled card turns and exposes verified contact while direct email remains available"
+    }
+  ],
+  "errors": [],
+  "failedRequests": [],
+  "status": "passed"
+}

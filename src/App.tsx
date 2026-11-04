@@ -19,7 +19,6 @@ import {
 import type { Project } from "./content";
 import CaseStudyPage from "./components/CaseStudyPage";
 import OSExperience from "./components/OSExperience";
-import GlassCursor from "./components/GlassCursor";
 import GlassMaterial from "./components/GlassMaterial";
 import AtelierLoader from "./components/AtelierLoader";
 import NotFound from "./components/NotFound";
@@ -32,6 +31,10 @@ import HeroFilm from "./components/HeroFilm";
 import WorkPage from "./components/WorkPage";
 import HomeDirectory from "./components/HomeDirectory";
 import InteractiveSignature from "./components/InteractiveSignature";
+import IdentityCard from "./components/IdentityCard";
+import DriveFilmPlayer, {
+  isApprovedDriveEmbed,
+} from "./components/DriveFilmPlayer";
 
 type ModalState =
   | { type: "project"; id: Project["id"] }
@@ -681,7 +684,6 @@ export default function App() {
         onHome={() => navigate("/")}
       />
       <AtelierLoader enabled={preferences.motion} />
-      <GlassCursor enabled={preferences.motion && !modal && !osOpen} />
       <main id="main" ref={mainRef} data-page={mainPage}>
         <GlassMaterial />
         {mainPage === "home" && (
@@ -864,34 +866,42 @@ export default function App() {
               </section>
             </div>
             <section id="contact" className="contact-section">
-              <div className="page-width">
-                <p className="section-label">Contact</p>
-                <h2>
-                  Your next project.
-                  <br />
-                  <em>Let’s talk.</em>
-                </h2>
-                <p className="contact-invitation">
-                  Websites, stories, or an idea worth exploring.
-                </p>
-                {contactReady ? (
-                  copy.contact.email ? (
-                    <a
-                      className="contact-action"
-                      href={`mailto:${copy.contact.email}`}
-                    >
-                      {copy.contact.email}
-                    </a>
+              <div className="page-width contact-identity-layout">
+                <div className="contact-identity-copy">
+                  <p className="section-label">Contact</p>
+                  <h2>
+                    Your next project.
+                    <br />
+                    <em>Let’s talk.</em>
+                  </h2>
+                  <p className="contact-invitation">
+                    Websites, stories, or an idea worth exploring.
+                  </p>
+                  {contactReady ? (
+                    copy.contact.email ? (
+                      <a
+                        className="contact-action"
+                        href={`mailto:${copy.contact.email}`}
+                      >
+                        {copy.contact.email}
+                      </a>
+                    ) : (
+                      <button
+                        className="contact-action"
+                        onClick={() => setModal({ type: "contact" })}
+                      >
+                        Let’s connect
+                      </button>
+                    )
                   ) : (
-                    <button
-                      className="contact-action"
-                      onClick={() => setModal({ type: "contact" })}
-                    >
-                      Let’s connect
-                    </button>
-                  )
-                ) : (
-                  <p>Contact details have not been supplied yet.</p>
+                    <p>Contact details have not been supplied yet.</p>
+                  )}
+                </div>
+                {contactReady && copy.contact.email && (
+                  <IdentityCard
+                    email={copy.contact.email}
+                    motionEnabled={preferences.motion}
+                  />
                 )}
               </div>
             </section>
@@ -1100,7 +1110,7 @@ export default function App() {
             <>
               <p className="section-label">Creative Studio</p>
               <h2 className="dialog-title">{media.title}</h2>
-              {media.videoUrl ? (
+              {media.videoUrl && media.posterUrl && media.credits ? (
                 <video
                   className="actual-video"
                   aria-label={`${media.title} video player`}
@@ -1113,6 +1123,15 @@ export default function App() {
                   <source src={media.videoUrl} />
                   Your browser does not support video playback.
                 </video>
+              ) : "embedUrl" in media &&
+                isApprovedDriveEmbed(media.embedUrl) ? (
+                <>
+                  <DriveFilmPlayer
+                    title={media.title}
+                    embedUrl={media.embedUrl}
+                  />
+                  <p className="dialog-introduction">{media.caption}</p>
+                </>
               ) : (
                 <div className="video-pending">
                   <span>Original film to be added.</span>

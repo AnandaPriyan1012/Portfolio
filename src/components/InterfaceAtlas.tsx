@@ -1,5 +1,5 @@
 import { useId, useRef, useState, type KeyboardEvent } from "react";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 type ProjectId = "cirs" | "accuflow";
 type InterfaceView = {
@@ -150,18 +150,14 @@ export default function InterfaceAtlas({ project }: { project: ProjectId }) {
     >
       <header className="interface-atlas-header">
         <div>
-          <span className="interface-atlas-eyebrow">Inside the interface</span>
+          <span className="interface-atlas-eyebrow">{projectName} / Interface views</span>
           <h3 id={`${id}-title`}>
             {project === "cirs"
-              ? "Explore the school website."
-              : "Explore the prototype."}
+              ? "The public website, in detail."
+              : "Inside the prototype."}
           </h3>
         </div>
-        <p>
-          {project === "cirs"
-            ? "Four views of the public website, from its opening page to the practical Admissions guide."
-            : "Four connected routes from the real website prototype, including the guide’s initial state."}
-        </p>
+        <p>04 views / Genuine browser captures</p>
       </header>
       <div
         className="interface-atlas-tabs"
@@ -224,13 +220,16 @@ export default function InterfaceAtlas({ project }: { project: ProjectId }) {
           </span>
           <h4>{view.title}</h4>
           <p>{view.description}</p>
-          <ul aria-label="Observed interface details">
-            {view.observations.map((observation) => (
-              <li key={observation}>{observation}</li>
-            ))}
-          </ul>
+          <details className="interface-atlas-observations">
+            <summary>Observed interface details</summary>
+            <ul>
+              {view.observations.map((observation) => (
+                <li key={observation}>{observation}</li>
+              ))}
+            </ul>
+          </details>
           <a href={view.source} target="_blank" rel="noopener noreferrer">
-            Open this source view <ArrowUpRight size={15} aria-hidden="true" />
+            Open this source view <ArrowRight size={15} aria-hidden="true" />
           </a>
           <small>
             {project === "cirs"

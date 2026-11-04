@@ -1,5 +1,5 @@
 import { useId, useRef, useState, type KeyboardEvent } from "react";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 const languages = [
   { id: "en", label: "English", height: 500, mobileHeight: 420 },
@@ -93,7 +93,7 @@ export default function CommunityLanguageStudy() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            Open the {language.label} preview <ArrowUpRight size={14} aria-hidden="true" />
+            Open the {language.label} preview <ArrowRight size={14} aria-hidden="true" />
           </a>
         </div>
       </div>

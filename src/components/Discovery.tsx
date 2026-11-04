@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState } from "react";
 import {
-  ArrowUpRight,
+  ArrowRight,
   ChevronLeft,
   ChevronRight,
   Pause,
@@ -143,7 +143,7 @@ export function GuidedTour({
           onClick={complete ? onClose : explore}
         >
           {complete ? copy.done : slide.action}
-          <ArrowUpRight size={15} />
+          <ArrowRight size={15} />
         </button>
       </div>
       <footer className="tour-footer">

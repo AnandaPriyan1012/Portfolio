@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState, type CSSProperties } from "react";
-import { ArrowUpRight, MoveHorizontal } from "lucide-react";
+import { ArrowRight, MoveHorizontal } from "lucide-react";
 
 const captures = [
   {
@@ -178,7 +178,7 @@ export default function CirsConceptStudy({ motion = true }: { motion?: boolean }
         )}
         <a href={capture.source} target="_blank" rel="noreferrer">
           Visit CIRS {capture.label.toLowerCase()}
-          <ArrowUpRight size={16} aria-hidden="true" />
+          <ArrowRight size={16} aria-hidden="true" />
         </a>
       </div>
       <p className="cirs-concept-footnote">

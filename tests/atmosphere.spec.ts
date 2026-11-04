@@ -46,7 +46,7 @@ async function wheelBy(page: Page, distance: number) {
   await expect.poll(async () => Math.abs(await page.evaluate(() => scrollY) - before - distance)).toBeLessThan(1)
 }
 
-test('Studio room atmosphere loops silently with keyboard pause while original films remain gated', async ({ page }) => {
+test('Studio room atmosphere loops silently while approved films remain click-to-play', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' })
   await ready(page, '/studio')
   const video = page.locator('.studio-atmosphere-film')
@@ -62,7 +62,9 @@ test('Studio room atmosphere loops silently with keyboard pause while original f
   expect(media).toMatchObject({ muted: true, loop: true, fit: 'contain', clip: 'none', filter: 'none', transform: 'none' })
   expect(media.duration).toBeGreaterThan(1)
   await expect(page.locator('.studio-atmosphere-controls')).toContainText('Conceptual room')
-  await expect(page.locator('#studio .screening-play, #studio .reel-frame, dialog video')).toHaveCount(0)
+  await expect(page.locator('dialog video, iframe')).toHaveCount(0)
+  await expect(page.locator('#studio .reel-frame')).toHaveCount(2)
+  await expect(page.getByRole('button', { name: 'Play selected film: CCK trailer', exact: true })).toBeVisible()
   await expect(page.getByRole('radio')).toHaveCount(6)
 
   await page.getByRole('button', { name: 'Pause room atmosphere', exact: true }).focus()
@@ -145,7 +147,9 @@ test('decorative corridor and room films never load for fallback devices, and fa
       await page.getByRole('radio', { name: 'CCK trailer', exact: true }).focus()
       await page.keyboard.press('ArrowDown')
       await expect(page.getByRole('radio', { name: 'Farewell video', exact: true })).toBeChecked()
-      await expect(page.locator('#studio .screening-play, #studio .reel-frame, #studio video')).toHaveCount(0)
+      await expect(page.locator('#studio video, iframe')).toHaveCount(0)
+      await expect(page.locator('#studio .reel-frame')).toHaveCount(2)
+      await expect(page.getByRole('button', { name: 'Play selected film: Farewell video', exact: true })).toBeVisible()
       if (variant === 'failed') {
         expect(requests.some(url => url.includes('/scroll-corridor.mp4'))).toBe(true)
         expect(requests.some(url => url.includes('/studio-atmosphere-loop.mp4'))).toBe(true)
@@ -158,6 +162,11 @@ test('decorative corridor and room films never load for fallback devices, and fa
 test('the CIRS illustration is clearly reconstructed, reverses with scroll and yields to keyboard control beside genuine captures', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' })
   await ready(page, '/work')
+  const conceptDrawer = page.locator('.work-process-drawer')
+  await expect(conceptDrawer).not.toHaveAttribute('open', '')
+  await conceptDrawer.locator('summary').focus()
+  await page.keyboard.press('Enter')
+  await expect(conceptDrawer).toHaveAttribute('open', '')
   const study = page.locator('.cirs-concept-study')
   await expect(study).toContainText('Reconstructed concept · Created for this portfolio')
   await expect(study).toContainText('not an original project sketch or evidence of the historical design process')

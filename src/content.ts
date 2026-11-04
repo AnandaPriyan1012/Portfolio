@@ -83,13 +83,13 @@ export const siteContent = {
         id: "cck-trailer",
         label: "CCK trailer",
         category: "Trailer",
-        status: "Original film and exact contribution credits to be supplied.",
+        status: "Available to watch · Public trailer export, 2:22.",
       },
       {
         id: "farewell-video",
         label: "Farewell video",
         category: "Video",
-        status: "Original film and exact contribution credits to be supplied.",
+        status: "Available to watch · Farewell AA.",
       },
       {
         id: "masquerade-trailer",
@@ -116,7 +116,7 @@ export const siteContent = {
         status: "Original film and exact contribution credits to be supplied.",
       },
     ],
-    mediaNote: "Original videos and thumbnails coming soon.",
+    mediaNote: "Two films available to watch. More original films and credits will follow.",
   },
   community: {
     eyebrow: "Volunteer work · since 2023",
@@ -181,7 +181,7 @@ export const editorialCopy = {
     label: "Creative Studio",
     title: "Stories, frame by frame.",
     description:
-      "Trailers, films and creative work. Original media and exact contribution credits will be added as they are supplied.",
+      "Trailers, films and creative work. Watch CCK trailer and Farewell AA; more original work and exact contribution credits will follow.",
   },
   about: {
     label: "About me",
@@ -346,18 +346,18 @@ export const projects: Project[] = [
     title: "Creative Studio",
     subtitle: "Ideas, frame by frame.",
     description:
-      "Trailers, films and editing work. A collection of six named pieces, with original media and exact contribution credits awaiting upload.",
+      "Trailers, films and editing work. A collection of six named pieces, including two films available through Google Drive.",
     tags: ["Storytelling", "Film & editing"],
     accent: "#b69d85",
-    mediaStatus: "Original videos, thumbnails and project credits pending.",
+    mediaStatus: "CCK trailer and Farewell AA available to watch. More films, approved stills and exact credits pending.",
     story: {
       challenge:
         "Bring creative storytelling work into a collection that gives each project room to be understood. Individual project briefs are still to be supplied.",
       role: "Creative storyteller. Exact TED-Ed, TEDx and editing contributions, collaborators and credits are awaiting verification.",
       process:
-        "Original videos, timelines and behind-the-scenes material will replace the labelled editorial placeholders.",
+        "CCK trailer and Farewell AA can be viewed through their original Google Drive players. Timelines, behind-the-scenes material and exact contribution credits are still to be supplied.",
       outcome:
-        "This collection reserves space for the work. No release, audience, affiliation or production results are claimed without project details.",
+        "Two films are available to watch. No audience, affiliation or production results are claimed without project details.",
       lessons:
         "Project-specific creative decisions and personal reflections will accompany the finished media.",
     },
@@ -456,6 +456,7 @@ export const creativeMedia: {
   title: string;
   type: string;
   videoUrl: string | null;
+  embedUrl?: string | null;
   posterUrl: string | null;
   caption: string;
   credits: string | null;
@@ -465,18 +466,20 @@ export const creativeMedia: {
     title: "CCK trailer",
     type: "Trailer",
     videoUrl: null,
+    embedUrl: "https://drive.google.com/file/d/1FXMI8GoosQllewx87S8_lJDXRULukrYA/preview",
     credits: null,
     posterUrl: null,
-    caption: "Original film and exact contribution credits to be supplied.",
+    caption: "Trailer · Public export, 2:22.",
   },
   {
     id: "farewell-video",
     title: "Farewell video",
     type: "Video",
     videoUrl: null,
+    embedUrl: "https://drive.google.com/file/d/1zxuYX1UAG8FwYlfYhWP-SAnP4jaRx5MN/preview",
     credits: null,
     posterUrl: null,
-    caption: "Original film and exact contribution credits to be supplied.",
+    caption: "Farewell AA · Watch the film.",
   },
   {
     id: "masquerade-trailer",
@@ -519,7 +522,7 @@ export const creativeMedia: {
 export const assetChecklist = [
   "CIRS desktop and mobile screenshots, including the Admissions page; exact contribution details, collaborators, dates and process notes.",
   "AirKart’s verified description, stage, role and research; any measured figures you want to replace the conceptual comparison.",
-  "Original films or approved embed URLs for CCK trailer, Farewell video, Masquerade trailer, Vantara, TED-Ed 2026 and CIRSMUN 2026; approved thumbnails, dates and exact contribution credits.",
+  "Original films or approved embed URLs for Masquerade trailer, Vantara, TED-Ed 2026 and CIRSMUN 2026; approved thumbnails, dates and exact contribution credits for the film collection.",
   "Approved Vallalar Sathya Dharmasalai photographs, digital-storytelling and social-media samples, website screenshots and its verified URL when ready; specific process notes and any verified outcomes you wish to publish.",
   "AccuFlow’s verified description, intended audience, contribution, current stage, genuine visuals and personal reflections; Dhvanyartha’s verified description, status and images.",
   "Certificates and context for both academic recognitions, including the organizer details for ICSC and award dates.",
@@ -705,7 +708,7 @@ export const discoveryContent = {
         y: 67,
         title: "Giving an idea a sequence.",
         description:
-          "TED-Ed, TEDx and editing work belong to the creative-production collection. Original media and exact contribution credits are awaiting upload.",
+          "TED-Ed, TEDx and editing work belong to the creative-production collection. CCK trailer and Farewell AA are available to watch; exact contribution credits will follow.",
         action: "Explore creative production",
         project: "creative",
       },
@@ -775,7 +778,7 @@ export const discoveryContent = {
         label: "Create",
         title: "Give the idea a different form.",
         description:
-          "A creative-production space for TED-Ed, TEDx and editing work. Original videos and credits are still to be supplied.",
+          "A creative-production space for TED-Ed, TEDx and editing work. Watch CCK trailer and Farewell AA; more original films and credits will follow.",
         action: "Open creative production",
         project: "creative",
       },
@@ -826,8 +829,8 @@ export const interfaceCopy = {
   },
   media: {
     first: "The frame is ready.",
-    second: "The film comes next.",
-    note: "Original work, exact contributions and credits will be shared here once supplied.",
+    second: "Choose a film.",
+    note: "CCK trailer and Farewell AA are available to watch. More original films and exact credits will follow.",
   },
   lab: {
     title: "What if orders arrive more often?",

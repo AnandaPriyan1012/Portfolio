@@ -145,7 +145,8 @@ test('verified prototype media and honest reading modes replace public preview n
   await expect(page.getByRole('heading', { name: 'What I learned', exact: true })).toHaveCount(0)
   await ready(page, '/studio')
   await expect(page.locator('#studio')).not.toContainText('Original work to be added')
-  await expect(page.locator('#studio video:not(.studio-atmosphere-film), #studio .reel-frame')).toHaveCount(0)
+  await expect(page.locator('#studio video:not(.studio-atmosphere-film), iframe')).toHaveCount(0)
+  await expect(page.locator('#studio .reel-frame')).toHaveCount(2)
 })
 
 test('the warm AP mark paints before scrolling and falls back if its source fails', async ({ browser, browserName }) => {

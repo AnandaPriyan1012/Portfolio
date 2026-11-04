@@ -904,3 +904,93 @@
     transition: none;
   }
 }
+
+/* Compact project chapters: introductions lead into evidence without another
+   full-screen title threshold. Native and reduced-motion layouts keep the same work. */
+.work-page .cirs-details {
+  padding-block: 66px;
+  gap: 6%;
+}
+.work-page .cirs-detail-copy > h2 {
+  font-size: clamp(35px, 3.7vw, 53px);
+}
+.work-page .story-projects .work-feature {
+  padding-block: 54px 48px;
+}
+.work-page .chapter-index {
+  padding-bottom: 20px;
+  margin-bottom: 28px;
+}
+.work-page .work-feature .feature-heading {
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.9fr);
+  margin-bottom: 28px;
+  gap: 6%;
+}
+.work-page .work-feature .material-title {
+  font-size: clamp(39px, 4.6vw, 65px);
+}
+.work-page .work-feature .feature-footer {
+  margin-top: 30px;
+  padding-top: 18px;
+}
+.work-page .accuflow-assembly .feature-media {
+  height: clamp(390px, 36vw, 540px);
+}
+.work-page .feature-accuflow .accuflow-stage-info {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 28px;
+  max-width: none;
+  margin-top: 28px;
+  padding: 22px;
+}
+.work-page .feature-accuflow .accuflow-stage-info p {
+  margin: 0;
+}
+@media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
+  main[data-scroll-engine="gsap-lenis"] .work-page .community-world,
+  main[data-scroll-engine="gsap-lenis"] .work-page .community-purpose {
+    min-height: min(92svh, 920px);
+  }
+  main[data-scroll-engine="gsap-lenis"] .work-page .community-purpose {
+    gap: 28px;
+    padding-block: 14px;
+  }
+}
+@media (max-width: 767px) {
+  .work-page .cirs-details {
+    padding-block: 42px;
+    gap: 30px;
+  }
+  .work-page .cirs-detail-copy > h2 {
+    font-size: clamp(32px, 8.8vw, 43px);
+  }
+  .work-page .story-projects .work-feature {
+    padding-block: 42px 36px;
+  }
+  .work-page .chapter-index {
+    margin-bottom: 24px;
+    padding-bottom: 18px;
+  }
+  .work-page .work-feature .feature-heading {
+    display: block;
+    margin-bottom: 28px;
+  }
+  .work-page .work-feature .material-title {
+    font-size: clamp(33px, 8.9vw, 46px);
+  }
+  .work-page .community-world {
+    gap: 30px;
+  }
+  .work-page .community-purpose h3 {
+    font-size: 29px;
+  }
+  .work-page .accuflow-assembly .feature-media {
+    height: clamp(440px, 140vw, 560px);
+  }
+  .work-page .feature-accuflow .accuflow-stage-info {
+    grid-template-columns: 1fr;
+    padding: 20px 18px;
+    gap: 22px;
+  }
+}

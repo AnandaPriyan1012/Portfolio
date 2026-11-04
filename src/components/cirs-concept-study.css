@@ -5,7 +5,7 @@
   width: 100%;
   max-width: 1440px;
   margin: 0 auto;
-  padding: clamp(48px, 6vw, 86px) 6%;
+  padding: clamp(34px, 3.4vw, 50px) 6%;
   color: var(--study-ink);
   border-top: 1px solid #d4b58b33;
   background: radial-gradient(ellipse at 30% 44%, #ac70300d, transparent 65%);
@@ -15,7 +15,7 @@
   grid-template-columns: 1.2fr 0.8fr;
   align-items: end;
   gap: 42px;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
 }
 .cirs-concept-kicker {
   color: var(--study-amber);
@@ -26,8 +26,8 @@
 }
 .cirs-concept-header h3 {
   max-width: 17ch;
-  margin-top: 17px;
-  font: 400 clamp(31px, 3.3vw, 48px) / 1.12 var(--font-display, "Fraunces", Georgia, serif);
+  margin-top: 12px;
+  font: 400 clamp(27px, 2.6vw, 36px) / 1.12 var(--font-display, "Fraunces", Georgia, serif);
   letter-spacing: -0.035em;
 }
 .cirs-concept-header > p {
@@ -74,6 +74,8 @@
   position: relative;
   isolation: isolate;
   aspect-ratio: 1672 / 941;
+  max-width: 960px;
+  margin-inline: auto;
   overflow: hidden;
   border: 1px solid #d4b58b54;
   background: #0b0e0f;
@@ -121,7 +123,7 @@
   display: flex;
   justify-content: space-between;
   gap: 24px;
-  padding: 17px 0;
+  padding: 12px 0;
 }
 .cirs-concept-legend p {
   margin: 0;
@@ -137,7 +139,7 @@
   display: flex;
   align-items: center;
   gap: 24px;
-  padding: 18px 0;
+  padding: 12px 0;
   border-top: 1px solid #d4b58b2e;
 }
 .cirs-concept-slider {

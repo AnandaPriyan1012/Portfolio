@@ -1,5 +1,5 @@
 import type { MouseEvent } from "react";
-import { ArrowDownRight, ArrowUpRight } from "lucide-react";
+import { ArrowDown, ArrowRight } from "lucide-react";
 import { creativeMedia } from "../content";
 import ScrollCorridor from "./ScrollCorridor";
 
@@ -50,7 +50,7 @@ export default function HomeDirectory({
             </h2>
           </div>
           <div className="home-directory-intro-note">
-            <ArrowDownRight size={28} strokeWidth={1} aria-hidden="true" />
+            <ArrowDown size={28} strokeWidth={1} aria-hidden="true" />
             <p>
               Websites for school and community. Creative work for the screen. A
               little more about the person behind both.
@@ -82,7 +82,7 @@ export default function HomeDirectory({
               </p>
               <span className="home-directory-action">
                 Explore the projects{" "}
-                <ArrowUpRight size={19} aria-hidden="true" />
+                <ArrowRight size={19} aria-hidden="true" />
               </span>
             </div>
 
@@ -132,7 +132,7 @@ export default function HomeDirectory({
               <figcaption>Actual website & prototype captures</figcaption>
             </figure>
             <span className="home-directory-route-arrow" aria-hidden="true">
-              <ArrowUpRight size={28} strokeWidth={1.2} />
+              <ArrowRight size={28} strokeWidth={1.2} />
             </span>
           </a>
 
@@ -152,7 +152,7 @@ export default function HomeDirectory({
                 into a dedicated collection index.
               </p>
               <span className="home-directory-action">
-                Enter the Studio <ArrowUpRight size={19} aria-hidden="true" />
+                Enter the Studio <ArrowRight size={19} aria-hidden="true" />
               </span>
             </div>
 
@@ -183,7 +183,7 @@ export default function HomeDirectory({
               </span>
             </div>
             <span className="home-directory-route-arrow" aria-hidden="true">
-              <ArrowUpRight size={28} strokeWidth={1.2} />
+              <ArrowRight size={28} strokeWidth={1.2} />
             </span>
           </a>
 
@@ -206,7 +206,7 @@ export default function HomeDirectory({
                 Sathya Dharmasalai.
               </p>
               <span className="home-directory-action">
-                Meet the person <ArrowUpRight size={19} aria-hidden="true" />
+                Meet the person <ArrowRight size={19} aria-hidden="true" />
               </span>
             </div>
             <div className="home-directory-signature" aria-hidden="true">
@@ -226,7 +226,7 @@ export default function HomeDirectory({
               </span>
             </div>
             <span className="home-directory-route-arrow" aria-hidden="true">
-              <ArrowUpRight size={28} strokeWidth={1.2} />
+              <ArrowRight size={28} strokeWidth={1.2} />
             </span>
           </a>
         </nav>
@@ -237,7 +237,7 @@ export default function HomeDirectory({
             href="/about#contact"
             onClick={(event) => navigate(event, "/about#contact")}
           >
-            Let’s talk <ArrowUpRight size={18} aria-hidden="true" />
+            Let’s talk <ArrowRight size={18} aria-hidden="true" />
           </a>
         </div>
       </div>

@@ -6,7 +6,7 @@ import {
 } from "react";
 import {
   ArrowLeft,
-  ArrowUpRight,
+  ArrowRight,
   BriefcaseBusiness,
   Check,
   Code2,
@@ -463,7 +463,7 @@ export default function OSExperience({
                   onClick={() => view(item.id)}
                 >
                   {project ? "Open the full case study" : "Meet the person"}{" "}
-                  <ArrowUpRight size={16} />
+                  <ArrowRight size={16} />
                 </button>
                 <p className="os-passport-note">
                   {project?.mediaStatus ??

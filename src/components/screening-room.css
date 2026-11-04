@@ -197,6 +197,16 @@
   font-size: 11px;
   line-height: 1.9;
 }
+.screening-film-note {
+  max-width: 490px;
+  margin: 20px 0 0;
+  color: #c2c9be;
+  font-size: 12px;
+  line-height: 1.8;
+}
+.screening-film-note + .screening-availability {
+  margin-top: 8px;
+}
 .screening-room .screening-programme {
   padding: 0;
   border: 0;
@@ -334,6 +344,23 @@
 }
 .screening-room .reel-frame > span {
   color: #eee9de;
+}
+.screening-room .reel-frame > .screening-reel-title {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 24px;
+  background: linear-gradient(135deg, #d4bf8d0b, transparent 55%), #111817;
+  color: #d9c59b;
+}
+.screening-reel-title small {
+  color: #c1c5b7;
+  font-size: 11px;
+  line-height: 1.6;
 }
 .screening-room[data-page="studio"] {
   padding-top: calc(var(--header-height, 76px) + clamp(48px, 7vw, 104px));

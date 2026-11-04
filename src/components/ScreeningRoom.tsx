@@ -1,12 +1,17 @@
 import { useEffect, useId, useRef, useState } from "react";
 import type { CSSProperties } from "react";
+import { ArrowRight, Play } from "lucide-react";
 import type { creativeMedia } from "../content";
 import StudioAtmosphere from "./StudioAtmosphere";
+import { isApprovedDriveEmbed } from "./DriveFilmPlayer";
 
 type Film = (typeof creativeMedia)[number];
 
 function isReady(film: Film) {
-  return Boolean(film.videoUrl && film.posterUrl && film.credits);
+  return Boolean(
+    (film.videoUrl && film.posterUrl && film.credits) ||
+    isApprovedDriveEmbed(film.embedUrl),
+  );
 }
 
 export default function ScreeningRoom({
@@ -151,7 +156,7 @@ export default function ScreeningRoom({
               aria-atomic="true"
               style={{ "--screening-index": selectedIndex } as CSSProperties}
             >
-              {selected && isReady(selected) && (
+              {selected && isReady(selected) && selected.posterUrl && (
                 <img
                   className="screening-still"
                   src={selected.posterUrl!}
@@ -181,7 +186,7 @@ export default function ScreeningRoom({
                       onClick={() => onPlay(selected.id)}
                       aria-label={`Play selected film: ${selected.title}`}
                     >
-                      <span aria-hidden="true">↗</span> Watch film
+                      <Play size={14} aria-hidden="true" /> Watch film
                     </button>
                   )}
                 </div>
@@ -192,12 +197,15 @@ export default function ScreeningRoom({
               </div>
             </div>
             <div className="screening-sill" aria-hidden="true" />
+            <p className="screening-film-note">
+              {selected && isReady(selected) ? selected.caption : "Original film and confirmed contribution details to follow."}
+            </p>
             <p className="screening-availability">
               {readyFilms.length === films.length && films.length > 0
                 ? "Select a title to explore the collection."
                 : readyFilms.length === 0
                   ? "Original films and confirmed contribution credits are needed before playback can open here."
-                  : "Original films and confirmed contribution credits are needed before the remaining titles can play here."}
+                  : `${readyFilms.length} films available to watch. Drive players load only after you choose Watch film.`}
             </p>
           </div>
 
@@ -236,7 +244,7 @@ export default function ScreeningRoom({
                         </span>
                         <span className="screening-row-copy">
                           <span>{film.title}</span>
-                          <small>{film.type}</small>
+                          <small>{film.type}{isReady(film) ? " · Available to watch" : ""}</small>
                         </span>
                         <span
                           className="screening-selection"
@@ -262,11 +270,18 @@ export default function ScreeningRoom({
                   onClick={() => onPlay(film.id)}
                   aria-label={`Play ${film.title}`}
                 >
-                  <img
-                    src={film.posterUrl!}
-                    alt={`${film.title} — original film still`}
-                    loading="lazy"
-                  />
+                  {film.posterUrl ? (
+                    <img
+                      src={film.posterUrl}
+                      alt={`${film.title} — original film still`}
+                      loading="lazy"
+                    />
+                  ) : (
+                    <span className="screening-reel-title" aria-hidden="true">
+                      <Play size={22} />
+                      <small>{film.type} / Google Drive</small>
+                    </span>
+                  )}
                   <span>{film.title}</span>
                 </button>
               ))}
@@ -285,7 +300,7 @@ export default function ScreeningRoom({
                 }
               }}
             >
-              Let’s talk <span aria-hidden="true">↗</span>
+              Let’s talk <ArrowRight size={16} aria-hidden="true" />
             </a>
           </footer>
         )}

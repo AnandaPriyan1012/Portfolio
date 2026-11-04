@@ -131,7 +131,8 @@ test('the Studio screening follows scroll in both directions while keyboard choi
   await page.mouse.wheel(0, 350)
   await expect(keyboardChoice).toBeChecked()
   await expect(page.locator('.screening-title-card h3')).toHaveText('CCK trailer')
-  await expect(page.locator('#studio video:not(.studio-atmosphere-film), #studio .screening-play')).toHaveCount(0)
+  await expect(page.locator('#studio video:not(.studio-atmosphere-film), iframe')).toHaveCount(0)
+  await expect(page.getByRole('button', { name: 'Play selected film: CCK trailer', exact: true })).toBeVisible()
 })
 
 test('the original About signature scatters by keyboard, settles, and respects both motion controls', async ({ page }) => {

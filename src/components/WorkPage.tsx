@@ -1,11 +1,11 @@
 import { useRef, useState } from "react";
 import type { CSSProperties } from "react";
-import { ArrowDownRight } from "lucide-react";
+import { ArrowRight, Plus } from "lucide-react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
   projects,
   projectAssets,
   projectStatus,
-  scrollStoryCopy,
   communityStory,
 } from "../content";
 import type { Project } from "../content";
@@ -18,6 +18,37 @@ type WorkPageProps = {
   onPage: (id: Project["id"]) => void;
   motionEnabled?: boolean;
 };
+
+const projectBriefs = {
+  cirs: [
+    ["Purpose", "Make school and Admissions information clear for prospective families."],
+    ["My part", "Web development and creative work, including the Admissions page."],
+    ["The work", "The live school website and its practical Admissions Guide."],
+  ],
+  community: [
+    ["Purpose", "Support community service through digital storytelling and technology."],
+    ["My part", "Voluntary Social Media & Technology Head, since 2023."],
+    ["Work shown", "The website’s About page in English and Tamil, from its public review preview."],
+  ],
+  accuflow: [
+    ["Purpose", "Connect a product story to a pressure-point information guide."],
+    ["Project scope", "A six-page product website and conversational guide prototype."],
+    ["Work shown", "The real Try interface and four website routes. No health outcomes are claimed."],
+  ],
+} as const;
+
+function ProjectBrief({ project }: { project: keyof typeof projectBriefs }) {
+  return (
+    <dl className="project-brief" aria-label={`${project === "community" ? "Vallalar" : project === "cirs" ? "CIRS" : "AccuFlow"} project introduction`}>
+      {projectBriefs[project].map(([label, description]) => (
+        <div key={label}>
+          <dt>{label}</dt>
+          <dd>{description}</dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
 
 function ProjectMedia({
   project,
@@ -101,12 +132,11 @@ function CirsStory({
       <div className="cirs-detail-copy">
         <p className="section-label">01 — CIRS Website</p>
         <h2>
-          A school’s story.
+          CIRS website.
           <br />
-          <em>A family’s next step.</em>
+          <em>Admissions in focus.</em>
         </h2>
-        <p>{scrollStoryCopy.cirsRole}</p>
-        <p>{scrollStoryCopy.cirsContext}</p>
+        <ProjectBrief project="cirs" />
         <div className="story-links">
           <button onClick={onQuick}>Quick view</button>
           <a
@@ -290,15 +320,11 @@ function Feature({
                   <em>Dharmasalai.</em>
                 </>
               ) : (
-                <>
-                  AccuFlow.
-                  <br />
-                  <em>A conversation, considered.</em>
-                </>
+                <>AccuFlow.</>
               )}
             </h2>
           </div>
-          <p className="feature-description">{project.description}</p>
+          <ProjectBrief project={project.id === "community" ? "community" : "accuflow"} />
         </div>
         {project.id === "community" ? (
           <div className="community-scroll-runway">
@@ -325,9 +351,7 @@ function Feature({
                 <div className="service-step" data-service-step="purpose">
                   <p className="section-label">{communityStory.purposeLabel}</p>
                   <h3>
-                    Digital work.
-                    <br />
-                    <em>Human purpose.</em>
+                    In service of<br />the community.
                   </h3>
                   <p>{communityStory.purpose}</p>
                 </div>
@@ -376,10 +400,6 @@ function Feature({
         )}
         {project.id === "accuflow" && (
           <div className="accuflow-stage-info">
-            <p data-flow-stage>
-              <span>The idea</span>
-              {project.story.challenge}
-            </p>
             <p data-flow-stage>
               <span>The interaction</span>
               {project.story.process}
@@ -503,7 +523,7 @@ export default function WorkPage({
                     </span>
                   </span>
                 )}
-                <ArrowDownRight
+                <ArrowRight
                   className="work-index-arrow"
                   size={22}
                   aria-hidden="true"
@@ -523,7 +543,21 @@ export default function WorkPage({
           onPage={() => onPage("cirs")}
         />
         <InterfaceAtlas project="cirs" />
-        <CirsConceptStudy motion={motionEnabled} />
+        <details
+          className="work-process-drawer"
+          onToggle={() => ScrollTrigger.refresh()}
+        >
+          <summary className="page-width">
+            <span>
+              <span className="section-label">CIRS / Portfolio interpretation</span>
+              <strong>Reconstructed concept study</strong>
+            </span>
+            <span className="work-process-drawer-action">
+              Explore the illustration <Plus size={18} aria-hidden="true" />
+            </span>
+          </summary>
+          <CirsConceptStudy motion={motionEnabled} />
+        </details>
       </div>
       <div className="story-projects">
         <Feature

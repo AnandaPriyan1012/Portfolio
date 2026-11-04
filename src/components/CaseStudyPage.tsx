@@ -3,7 +3,6 @@ import {
   ArrowDown,
   ArrowLeft,
   ArrowRight,
-  ArrowUpRight,
   FileImage,
   Layers,
   List,
@@ -218,7 +217,7 @@ export default function CaseStudyPage({
                     rel="noopener noreferrer"
                   >
                     {isAccuFlow ? "Open the prototype" : "Visit the website"}{" "}
-                    <ArrowUpRight size={12} />
+                    <ArrowRight size={12} />
                   </a>
                 ) : (
                   stateLabel[project.id]
@@ -261,7 +260,7 @@ export default function CaseStudyPage({
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      View the live site <ArrowUpRight size={13} />
+                      View the live site <ArrowRight size={13} />
                     </a>
                   </>
                 ) : (
@@ -403,7 +402,7 @@ export default function CaseStudyPage({
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Visit the Admissions Guide <ArrowUpRight size={16} />
+                  Visit the Admissions Guide <ArrowRight size={16} />
                 </a>
               </section>
             )}
@@ -428,7 +427,7 @@ export default function CaseStudyPage({
                 </div>
                 <span>
                   {new URL(project.link).hostname}
-                  <ArrowUpRight size={24} />
+                  <ArrowRight size={24} />
                 </span>
               </a>
             )}
@@ -455,7 +454,7 @@ export default function CaseStudyPage({
             <h2>{nextProject.title}</h2>
             <p>{nextProject.subtitle}</p>
             <span className="case-next-action">
-              Open the story <ArrowUpRight size={18} aria-hidden="true" />
+              Open the story <ArrowRight size={18} aria-hidden="true" />
             </span>
           </div>
           {projectAssets[nextProject.id].previewUrl && (
@@ -478,7 +477,7 @@ export default function CaseStudyPage({
                 build <em>together?</em>
               </h2>
               <button onClick={onContact}>
-                Let’s connect <ArrowUpRight size={18} />
+                Let’s connect <ArrowRight size={18} />
               </button>
             </>
           ) : (
@@ -490,7 +489,7 @@ export default function CaseStudyPage({
                 to <em>explore.</em>
               </h2>
               <button onClick={onBack}>
-                Back to selected work <ArrowUpRight size={18} />
+                Back to selected work <ArrowRight size={18} />
               </button>
             </>
           )}

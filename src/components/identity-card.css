@@ -1,0 +1,323 @@
+.contact-section .contact-identity-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr);
+  gap: clamp(45px, 6vw, 90px);
+  align-items: center;
+}
+.contact-identity-copy {
+  min-width: 0;
+}
+.contact-section .contact-identity-copy h2 {
+  font-size: clamp(46px, 5.4vw, 78px);
+  margin-block: 25px;
+}
+.contact-section .contact-identity-copy .contact-invitation {
+  font-size: 14px;
+  line-height: 1.8;
+  color: #c1c5b9;
+}
+.contact-section .contact-identity-copy .contact-action {
+  font-size: clamp(16px, 1.65vw, 24px);
+  margin-top: 23px;
+}
+.identity-card {
+  --card-rx: 0deg;
+  --card-ry: 0deg;
+  --card-foil-x: 50%;
+  --card-foil-y: 20%;
+  --card-gold: #deca99;
+  position: relative;
+  width: 100%;
+  max-width: 530px;
+  margin: 0;
+  color: var(--card-gold);
+}
+.identity-card-stage {
+  position: relative;
+  perspective: 1200px;
+  aspect-ratio: 1.586;
+}
+.identity-card-motion,
+.identity-card-turn {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+}
+.identity-card-motion {
+  transform: rotateX(var(--card-rx)) rotateY(var(--card-ry));
+  transition: transform 180ms ease-out;
+}
+.identity-card-turn {
+  transform: rotateY(0deg);
+  transition: transform 650ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.identity-card[data-side="contact"] .identity-card-turn {
+  transform: rotateY(180deg);
+}
+.identity-card-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  isolation: isolate;
+  padding: clamp(22px, 2.3vw, 34px);
+  border: 1px solid #c6a869a8;
+  border-radius: 13px;
+  background:
+    radial-gradient(
+      ellipse at var(--card-foil-x) var(--card-foil-y),
+      #ad8a3c19,
+      transparent 68%
+    ),
+    repeating-linear-gradient(0deg, #ffffff02 0 1px, transparent 1px 3px),
+    linear-gradient(130deg, #20211f, #0d100f 45%, #181a16);
+  box-shadow:
+    inset 0 1px 0 #f3deb08f,
+    inset 0 -1px 0 #544124,
+    0 28px 45px #0007,
+    0 4px 10px #0006;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+.identity-card-face::before {
+  content: "";
+  position: absolute;
+  inset: 9px;
+  z-index: -1;
+  pointer-events: none;
+  border: 1px solid #cdb16e28;
+  border-radius: 6px;
+}
+.identity-card-front::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    transparent 35%,
+    #e9d0980a 45%,
+    transparent 56%
+  );
+}
+.identity-card-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  color: #d9c797;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+.identity-card-gilded-rule {
+  width: 31px;
+  height: 3px;
+  flex: 0 0 auto;
+  background: linear-gradient(90deg, #8d6d36, #f2dfaa 55%, #a18043);
+  box-shadow: 0 1px 1px #0008;
+}
+.identity-card-mark {
+  position: absolute;
+  top: 27%;
+  left: 6.3%;
+  width: 39%;
+  height: 32%;
+}
+.identity-card-mark img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: left center;
+}
+@supports (mask-image: url("/media/ap-signature.png")) {
+  .identity-card-mark img {
+    visibility: hidden;
+  }
+  .identity-card-mark::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      115deg,
+      #a88445,
+      #f2dfb2 34%,
+      #ba974d 52%,
+      #f1ddb0 79%,
+      #a58143
+    );
+    mask: url("/media/ap-signature.png") left center / contain no-repeat;
+  }
+}
+.identity-card-nameplate {
+  position: relative;
+  z-index: 1;
+  margin-top: auto;
+}
+.identity-card-nameplate p {
+  margin: 0 0 8px;
+  color: #e7d3a4;
+  font: 350 clamp(25px, 2.5vw, 36px) / 1.1 var(--font-display);
+  letter-spacing: -0.025em;
+  text-shadow: 0 1px 1px #000;
+}
+.identity-card-nameplate > span {
+  color: #c6b58c;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+.identity-card-engraving {
+  position: absolute;
+  z-index: -1;
+  top: -18%;
+  bottom: -18%;
+  right: -12%;
+  width: 48%;
+  transform: rotate(24deg);
+  border-left: 1px solid #be9d591f;
+  background: repeating-linear-gradient(
+    90deg,
+    #bda36b0e 0 1px,
+    transparent 1px 8px
+  );
+}
+.identity-card-back {
+  transform: rotateY(180deg);
+}
+.identity-card-invitation {
+  margin: 18px 0 0;
+  color: #e9d9b5;
+  font: 350 clamp(24px, 2.7vw, 38px) / 1.1 var(--font-display);
+  letter-spacing: -0.025em;
+}
+.identity-card-invitation em {
+  color: #c5aa72;
+}
+.identity-card-email {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 44px;
+  color: #ebd7a6;
+  font-size: clamp(13px, 1.16vw, 16px);
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+  text-decoration: underline;
+  text-decoration-color: #b2995e75;
+  text-underline-offset: 6px;
+}
+.identity-card-email svg {
+  flex: 0 0 auto;
+}
+.identity-card-caption {
+  margin-top: 22px;
+}
+.identity-card-side-note {
+  display: block;
+  font-size: 11px;
+  color: #b8b7a6;
+  line-height: 1.5;
+}
+.identity-card-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 24px;
+  margin-top: 5px;
+}
+.identity-card-controls > :is(button, a) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 9px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #e0c99a;
+  font: 400 12px / 1.5 var(--font-body);
+  cursor: pointer;
+}
+.identity-card-controls > :is(button, a):hover {
+  color: #fff0cc;
+}
+.identity-card :is(button, a):focus-visible {
+  outline: 2px solid #e6d09d;
+  outline-offset: 5px;
+  border-radius: 2px;
+}
+.identity-card[data-motion="off"]
+  :is(.identity-card-turn, .identity-card-motion) {
+  transition: none;
+}
+@media (max-width: 1050px) {
+  .contact-section .contact-identity-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 48px;
+  }
+  .identity-card {
+    max-width: 530px;
+  }
+}
+@media (max-width: 767px) {
+  .contact-section .contact-identity-copy h2 {
+    font-size: clamp(43px, 10vw, 58px);
+  }
+  .identity-card {
+    max-width: 440px;
+  }
+  .identity-card-face {
+    padding: 22px;
+  }
+  .identity-card-nameplate p {
+    font-size: clamp(25px, 6.5vw, 32px);
+  }
+  .identity-card-invitation {
+    font-size: clamp(23px, 6vw, 31px);
+    margin-top: 12px;
+  }
+  .identity-card-topline,
+  .identity-card-nameplate > span {
+    font-size: 10px;
+    letter-spacing: 0.06em;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .identity-card-turn,
+  .identity-card-motion {
+    transition: none;
+  }
+}
+@media (forced-colors: active) {
+  .identity-card-face {
+    border-color: CanvasText;
+    background: Canvas;
+    box-shadow: none;
+  }
+  .identity-card-face::before {
+    border-color: CanvasText;
+  }
+  .identity-card :is(p, em, span, a, button) {
+    color: CanvasText;
+    text-shadow: none;
+  }
+  .identity-card-mark::before,
+  .identity-card-engraving,
+  .identity-card-gilded-rule {
+    display: none;
+  }
+  .identity-card-mark img {
+    visibility: visible;
+  }
+  .identity-card :is(button, a):focus-visible {
+    outline-color: Highlight;
+  }
+}
