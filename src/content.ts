@@ -395,7 +395,7 @@ export const aboutLanes = [
     label: "Builder",
     title: "Websites for school and community.",
     description:
-      "I’m a student developer. My work includes web development and creative work for the CIRS website, including Admissions, and work on the organisation’s website at Vallalar Sathya Dharmasalai, where I serve voluntarily as Social Media & Technology Head.",
+      "My work on the CIRS website includes Admissions. At Vallalar Sathya Dharmasalai, I volunteer as Social Media & Technology Head and work on the organisation’s website.",
     detail: "Websites, experiments and ideas taking shape.",
   },
   {
@@ -403,7 +403,7 @@ export const aboutLanes = [
     label: "Storyteller",
     title: "Film, editing and digital storytelling.",
     description:
-      "My film collection includes the CCK trailer and Farewell video. Digital storytelling is also part of my voluntary work for Vallalar Sathya Dharmasalai.",
+      "My film collection includes the CCK trailer and Farewell AA. Digital storytelling is also part of my voluntary work at Vallalar Sathya Dharmasalai.",
     detail: "Explore the films in Studio.",
   },
   {
@@ -419,7 +419,7 @@ export const aboutLanes = [
     label: "Curious Mind",
     title: "Ideas to explore, interfaces to test.",
     description:
-      "I’m a student and an aspiring entrepreneur. AirKart explores delivery choices, while AccuFlow is a product website and interaction prototype.",
+      "AccuFlow is a product website and interaction prototype. AirKart explores delivery choices. Both are student concepts and early-stage work.",
     detail: "Student concepts and early-stage work.",
   },
 ];

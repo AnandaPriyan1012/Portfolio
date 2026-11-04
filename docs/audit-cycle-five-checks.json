@@ -1,0 +1,54 @@
+{
+  "date": "2026-11-04",
+  "baseCommit": "6668e92f95c75c738b85bed3147d1cc09265b0b9",
+  "productionBuild": "passed",
+  "bundle": "index-DOJLnaJG.js",
+  "css": "index-BgwET4xa.css",
+  "fullChromiumSuite": {
+    "passed": 188,
+    "duration": "5.7 minutes"
+  },
+  "isolatedTargetedChecks": {
+    "sceneAndCard": 21,
+    "existingNavigationAndAP": 13,
+    "status": "passed on frozen source matching integrated files"
+  },
+  "compiledNormalMotionReturn": {
+    "trips": 6,
+    "projects": [
+      "CIRS",
+      "Vallalar",
+      "AccuFlow"
+    ],
+    "viewport": [
+      1440,
+      720
+    ],
+    "status": "passed",
+    "scope": "Native origin-link focus/visibility, lane and saved scroll restored."
+  },
+  "sourceIntegrity": {
+    "originalApSha256": "80ccec808c2b7a5323d7401d1fd235d5f37b64362247656e08b9c742f6bf34a4",
+    "interactiveSignatureComponent": "unchanged",
+    "newAssetsOrDependencies": false
+  },
+  "fixedRegressions": [
+    "Closed AirKart target focuses its direct native summary rather than hidden heading.",
+    "About explicit case return restores originating link without changing native tabindex.",
+    "One-shot route-tagged restore follows coordinated refresh, synchronizes Lenis and invalidates ScrollTrigger cached scroll.",
+    "Desktop AP control space is reserved, preventing remount layout shifts.",
+    "Image-box/aperture bounds verify true full containment."
+  ],
+  "testHarnessNote": "Two relative wheel-delta assertions now allow the adjacent CSS pixel (<=1); scene progress and sticky bounds remain unchanged. First combined185 run184passed; incomplete rerun stopped on discovery of real motion-on bug. Final188 runpassed after fix.",
+  "limits": [
+    "Chromium desktop and phone emulation; physical Safari/iOS not verified.",
+    "Short actual film decode samples are documented separately for the unchanged C4 player; not whole-film/audio/smoothness verification."
+  ],
+  "compiledFullReview": {
+    "routes": 8,
+    "features": 43,
+    "status": "passed",
+    "browserErrors": [],
+    "networkErrors": []
+  }
+}

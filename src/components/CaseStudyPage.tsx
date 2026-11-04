@@ -653,7 +653,7 @@ export default function CaseStudyPage({
                 to <em>explore.</em>
               </h2>
               <button onClick={onBack}>
-                Back to selected work <ArrowRight size={18} />
+                Return to portfolio <ArrowRight size={18} />
               </button>
             </>
           )}
@@ -662,7 +662,7 @@ export default function CaseStudyPage({
       <footer className="case-footer">
         <button onClick={onBack}>
           <ArrowLeft size={14} />
-          Back to selected work
+          Return to portfolio
         </button>
         <span>
           Designed around curiosity.

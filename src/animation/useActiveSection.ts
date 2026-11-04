@@ -28,11 +28,24 @@ export default function useActiveSection(enabled: boolean) {
     const schedule = () => {
       if (!frame) frame = requestAnimationFrame(update);
     };
+    const about = document.getElementById("about");
+    let aboutHeight = about?.offsetHeight ?? 0;
+    const aboutResize =
+      about && typeof ResizeObserver !== "undefined"
+        ? new ResizeObserver(() => {
+            const height = about.offsetHeight;
+            if (height === aboutHeight) return;
+            aboutHeight = height;
+            schedule();
+          })
+        : null;
+    if (about) aboutResize?.observe(about);
     schedule();
     window.addEventListener("scroll", schedule, { passive: true });
     window.addEventListener("resize", schedule);
     window.addEventListener("hashchange", schedule);
     return () => {
+      aboutResize?.disconnect();
       cancelAnimationFrame(frame);
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);

@@ -97,15 +97,16 @@ test('Vallalar and AccuFlow scenes respond to real wheel input and reverse', asy
   }))
   const start = Number(await runway.getAttribute('data-scene-progress'))
   const sticky = (await page.locator('.community-image-reservation').boundingBox())!.y
+  // Fractional alignment targets can settle on the adjacent CSS pixel.
   const beforeForward = await page.evaluate(() => scrollY)
   await page.mouse.wheel(0, 220)
-  await expect.poll(async () => Math.abs(await page.evaluate(() => scrollY) - beforeForward - 220)).toBeLessThan(1)
+  await expect.poll(async () => Math.abs(await page.evaluate(() => scrollY) - beforeForward - 220)).toBeLessThanOrEqual(1)
   await expect.poll(async () => Number(await runway.getAttribute('data-scene-progress'))).toBeGreaterThan(start + .15)
   const advanced = Number(await runway.getAttribute('data-scene-progress'))
   expect(Math.abs((await page.locator('.community-image-reservation').boundingBox())!.y - sticky)).toBeLessThan(5)
   const beforeReverse = await page.evaluate(() => scrollY)
   await page.mouse.wheel(0, -150)
-  await expect.poll(async () => Math.abs(await page.evaluate(() => scrollY) - beforeReverse + 150)).toBeLessThan(1)
+  await expect.poll(async () => Math.abs(await page.evaluate(() => scrollY) - beforeReverse + 150)).toBeLessThanOrEqual(1)
   await expect.poll(async () => Number(await runway.getAttribute('data-scene-progress'))).toBeLessThan(advanced - .1)
   await wheelTo(page, '.accuflow-assembly', 700)
   const assembly = page.locator('.accuflow-assembly')

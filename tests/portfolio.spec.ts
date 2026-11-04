@@ -115,8 +115,8 @@ test('About tabs work by keyboard and awards retain their actual certificate sta
   const award = page.locator('.achievement').first()
   await award.locator('summary').click()
   await expect(award.locator('.certificate-placeholder')).toBeVisible()
-  await page.locator('.all-lanes > summary').click()
-  await expect(page.locator('.all-lanes h4')).toHaveCount(4)
+  await page.locator('.about-identity-perspectives > summary').click()
+  await expect(page.locator('.about-identity-perspectives h4')).toHaveCount(4)
 })
 
 test('theme persists and reduced motion remains authoritative', async ({ page }) => {

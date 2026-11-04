@@ -7,13 +7,11 @@ import {
   projectAssets,
   projectStatus,
   creativeMedia,
-  aboutLanes,
   achievements,
   experiments,
   experienceContent,
   interfaceCopy,
   directorsCut,
-  editorialCopy,
   scrollStoryCopy,
 } from "./content";
 import type { Project } from "./content";
@@ -30,7 +28,7 @@ import ScreeningRoom from "./components/ScreeningRoom";
 import HeroFilm from "./components/HeroFilm";
 import WorkPage from "./components/WorkPage";
 import HomeDirectory from "./components/HomeDirectory";
-import InteractiveSignature from "./components/InteractiveSignature";
+import AboutIdentity from "./components/AboutIdentity";
 import GlassCursor from "./components/GlassCursor";
 import IdentityCard from "./components/IdentityCard";
 import DriveFilmPlayer, {
@@ -399,88 +397,6 @@ function DecisionRoom() {
   );
 }
 
-function About({
-  selected,
-  onSelect,
-}: {
-  selected: string;
-  onSelect: (id: string) => void;
-}) {
-  const active =
-    aboutLanes.find((item) => item.id === selected) ?? aboutLanes[0];
-  const ref = useRef<HTMLDivElement>(null);
-  function keys(event: React.KeyboardEvent, index: number) {
-    let next = index;
-    if (event.key === "ArrowRight") next = (index + 1) % 4;
-    else if (event.key === "ArrowLeft") next = (index + 3) % 4;
-    else if (event.key === "Home") next = 0;
-    else if (event.key === "End") next = 3;
-    else return;
-    event.preventDefault();
-    onSelect(aboutLanes[next].id);
-    (ref.current?.children[next] as HTMLElement)?.focus();
-  }
-  return (
-    <section id="about" className="about-section">
-      <div className="about-heading">
-        <p className="section-label">The person behind the work</p>
-        <h2>
-          Between code,
-          <br />
-          <em>stories & swimming.</em>
-        </h2>
-        <p>{editorialCopy.about.description}</p>
-      </div>
-      <div className="about-content">
-        <div
-          className="lane-tabs"
-          ref={ref}
-          role="tablist"
-          aria-label="Explore my different lanes"
-        >
-          {aboutLanes.map((item, i) => (
-            <button
-              key={item.id}
-              role="tab"
-              id={`lane-${item.id}`}
-              aria-selected={selected === item.id}
-              aria-controls="lane-panel"
-              tabIndex={selected === item.id ? 0 : -1}
-              onClick={() => onSelect(item.id)}
-              onKeyDown={(e) => keys(e, i)}
-            >
-              {item.label}
-            </button>
-          ))}
-        </div>
-        <div
-          className="lane-panel"
-          id="lane-panel"
-          role="tabpanel"
-          aria-labelledby={`lane-${active.id}`}
-          tabIndex={0}
-        >
-          <h3>{active.title}</h3>
-          <p>{active.description}</p>
-          <span>{active.detail}</span>
-        </div>
-        <details className="all-lanes">
-          <summary>
-            Read all four perspectives
-            <Plus size={16} />
-          </summary>
-          {aboutLanes.map((item) => (
-            <div key={item.id}>
-              <h4>{item.label}</h4>
-              <p>{item.description}</p>
-            </div>
-          ))}
-        </details>
-      </div>
-    </section>
-  );
-}
-
 function Comparison({ before, after }: { before: string; after: string }) {
   const [position, setPosition] = useState(50);
   return (
@@ -519,7 +435,7 @@ export default function App() {
   const [cut, setCut] = useState<"quick" | "director">("quick");
   const [question, setQuestion] = useState<string | null>(null);
   const [route, setRoute] = useState(normalizedPath());
-  const caseReturn = useRef({ path: "/work", top: 0 });
+  const caseReturn = useRef<{ path: string; top: number; aboutHref?: string }>({ path: "/work", top: 0 });
   const currentProject = projects.find(
     (project) => route === `/projects/${project.id}`,
   );
@@ -618,7 +534,7 @@ export default function App() {
     window.addEventListener("keydown", close);
     return () => window.removeEventListener("keydown", close);
   }, [menuOpen]);
-  function navigate(destination: string, restoreTop = 0) {
+  function navigate(destination: string, restoreTop = 0, aboutHref?: string) {
     const next = destination.split("#")[0].replace(/\/+$/, "") || "/";
     if (next !== route) storyMotion.beforeNavigate();
     setMenuOpen(false);
@@ -629,8 +545,18 @@ export default function App() {
     setRoute(normalizedPath());
     requestAnimationFrame(() => {
       if (window.location.hash) storyMotion.scrollTo(window.location.hash);
-      else window.scrollTo({ top: restoreTop, behavior: "instant" });
+      else storyMotion.restoreTo(restoreTop, next);
       const main = document.querySelector("main");
+      // Only an explicit return from an About evidence link restores that
+      // native link. Ordinary page/hash navigation keeps its heading focus.
+      if (aboutHref && main?.dataset.page === "about" && !window.location.hash) {
+        const origin = [...main.querySelectorAll<HTMLAnchorElement>(".about-identity-links a")]
+          .find((link) => link.getAttribute("href") === aboutHref);
+        if (origin) {
+          origin.focus({ preventScroll: true });
+          return;
+        }
+      }
       let focusTarget = main?.querySelector<HTMLElement>("h1");
       if (window.location.hash) {
         try {
@@ -639,7 +565,10 @@ export default function App() {
           );
           if (target && main?.contains(target)) {
             const headings = "h1, h2, h3, h4, h5, h6";
-            focusTarget = target.matches(headings)
+            const closedDisclosure = target instanceof HTMLDetailsElement && !target.open;
+            focusTarget = closedDisclosure
+              ? target.querySelector<HTMLElement>(":scope > summary") ?? target
+              : target.matches(headings)
               ? target
               : target.querySelector<HTMLElement>(headings) ?? target;
           }
@@ -648,7 +577,8 @@ export default function App() {
         }
       }
       if (focusTarget) {
-        focusTarget.tabIndex = -1;
+        // A summary already has native focus and Enter/Space behaviour.
+        if (!focusTarget.matches("summary")) focusTarget.tabIndex = -1;
         focusTarget.focus({ preventScroll: true });
       }
     });
@@ -656,12 +586,12 @@ export default function App() {
   function navigateSection(id: string) {
     navigate(id === "contact" ? "/about#contact" : `/${id}`);
   }
-  function page(id: Project["id"]) {
-    caseReturn.current = { path: route, top: scrollY };
+  function page(id: Project["id"], aboutHref?: string) {
+    caseReturn.current = { path: route, top: scrollY, ...(route === "/about" && aboutHref ? { aboutHref } : {}) };
     navigate(`/projects/${id}`);
   }
   function home() {
-    navigate(caseReturn.current.path, caseReturn.current.top);
+    navigate(caseReturn.current.path, caseReturn.current.top, caseReturn.current.aboutHref);
   }
   function quick(id: Project["id"]) {
     setOsOpen(false);
@@ -830,23 +760,17 @@ export default function App() {
         )}
         {mainPage === "about" && (
           <>
-            <header className="about-page-intro page-width">
-              <div className="about-page-intro-copy">
-                <p className="section-label">About / Ananda Priyan</p>
-                <h1>
-                  There’s a person
-                  <br />
-                  <em>behind every project.</em>
-                </h1>
-                <p>
-                  A student developer, storyteller and swimmer, with a voluntary
-                  commitment to community work.
-                </p>
-              </div>
-              <InteractiveSignature enabled={preferences.motion} />
-            </header>
+            <AboutIdentity
+              selected={lane}
+              onSelect={setLane}
+              motionEnabled={preferences.motion}
+              onNavigate={(path) => {
+                const target = projects.find((item) => path === `/projects/${item.id}`);
+                if (target) page(target.id, path);
+                else navigate(path);
+              }}
+            />
             <div className="page-width">
-              <About selected={lane} onSelect={setLane} />
               <section className="recognition-section" id="recognition">
                 <div>
                   <p className="section-label">Learning & competition</p>

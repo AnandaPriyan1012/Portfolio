@@ -160,7 +160,7 @@ test('pointer tilt responds on desktop while user and system motion settings ret
 test('touch users can turn both ways at 320px and 390px with fitting content and usable controls', async ({ browser, browserName }) => {
   test.skip(browserName !== 'chromium', 'This check uses Chromium touch emulation, not a claim of physical-device testing.')
   for (const width of [320, 390]) {
-    const context = await browser.newContext({ baseURL: 'http://127.0.0.1:5173', viewport: { width, height: 844 }, reducedMotion: 'no-preference', hasTouch: true, isMobile: true })
+    const context = await browser.newContext({ baseURL: test.info().project.use.baseURL, viewport: { width, height: 844 }, reducedMotion: 'no-preference', hasTouch: true, isMobile: true })
     try {
       const page = await context.newPage()
       const errors: string[] = []

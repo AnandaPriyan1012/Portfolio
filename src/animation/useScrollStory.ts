@@ -426,28 +426,6 @@ function coordinateChapterScenes(element: HTMLElement) {
     );
   }
 
-  const about = find("#about");
-  if (about)
-    gsap.fromTo(
-      about,
-      { scale: 0.965, rotationY: 1.6, y: 22, "--about-exposure": 0.1 },
-      {
-        scale: 1,
-        rotationY: 0,
-        y: 0,
-        "--about-exposure": 0.32,
-        ease: "none",
-        scrollTrigger: {
-          id: "atelier-about-pane",
-          trigger: about,
-          start: "top 92%",
-          end: "top 28%",
-          scrub: true,
-          invalidateOnRefresh: true,
-        },
-      },
-    );
-
   const contact = find("#contact");
   const invitation = contact?.querySelector<HTMLElement>("h2");
   if (contact) {
@@ -483,8 +461,11 @@ export default function useScrollStory({ root, enabled, route }: Options) {
   const lenisRef = useRef<Lenis | null>(null);
   const reduceRef = useRef(false);
   const cleanupRef = useRef<(() => void) | null>(null);
+  const pendingRestore = useRef<{ route: string; top: number } | null>(null);
+  const restoreCoordinator = useRef<{ route: string; refresh: () => void } | null>(null);
 
   useLayoutEffect(() => {
+    if (pendingRestore.current?.route !== route) pendingRestore.current = null;
     const element = root.current;
     if (!element || route.startsWith("/projects/")) return;
     element.dataset.scrollEngine = "static";
@@ -541,6 +522,7 @@ export default function useScrollStory({ root, enabled, route }: Options) {
     const markInteraction = () => {
       interacted = true;
       initialHashPending = false;
+      pendingRestore.current = null;
     };
     window.addEventListener("wheel", markInteraction, { passive: true });
     window.addEventListener("touchstart", markInteraction, { passive: true });
@@ -550,6 +532,7 @@ export default function useScrollStory({ root, enabled, route }: Options) {
       // A new hash is an explicit navigation, including native back/forward.
       // It is independent of the one-time loading correction above.
       initialHashPending = false;
+      pendingRestore.current = null;
       cancelAnimationFrame(anchorFrame);
       anchorFrame = requestAnimationFrame(() => {
         if (!alive) return;
@@ -567,9 +550,39 @@ export default function useScrollStory({ root, enabled, route }: Options) {
         if (!alive) return;
         ScrollTrigger.refresh();
         lenisRef.current?.resize();
+        const restoration = pendingRestore.current;
+        if (restoration?.route === route && !window.location.hash) {
+          pendingRestore.current = null;
+          // Refresh can temporarily set the native scroller to zero. Restore
+          // only after it finishes, synchronizing Lenis and GSAP's scroll cache
+          // before another image/font/layout refresh can read a stale value.
+          const lenis = lenisRef.current;
+          if (lenis) lenis.scrollTo(restoration.top, { immediate: true, force: true });
+          else window.scrollTo({ top: restoration.top, behavior: "instant" });
+          ScrollTrigger.update();
+          return;
+        }
         correctInitialAnchor();
       });
     };
+    const coordinator = { route, refresh };
+    restoreCoordinator.current = coordinator;
+    // Interest selection and the native disclosure can move Contact without a
+    // route change or an image load. Observe layout height only: pane transforms
+    // do not change offsetHeight and must not create a refresh feedback loop.
+    const about = element.querySelector<HTMLElement>("#about");
+    let aboutHeight = about?.offsetHeight ?? 0;
+    const aboutResize =
+      about && typeof ResizeObserver !== "undefined"
+        ? new ResizeObserver(() => {
+            if (!alive) return;
+            const height = about.offsetHeight;
+            if (height === aboutHeight) return;
+            aboutHeight = height;
+            refresh();
+          })
+        : null;
+    if (about) aboutResize?.observe(about);
     const readinessCleanups: (() => void)[] = [];
     const images = [...element.querySelectorAll("img")];
     images.forEach((image) => {
@@ -985,6 +998,8 @@ export default function useScrollStory({ root, enabled, route }: Options) {
     const cleanup = () => {
       if (!alive) return;
       alive = false;
+      if (restoreCoordinator.current === coordinator) restoreCoordinator.current = null;
+      if (pendingRestore.current?.route === route) pendingRestore.current = null;
       cancelAnimationFrame(refreshFrame);
       cancelAnimationFrame(anchorFrame);
       window.clearTimeout(readinessTimeout);
@@ -993,6 +1008,7 @@ export default function useScrollStory({ root, enabled, route }: Options) {
       window.removeEventListener("pointerdown", markInteraction);
       window.removeEventListener("keydown", markInteraction);
       window.removeEventListener("hashchange", hashChange);
+      aboutResize?.disconnect();
       readinessCleanups.forEach((cleanup) => cleanup());
       images.forEach((image) => {
         image.removeEventListener("load", refresh);
@@ -1074,5 +1090,20 @@ export default function useScrollStory({ root, enabled, route }: Options) {
   );
 
   const beforeNavigate = useCallback(() => cleanupRef.current?.(), []);
-  return { scrollTo, beforeNavigate };
+  const restoreTo = useCallback((top: number, destination: string) => {
+    const currentPath = window.location.pathname.replace(/\/+$/, "") || "/";
+    if (destination !== currentPath || window.location.hash) return;
+    const position = Number.isFinite(top) ? Math.max(0, top) : 0;
+    pendingRestore.current = { route: destination, top: position };
+    const coordinator = restoreCoordinator.current;
+    if (coordinator?.route === destination) coordinator.refresh();
+    else {
+      // Case routes have no main-page coordinator; a not-yet-mounted main page
+      // will consume the route-tagged request in its first refresh instead.
+      window.scrollTo({ top: position, behavior: "instant" });
+      ScrollTrigger.update();
+      if (destination.startsWith("/projects/")) pendingRestore.current = null;
+    }
+  }, []);
+  return { scrollTo, beforeNavigate, restoreTo };
 }

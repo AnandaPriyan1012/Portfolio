@@ -14,7 +14,7 @@ const pages = [
   { path: '/', page: 'home', heading: /Ananda\s*Priyan/, title: /Ananda Priyan/ },
   { path: '/work', page: 'work', heading: /Selected\s*work\./, title: /Selected work — Ananda Priyan/ },
   { path: '/studio', page: 'studio', heading: /The screening\s*room\./, title: /The screening room — Ananda Priyan/ },
-  { path: '/about', page: 'about', heading: /There’s a person\s*behind every project\./, title: /About & contact — Ananda Priyan/ },
+  { path: '/about', page: 'about', heading: /Ananda Priyan\./, title: /About & contact — Ananda Priyan/ },
 ] as const
 
 async function navigate(page: Page, name: string) {

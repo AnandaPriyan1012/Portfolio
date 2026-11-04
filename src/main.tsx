@@ -20,6 +20,7 @@ import "./components/community-language-study.css";
 import "./multi-page.css";
 import "./components/identity-card.css";
 import "./typography.css";
+import "./components/about-identity.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
