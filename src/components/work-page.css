@@ -405,18 +405,25 @@
 
   .work-index-entry {
     grid-template-columns: 19px minmax(0, 1fr) 90px 14px;
+    grid-template-rows: auto auto;
     gap: 10px;
+    row-gap: 8px;
     min-height: 112px;
     padding: 16px 0;
   }
 
   .work-index-number {
     padding-top: 7px;
-    font-size: 8px;
+    font-size: 10px;
   }
 
   .work-index-entry::before {
     inset-inline: -12px;
+  }
+
+  .work-index-name {
+    grid-area: 1 / 2;
+    gap: 8px;
   }
 
   .work-index-name > strong {
@@ -424,12 +431,14 @@
   }
 
   .work-index-name > span {
-    font-size: 8px;
-    max-width: 145px;
+    font-size: 10px;
   }
 
   .work-index-note {
-    display: none;
+    grid-area: 2 / 2 / auto / -1;
+    justify-self: start;
+    max-width: none;
+    font-size: 10px;
   }
 
   .work-index-preview {
@@ -444,7 +453,7 @@
   }
 
   .work-index-arrow {
-    grid-column: 4;
+    grid-area: 1 / 4;
   }
 
   .work-page .project-brief > div {

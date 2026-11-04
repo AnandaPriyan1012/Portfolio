@@ -1190,7 +1190,15 @@ export default function App() {
               )
                 return;
               event.preventDefault();
-              storyMotion.scrollTo(0);
+              storyMotion.scrollTo(0, { immediate: event.detail === 0 });
+              // Home's animated heading may still be hidden at activation;
+              // its persistent main landmark gives native Tab a stable origin.
+              const destination = mainPage === "home" ? mainRef.current
+                : mainRef.current?.querySelector<HTMLElement>("h1") ?? mainRef.current;
+              if (destination) {
+                destination.tabIndex = -1;
+                destination.focus({ preventScroll: true });
+              }
             }}
           >
             Back to top

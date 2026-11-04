@@ -354,7 +354,8 @@ function ProcessMedia({
         data-cursor="view"
         className={`feature-media ${showing ? "is-process" : ""}`}
         onClick={onOpen}
-        aria-label={`Open the ${project.title} case study`}
+        aria-label={`Quick view: ${project.title}`}
+        aria-haspopup="dialog"
       >
         <ProjectMedia project={project} draft={showing} />
         {project.id === "community" && (
@@ -579,22 +580,25 @@ const selectedProjects = [
   {
     id: "cirs",
     title: "CIRS",
-    discipline: "Education / Web development",
-    note: "The official school website",
+    discipline: "Campus life & Admissions",
+    note: "Official school website · Live",
+    artifact: "CIRS / Homepage · Live website",
     anchor: "cirs",
   },
   {
     id: "community",
     title: "Vallalar",
-    discipline: "Community / Digital storytelling",
-    note: "A voluntary commitment since 2023",
+    discipline: "Website & digital storytelling",
+    note: "Voluntary since 2023 · Website review preview",
+    artifact: "Vallalar / About · Website review preview",
     anchor: "community",
   },
   {
     id: "accuflow",
     title: "AccuFlow",
-    discipline: "Product / Interaction prototype",
-    note: "A conversation, considered",
+    discipline: "Six-page website & conversational guide",
+    note: "Exploratory prototype",
+    artifact: "AccuFlow / Try interface · Prototype",
     anchor: "accuflow",
   },
 ] as const;
@@ -640,13 +644,7 @@ function WorkProjectIndex({ motionEnabled }: { motionEnabled: boolean }) {
                   )}
                   <img src={asset.previewUrl} alt="" loading="eager" />
                 </picture>
-                <span>
-                  {item.id === "community"
-                    ? "Website review preview"
-                    : item.id === "accuflow"
-                      ? "Actual prototype capture"
-                      : "Live website capture"}
-                </span>
+                <span>{item.artifact}</span>
               </span>
             )}
             <ArrowRight

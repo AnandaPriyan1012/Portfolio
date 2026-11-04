@@ -219,7 +219,7 @@ test('an unavailable project image leaves its title and native project link usab
   const entry = page.locator('.work-index-community')
   await entry.focus()
   await expect(entry.locator('.work-index-name')).toBeVisible()
-  await expect(entry.locator('.work-index-note')).toContainText('voluntary commitment')
+  await expect(entry.locator('.work-index-note')).toContainText('Voluntary since 2023')
   await page.keyboard.press('Enter')
   await expectChapter(page, 'community')
 })

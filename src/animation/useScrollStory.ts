@@ -1031,11 +1031,11 @@ export default function useScrollStory({ root, enabled, route }: Options) {
   }, [root, enabled, route]);
 
   const scrollTo = useCallback(
-    (target: ScrollTarget) => {
+    (target: ScrollTarget, options?: { immediate?: boolean }) => {
       const lenis = lenisRef.current;
       if (lenis) {
         if (typeof target === "number")
-          lenis.scrollTo(target, { duration: 0.85 });
+          lenis.scrollTo(target, { duration: 0.85, immediate: options?.immediate });
         else {
           let destination: Element | null =
             target instanceof Element ? target : null;
@@ -1057,13 +1057,14 @@ export default function useScrollStory({ root, enabled, route }: Options) {
                   window.scrollY -
                   headerClearance(),
               ),
-              { duration: 0.85 },
+              { duration: 0.85, immediate: options?.immediate },
             );
           }
         }
+        if (options?.immediate) ScrollTrigger.update();
         return;
       }
-      const behavior = enabled && !reduceRef.current ? "smooth" : "instant";
+      const behavior = !options?.immediate && enabled && !reduceRef.current ? "smooth" : "instant";
       if (typeof target === "number")
         window.scrollTo({ top: target, behavior });
       else {
@@ -1089,6 +1090,7 @@ export default function useScrollStory({ root, enabled, route }: Options) {
             behavior,
           });
       }
+      if (options?.immediate) ScrollTrigger.update();
     },
     [enabled],
   );
