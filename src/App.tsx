@@ -630,10 +630,26 @@ export default function App() {
     requestAnimationFrame(() => {
       if (window.location.hash) storyMotion.scrollTo(window.location.hash);
       else window.scrollTo({ top: restoreTop, behavior: "instant" });
-      const heading = document.querySelector<HTMLElement>("main h1");
-      if (heading) {
-        heading.tabIndex = -1;
-        heading.focus({ preventScroll: true });
+      const main = document.querySelector("main");
+      let focusTarget = main?.querySelector<HTMLElement>("h1");
+      if (window.location.hash) {
+        try {
+          const target = document.getElementById(
+            decodeURIComponent(window.location.hash.slice(1)),
+          );
+          if (target && main?.contains(target)) {
+            const headings = "h1, h2, h3, h4, h5, h6";
+            focusTarget = target.matches(headings)
+              ? target
+              : target.querySelector<HTMLElement>(headings) ?? target;
+          }
+        } catch {
+          // An invalid fragment retains the page-heading focus fallback.
+        }
+      }
+      if (focusTarget) {
+        focusTarget.tabIndex = -1;
+        focusTarget.focus({ preventScroll: true });
       }
     });
   }

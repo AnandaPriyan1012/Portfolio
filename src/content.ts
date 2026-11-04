@@ -471,7 +471,7 @@ export const creativeMedia: {
     embedUrl:
       "https://drive.google.com/file/d/1FXMI8GoosQllewx87S8_lJDXRULukrYA/preview",
     credits: null,
-    posterUrl: null,
+    posterUrl: "/media/cck-trailer-still.jpg",
     caption: "Trailer · Public export, 2:22.",
   },
   {

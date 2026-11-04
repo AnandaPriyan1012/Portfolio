@@ -131,3 +131,66 @@ test('keyboard quick-view case entry focuses the new heading after dialog cleanu
   await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))))
   await expect(page.locator('h1')).toBeFocused()
 })
+
+for (const width of [390, 1440]) {
+  test(`${width}px keyboard Contact navigation continues directly to the email and personal card`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 1000 })
+    await page.goto('/work')
+    if (width < 768) {
+      await page.getByRole('button', { name: 'Open menu', exact: true }).focus()
+      await page.keyboard.press('Enter')
+    }
+    const contact = page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Contact', exact: true })
+    await contact.focus()
+    await page.keyboard.press('Enter')
+    await expect(page).toHaveURL(/\/about#contact$/)
+    const heading = page.locator('#contact h2')
+    await expect(heading).toBeFocused()
+    await expect(heading).toBeInViewport()
+    const contactTop = await page.evaluate(() => scrollY)
+    await page.keyboard.press('Tab')
+    const email = page.locator('.contact-identity-copy').getByRole('link', { name: 'anandapriyan1012@gmail.com', exact: true })
+    await expect(email).toBeFocused()
+    await expect(email).toBeInViewport()
+    expect(await page.evaluate(() => scrollY)).toBeGreaterThanOrEqual(contactTop - 4)
+    await page.keyboard.press('Tab')
+    await expect(page.getByRole('button', { name: 'Show contact side', exact: true })).toBeFocused()
+    await expect(page.getByRole('button', { name: 'Show contact side', exact: true })).toBeInViewport()
+  })
+}
+
+test('the swimmer handoff focuses the About section and continues to its selected lane', async ({ page }) => {
+  await page.goto('/work')
+  await page.getByRole('button', { name: 'Take the 60-second tour', exact: true }).click()
+  const tour = page.locator('.tour-panel')
+  for (let index = 0; index < 4; index++) {
+    await tour.getByRole('button', { name: 'Next tour chapter', exact: true }).click()
+  }
+  await tour.getByRole('button', { name: 'Meet the swimmer', exact: true }).focus()
+  await page.keyboard.press('Enter')
+  await expect(page).toHaveURL(/\/about#about$/)
+  await expect(tour).toHaveCount(0)
+  await expect(page.locator('#about h2')).toBeFocused()
+  await expect(page.locator('#about h2')).toBeInViewport()
+  await page.keyboard.press('Tab')
+  await expect(page.getByRole('tab', { name: 'Swimmer', exact: true })).toBeFocused()
+  await expect(page.getByRole('tab', { name: 'Swimmer', exact: true })).toHaveAttribute('aria-selected', 'true')
+})
+
+for (const fragment of ['missing-section', 'site-nav', '%E0%A4%A']) {
+  test(`a fragment replaced during navigation keeps safe page focus for ${fragment}`, async ({ page }) => {
+    await page.goto('/work')
+    // A second click listener can replace a fragment before the route commits.
+    // Missing, malformed, and out-of-main targets must all retain a useful fallback.
+    await page.evaluate(hash => {
+      window.addEventListener('click', () => {
+        history.replaceState(history.state, '', `/about#${hash}`)
+      }, { once: true })
+    }, fragment)
+    await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Contact', exact: true }).focus()
+    await page.keyboard.press('Enter')
+    await expect.poll(() => page.evaluate(() => location.hash)).toBe(`#${fragment}`)
+    await expect(page.locator('main')).toHaveAttribute('data-page', 'about')
+    await expect(page.locator('h1')).toBeFocused()
+  })
+}

@@ -12,6 +12,7 @@ export default function HomeDirectory({
   onNavigate,
   motionEnabled = false,
 }: HomeDirectoryProps) {
+  const studioStill = creativeMedia.find((film) => film.id === "cck-trailer")?.posterUrl;
   const navigate = (event: MouseEvent<HTMLAnchorElement>, path: string) => {
     // Keep native open-in-new-tab and modified-click behaviour.
     if (
@@ -148,21 +149,27 @@ export default function HomeDirectory({
                 Studio<span className="home-directory-period">.</span>
               </h3>
               <p>
-                Trailers, video and event work. Six named projects, gathered
-                into a dedicated collection index.
+                Trailers, video and event work. Watch CCK trailer and Farewell AA
+                in the collection.
               </p>
               <span className="home-directory-action">
                 Enter the Studio <ArrowRight size={19} aria-hidden="true" />
               </span>
             </div>
 
-            <div className="home-directory-programme" aria-hidden="true">
+            <div className="home-directory-programme" data-has-still={Boolean(studioStill)} aria-hidden="true">
               <div className="home-directory-programme-heading">
                 <span>The collection</span>
                 <span>
                   {String(creativeMedia.length).padStart(2, "0")} titles
                 </span>
               </div>
+              {studioStill && (
+                <div className="home-directory-film-peek">
+                  <img src={studioStill} alt="" width="640" height="360" loading="lazy" decoding="async" />
+                  <span>CCK trailer<br />Actual film still</span>
+                </div>
+              )}
               <ol>
                 {creativeMedia.map((film, index) => (
                   <li key={film.id}>
@@ -179,7 +186,7 @@ export default function HomeDirectory({
                 ))}
               </ol>
               <span className="home-directory-programme-footnote">
-                A title index / open for details
+                Open Studio / watch available films
               </span>
             </div>
             <span className="home-directory-route-arrow" aria-hidden="true">

@@ -1,0 +1,156 @@
+.cirs-tour {
+  position: relative;
+}
+
+/* This unpadded plane is shared by the image and all capture coordinates. */
+.cirs-tour-stage {
+  position: relative;
+  aspect-ratio: 36 / 25;
+}
+
+.case-page .case-admissions .cirs-tour-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  object-fit: contain;
+}
+
+.cirs-tour-controls {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  left: 3%;
+  /* 10% of the 36:25 capture height, expressed against its inline size. */
+  margin-top: 6.944444%;
+  width: min(360px, 94%);
+  padding: 10px;
+  border: 1px solid rgb(var(--case-light) / 0.34);
+  background: linear-gradient(125deg, #28302aef, #111916f2);
+  box-shadow: inset 0 1px 0 #fff2, 0 12px 35px #0005;
+  border-radius: 4px;
+}
+
+.cirs-tour-label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--case-muted);
+  font-size: 11px;
+  line-height: 15px;
+  letter-spacing: 0.08em;
+}
+
+.cirs-tour-controls [role="group"] {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.cirs-tour .cirs-tour-controls button {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 7px 8px;
+  border: 1px solid rgb(var(--case-light) / 0.2);
+  border-radius: 2px;
+  color: var(--case-ink);
+  background: rgb(var(--case-light) / 0.05);
+  font: 500 13px/1.3 var(--font-body);
+  cursor: pointer;
+}
+
+.cirs-tour-controls button[aria-pressed="true"] {
+  border-color: var(--case-accent);
+  color: #f5dfaa;
+  background: rgb(var(--case-light) / 0.12);
+  box-shadow: inset 0 1px 0 rgb(var(--case-light) / 0.15);
+}
+
+.cirs-tour-controls button:focus-visible {
+  outline: 2px solid var(--case-accent);
+  outline-offset: 3px;
+}
+
+.cirs-tour-frame {
+  position: absolute;
+  left: var(--note-x);
+  top: var(--note-y);
+  width: var(--note-width);
+  height: var(--note-height);
+  border: 1px solid #fff0c9;
+  outline: 1px solid #16160edd;
+  outline-offset: 1px;
+  box-shadow: 0 0 0 4px #d6be7e24, 0 0 20px #d6be7e20;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.cirs-tour-frame[data-visible="true"] {
+  opacity: 1;
+}
+
+.case-page .cirs-tour-note {
+  min-height: 3.4em;
+  margin: 15px 2px 0;
+  color: var(--case-muted);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+@media (min-width: 768px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .cirs-tour[data-motion="on"] .cirs-tour-frame {
+    transition: left 340ms ease-out, top 340ms ease-out, width 340ms ease-out,
+      height 340ms ease-out, opacity 180ms ease-out;
+  }
+  .cirs-tour[data-motion="on"] .cirs-tour-controls button {
+    transition: border-color 180ms ease-out, background-color 180ms ease-out;
+  }
+}
+
+@media (max-width: 767px) {
+  .cirs-tour-controls {
+    position: static;
+    width: 100%;
+    margin: 0 0 10px;
+  }
+}
+
+@media (max-width: 700px) {
+  .cirs-tour-controls {
+    padding: 8px;
+  }
+  .cirs-tour-label {
+    margin-bottom: 4px;
+    font-size: 10px;
+    line-height: 13px;
+  }
+  .cirs-tour .cirs-tour-controls button {
+    padding-inline: 4px;
+    font-size: 11px;
+  }
+  .case-page .cirs-tour-note {
+    min-height: 6.8em;
+    font-size: 13px;
+  }
+}
+
+@media (min-width: 701px) and (max-width: 1000px) {
+  .case-page .cirs-tour-note {
+    min-height: 5.1em;
+  }
+}
+
+@media (forced-colors: active) {
+  .cirs-tour-controls {
+    background: Canvas;
+    border-color: CanvasText;
+  }
+  .cirs-tour-controls button[aria-pressed="true"],
+  .cirs-tour-controls button:focus-visible,
+  .cirs-tour-frame {
+    border-color: Highlight;
+    outline-color: Highlight;
+  }
+}

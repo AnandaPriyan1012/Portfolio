@@ -1,0 +1,56 @@
+{
+  "date": "2026-11-04",
+  "baseCommit": "3b7402cf9085f6328a3e0b9927433af567276775",
+  "productionBuild": "passed",
+  "chromiumSuite": {
+    "passed": 139,
+    "duration": "3.8 minutes"
+  },
+  "compiledBundle": "index-BJXSf7Da.js",
+  "compiledRoutes": 8,
+  "compiledFeatureChecks": 18,
+  "sourceStill": {
+    "path": "public/media/cck-trailer-still.jpg",
+    "dimensions": [
+      640,
+      360
+    ],
+    "bytes": 9190,
+    "sha256": "3b85d6a89f85f618e51739aafcdcd35a76918ab950a46f27b531d3c22a434d9e",
+    "transforms": "none"
+  },
+  "actualDrivePlayback": {
+    "scope": "Published baseline production embeds, separately verified; not inferred from fixture tests",
+    "cckDesktop": {
+      "time": 1.88,
+      "decodedFrames": 50
+    },
+    "cckPhone": {
+      "time": 1.91,
+      "decodedFrames": 52
+    },
+    "farewellDesktop": {
+      "time": 1.93,
+      "decodedFrames": 49
+    },
+    "farewellPhone": {
+      "time": 1.7,
+      "decodedFrames": 45
+    },
+    "readyState": 4,
+    "mediaErrors": null,
+    "limits": "Short decoded excerpts; not a full-film continuity, audible-output or physical Safari check."
+  },
+  "lazyNextImageLayoutShift": {
+    "assets": 3,
+    "widths": [
+      1440,
+      390
+    ],
+    "deltaPx": 0
+  },
+  "limits": [
+    "Chromium desktop and simulated phone; physical devices and Safari not checked.",
+    "Cross-origin Google player load/transport conditions can vary."
+  ]
+}

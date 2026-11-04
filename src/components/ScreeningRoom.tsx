@@ -36,6 +36,7 @@ export default function ScreeningRoom({
   const selected = films.find((film) => film.id === selectedId) ?? films[0];
   const selectedIndex = films.findIndex((film) => film.id === selected?.id);
   const readyFilms = films.filter(isReady);
+  const selectedPoster = selected && isReady(selected) ? selected.posterUrl : null;
 
   useEffect(() => {
     const desktop = matchMedia(
@@ -154,17 +155,25 @@ export default function ScreeningRoom({
           <div className="screening-projection" ref={projectionRef}>
             <div
               className="screening-screen"
+              data-has-still={Boolean(selectedPoster)}
               aria-live="polite"
               aria-atomic="true"
               style={{ "--screening-index": selectedIndex } as CSSProperties}
             >
-              {selected && isReady(selected) && selected.posterUrl && (
-                <img
-                  className="screening-still"
-                  src={selected.posterUrl!}
-                  alt={`${selected.title} — original film still`}
-                  loading="lazy"
-                />
+              {selected && selectedPoster && (
+                <div className="screening-still-window" key={`still-${selected.id}`}>
+                  <img
+                    className="screening-still"
+                    src={selectedPoster}
+                    alt={selected.id === "cck-trailer"
+                      ? "CCK trailer — an open notebook, desk and hands"
+                      : `${selected.title} — original film still`}
+                    width={selected.id === "cck-trailer" ? 640 : undefined}
+                    height={selected.id === "cck-trailer" ? 360 : undefined}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
               )}
               <div className="screening-screen-top">
                 <span>AP / Studio</span>
@@ -200,6 +209,7 @@ export default function ScreeningRoom({
             </div>
             <div className="screening-sill" aria-hidden="true" />
             <p className="screening-film-note">
+              {selectedPoster === "/media/cck-trailer-still.jpg" && "Actual film still · "}
               {selected && isReady(selected) ? selected.caption : "Original film and confirmed contribution details to follow."}
             </p>
             <p className="screening-availability">
@@ -267,6 +277,7 @@ export default function ScreeningRoom({
               {readyFilms.map((film) => (
                 <button
                   className="reel-frame"
+                  data-has-still={Boolean(film.posterUrl)}
                   data-cursor="play"
                   key={film.id}
                   onClick={() => onPlay(film.id)}
@@ -276,7 +287,10 @@ export default function ScreeningRoom({
                     <img
                       src={film.posterUrl}
                       alt={`${film.title} — original film still`}
+                      width={film.id === "cck-trailer" ? 640 : undefined}
+                      height={film.id === "cck-trailer" ? 360 : undefined}
                       loading="lazy"
+                      decoding="async"
                     />
                   ) : (
                     <span className="screening-reel-title" aria-hidden="true">

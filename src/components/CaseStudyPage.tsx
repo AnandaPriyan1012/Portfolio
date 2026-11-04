@@ -17,6 +17,8 @@ import {
 } from "../content";
 import "./case-study.css";
 import Signature from "./Signature";
+import GlassCursor from "./GlassCursor";
+import CirsAdmissionsTour from "./CirsAdmissionsTour";
 
 type Props = {
   project: Project;
@@ -288,6 +290,7 @@ export default function CaseStudyPage({
       data-reader-motion={motionEnabled ? "on" : "off"}
       style={{ "--case-accent": project.accent } as CSSProperties}
     >
+      <GlassCursor key={project.id} enabled={motionEnabled} />
       <a className="case-skip" href="#case-body">
         Skip to case study
       </a>
@@ -546,10 +549,9 @@ export default function CaseStudyPage({
                 </p>
                 <figure>
                   <div className="case-image-surface" data-reader-media>
-                    <img
+                    <CirsAdmissionsTour
                       src={assets.admissionsUrl!}
-                      alt="Admissions page — screenshot captured from the public CIRS website"
-                      loading="lazy"
+                      motionEnabled={motionEnabled}
                     />
                   </div>
                   <figcaption>
@@ -618,11 +620,13 @@ export default function CaseStudyPage({
             </span>
           </div>
           {projectAssets[nextProject.id].previewUrl && (
-            <img
-              src={projectAssets[nextProject.id].previewUrl!}
-              alt={`${nextProject.title} — actual website interface`}
-              loading="lazy"
-            />
+            <div className="case-next-preview">
+              <img
+                src={projectAssets[nextProject.id].previewUrl!}
+                alt={`${nextProject.title} — actual website interface`}
+                loading="lazy"
+              />
+            </div>
           )}
         </a>
         <section className="case-closing">
