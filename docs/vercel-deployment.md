@@ -16,7 +16,18 @@ The build generates the homepage, five physical project entry points and a brand
 
 The first production deployment was `dpl_2cQnQEfUoqokDbbSTsVGTAwPJn5k`, created from source commit `3248e5a` and verified Ready. The public production alias works without authentication. Vercel's API confirms the GitHub link is `AnandaPriyan1012/Portfolio` with production branch `main`. The owner completed Vercel sign-in and installed the Vercel GitHub app through the official flows. No provider credentials are stored in the repository.
 
-## Live acceptance
+## Current dated releases
+
+The dated audit reviews supersede the first-deployment screenshots and earlier content availability below:
+
+- `3b7402c`: approved glass arrow, exact-logo opening, direct card flip, reading motion and keyboard navigation; public desktop/phone checks passed.
+- `10da32e`: CIRS Admissions image tour, genuine local CCK preview, internal hash focus and stable lazy-image frames. GitHub Vercel reported success; public HTML and 14 assets matched the build, with 8 route and 18 feature checks passing.
+
+Short excerpts of both approved real Drive films decoded in desktop and simulated phone Chromium. Remaining named films and exact production credits still need confirmed sources. No Drive permission was changed. [Third-cycle record](audit-cycle-three.md).
+
+The legacy Netlify application's HTML remains byte-identical to its historical baseline after removing only one provider-added hosting comment. Raw response hashes differ by that comment; no Netlify mutation was performed.
+
+## First-deployment live acceptance
 
 - Homepage, `/projects/cirs/` and `/projects/accuflow/`: HTTP 200.
 - Unknown page and project paths: the branded page with genuine HTTP 404.
@@ -32,7 +43,7 @@ The existing Netlify site is preserved. A read-only Netlify inspection found no 
 
 The latest revision uses a 76px desktop / 72px tablet / 64px phone Film Strip header, measured heading clearance and active-section navigation. The CIRS frame begins moving immediately and occupies the centre before the name retires. Warm layered Vallalar surfaces, a cooler AccuFlow frame and dark Studio film rails continue the material treatment beyond the hero.
 
-Actual public Vallalar website-preview and AccuFlow internal-prototype captures replace their reserved visuals. The captures, prototype stages and limits are documented in [project-source-evidence.md](project-source-evidence.md). The owner-confirmed public email is a direct `mailto:` destination. CIRS uses the supplied contribution and observed Admissions structure; personal decisions or lessons were not fabricated. Films, documentary community photos and exact creative credits remain unavailable.
+Actual public Vallalar website-preview and AccuFlow internal-prototype captures replace their reserved visuals. The captures, prototype stages and limits are documented in [project-source-evidence.md](project-source-evidence.md). The owner-confirmed public email is a direct `mailto:` destination. CIRS uses the supplied contribution and observed Admissions structure; personal decisions or lessons were not fabricated. At that earlier release, films, documentary community photos and exact creative credits remained unavailable; the two approved Drive films have since been added as recorded above.
 
 Latest screenshots, scroll samples, browser checks and limits are in [refinement-review.md](refinement-review.md). The earlier evidence above records the first deployment rather than these refinements.
 

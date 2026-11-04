@@ -167,9 +167,11 @@ export default function ScreeningRoom({
                     src={selectedPoster}
                     alt={selected.id === "cck-trailer"
                       ? "CCK trailer — an open notebook, desk and hands"
-                      : `${selected.title} — original film still`}
-                    width={selected.id === "cck-trailer" ? 640 : undefined}
-                    height={selected.id === "cck-trailer" ? 360 : undefined}
+                      : selected.id === "farewell-video"
+                        ? "Farewell video — a montage of classroom and social photographs"
+                        : `${selected.title} — original film still`}
+                    width={640}
+                    height={360}
                     loading="lazy"
                     decoding="async"
                   />
@@ -209,7 +211,7 @@ export default function ScreeningRoom({
             </div>
             <div className="screening-sill" aria-hidden="true" />
             <p className="screening-film-note">
-              {selectedPoster === "/media/cck-trailer-still.jpg" && "Actual film still · "}
+              {selectedPoster && "Actual film still · "}
               {selected && isReady(selected) ? selected.caption : "Original film and confirmed contribution details to follow."}
             </p>
             <p className="screening-availability">
@@ -287,8 +289,8 @@ export default function ScreeningRoom({
                     <img
                       src={film.posterUrl}
                       alt={`${film.title} — original film still`}
-                      width={film.id === "cck-trailer" ? 640 : undefined}
-                      height={film.id === "cck-trailer" ? 360 : undefined}
+                      width={640}
+                      height={360}
                       loading="lazy"
                       decoding="async"
                     />

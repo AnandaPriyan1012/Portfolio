@@ -502,6 +502,68 @@ const selectedProjects = [
   },
 ] as const;
 
+function WorkProjectIndex({ motionEnabled }: { motionEnabled: boolean }) {
+  // Keep the last preview while crossing the gap to its native project link.
+  // Selection lives here so inspecting an image does not rerender the chapters.
+  const [previewProject, setPreviewProject] =
+    useState<(typeof selectedProjects)[number]["id"]>("cirs");
+
+  return (
+    <nav
+      className="work-project-index"
+      aria-label="Explore selected projects"
+      data-preview-mode="shared"
+      data-preview-motion={motionEnabled ? "on" : "off"}
+    >
+      {selectedProjects.map((item, index) => {
+        const asset = projectAssets[item.id];
+        return (
+          <a
+            key={item.id}
+            className={`work-index-entry work-index-${item.id}`}
+            href={`#${item.anchor}`}
+            data-preview-selected={previewProject === item.id || undefined}
+            onMouseEnter={() => setPreviewProject(item.id)}
+            onFocus={() => setPreviewProject(item.id)}
+          >
+            <span className="work-index-number">0{index + 1}</span>
+            <span className="work-index-name">
+              <strong>{item.title}</strong>
+              <span>{item.discipline}</span>
+            </span>
+            <span className="work-index-note">{item.note}</span>
+            {asset.previewUrl && (
+              <span className="work-index-preview" aria-hidden="true">
+                <picture>
+                  {asset.mobilePreviewUrl && (
+                    <source
+                      media="(max-width:767px)"
+                      srcSet={asset.mobilePreviewUrl}
+                    />
+                  )}
+                  <img src={asset.previewUrl} alt="" loading="eager" />
+                </picture>
+                <span>
+                  {item.id === "community"
+                    ? "Website review preview"
+                    : item.id === "accuflow"
+                      ? "Actual prototype capture"
+                      : "Live website capture"}
+                </span>
+              </span>
+            )}
+            <ArrowRight
+              className="work-index-arrow"
+              size={22}
+              aria-hidden="true"
+            />
+          </a>
+        );
+      })}
+    </nav>
+  );
+}
+
 export default function WorkPage({
   onQuick,
   onPage,
@@ -527,53 +589,7 @@ export default function WorkPage({
           </p>
           <span>Three projects. Different purposes.</span>
         </div>
-        <nav
-          className="work-project-index"
-          aria-label="Explore selected projects"
-        >
-          {selectedProjects.map((item, index) => {
-            const asset = projectAssets[item.id];
-            return (
-              <a
-                key={item.id}
-                className={`work-index-entry work-index-${item.id}`}
-                href={`#${item.anchor}`}
-              >
-                <span className="work-index-number">0{index + 1}</span>
-                <span className="work-index-name">
-                  <strong>{item.title}</strong>
-                  <span>{item.discipline}</span>
-                </span>
-                <span className="work-index-note">{item.note}</span>
-                {asset.previewUrl && (
-                  <span className="work-index-preview" aria-hidden="true">
-                    <picture>
-                      {asset.mobilePreviewUrl && (
-                        <source
-                          media="(max-width:767px)"
-                          srcSet={asset.mobilePreviewUrl}
-                        />
-                      )}
-                      <img src={asset.previewUrl} alt="" loading="eager" />
-                    </picture>
-                    <span>
-                      {item.id === "community"
-                        ? "Website review preview"
-                        : item.id === "accuflow"
-                          ? "Actual prototype capture"
-                          : "Live website capture"}
-                    </span>
-                  </span>
-                )}
-                <ArrowRight
-                  className="work-index-arrow"
-                  size={22}
-                  aria-hidden="true"
-                />
-              </a>
-            );
-          })}
-        </nav>
+        <WorkProjectIndex motionEnabled={motionEnabled} />
         <div className="work-page-scroll-note" aria-hidden="true">
           <span>Follow the work</span>
           <span>↓</span>

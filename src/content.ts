@@ -482,8 +482,8 @@ export const creativeMedia: {
     embedUrl:
       "https://drive.google.com/file/d/1zxuYX1UAG8FwYlfYhWP-SAnP4jaRx5MN/preview",
     credits: null,
-    posterUrl: null,
-    caption: "Farewell AA · Watch the film.",
+    posterUrl: "/media/farewell-film-still.jpg",
+    caption: "Farewell AA · 4:18.",
   },
   {
     id: "masquerade-trailer",

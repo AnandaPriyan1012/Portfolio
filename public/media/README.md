@@ -27,11 +27,15 @@ The ambient film loads only on capable fine-pointer desktops with motion enabled
 
 `cirs-reconstructed-concept.png` is the exact supplied concept image. Its visible caption states “Reconstructed concept · Created for this portfolio”; it is not a historical CIRS draft. Original-draft gates in `src/content.ts` remain unchanged. `atlas-*.webp` and `vallalar-language-*.webp` are genuine public interface captures, with exact sources, state and hashes in the respective source manifests.
 
-## Original film still
+## Original film stills
 
-`cck-trailer-still.jpg` is the genuine approved CCK trailer thumbnail, copied byte-for-byte from its public Google Drive preview. It shows an open notebook, desk and hands; no faces are shown. The source film's canonical Drive ID is `1FXMI8GoosQllewx87S8_lJDXRULukrYA` ([preview](https://drive.google.com/file/d/1FXMI8GoosQllewx87S8_lJDXRULukrYA/preview)). The 640 × 360 JPEG is 9,190 bytes, SHA-256 `3b85d6a89f85f618e51739aafcdcd35a76918ab950a46f27b531d3c22a434d9e`. No resizing, cropping, regeneration or colour editing was applied to the file. No transient signed thumbnail URL is stored.
+`cck-trailer-still.jpg` is the actual frame at 0:05 from the approved public CCK trailer ([preview](https://drive.google.com/file/d/1FXMI8GoosQllewx87S8_lJDXRULukrYA/preview)). It shows an open notebook, desk and writing hands; no faces are shown. This clearer frame replaces the earlier dark provider thumbnail. The 640 × 360 JPEG is 34,891 bytes, SHA-256 `f6e48a30129b680660a6423512b8513c4a0d310be1ef5c5fb1b5d167c911e6da`.
 
-The still is served locally in Studio and in the desktop Home Studio preview. It is identified as an actual film still and displayed with `object-fit: contain`; it does not imply final-cut status or any unconfirmed credit. The film itself remains click-to-play in its approved Drive player. Loading the local still makes no background request to Google. No thumbnail is used for Farewell AA because the available thumbnail was entirely black.
+`farewell-film-still.jpg` is the actual frame at 0:05 from the approved public Farewell AA film ([preview](https://drive.google.com/file/d/1zxuYX1UAG8FwYlfYhWP-SAnP4jaRx5MN/preview)). It preserves the original letterboxed montage, including its existing photographic crops and soft edges. No people are identified. The 640 × 360 JPEG is 46,028 bytes, SHA-256 `47c270fc2f27826901933427c3ec3b98602140a1b3dbd073625392f4e24f2d75`. The complete original's verified duration is 258.005333 seconds (4:18).
+
+Both actual frames were decoded from the approved originals, scaled to 640 pixels wide and encoded as JPEGs only. No crop, colour grading, retouching, generated material or added text was applied. Exact source filenames, canonical IDs, source hashes, timestamps, dimensions, processing and duration evidence are in `docs/film-still-sources.json`. No original movie or transient signed URL is included in the repository.
+
+The stills are served locally in Studio, with CCK also used in the desktop Home Studio preview. They are identified as actual film stills and displayed in full with `object-fit: contain`. They imply no final-cut status or unconfirmed production credit. Each film remains click-to-play in its approved Drive player. Loading or selecting a local still makes no background request to Google.
 
 ## Editor notes: missing originals
 
@@ -39,7 +43,7 @@ The still is served locally in Studio and in the desktop Home Studio preview. It
 
 - Vallalar documentary photographs and social-media examples remain unavailable. Its website-preview screenshot is labelled accurately.
 - AccuFlow's exact personal contribution and reflection remain unconfirmed. The actual website prototype establishes its interface and prototype stage.
-- CCK trailer and Farewell AA have approved public Drive players; only CCK currently has a usable genuine still. Masquerade trailer, Vantara, TED-Ed 2026 and CIRSMUN 2026 remain unavailable for playback. Exact contribution credits are still unconfirmed; none are invented. Native video playback requires videoUrl, posterUrl and confirmed credits together.
+- CCK trailer and Farewell AA have approved public Drive players and genuine stills. Masquerade trailer, Vantara, TED-Ed 2026 and CIRSMUN 2026 remain unavailable for playback. Exact contribution credits are still unconfirmed; none are invented. Native video playback requires videoUrl, posterUrl and confirmed credits together.
 - No genuine before/draft images or director's montage have been supplied. Process controls and the director's action remain hidden until those originals exist.
 
 Do not substitute generated work, staged charity imagery or fictional product interfaces for missing originals.

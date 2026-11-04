@@ -1,0 +1,43 @@
+{
+  "date": "2026-11-04",
+  "baseCommit": "10da32e4acc80903b4d13a1291c815ff33b7df0d",
+  "productionBuild": "passed",
+  "chromiumSuite": {
+    "passed": 171,
+    "duration": "4.6 minutes"
+  },
+  "compiled": {
+    "bundle": "index-Ck3j-BvP.js",
+    "css": "index-DqRfaxNC.css",
+    "routes": 8,
+    "featureChecks": 25,
+    "errors": []
+  },
+  "targetedAtmosphereRecheck": {
+    "passed": 4,
+    "duration": "30.3 seconds"
+  },
+  "testHarnessAdjustment": {
+    "before": "Strictly less than one CSS pixel wheel-delta error",
+    "after": "At most one CSS pixel wheel-delta error",
+    "evidence": "Repeated2010\u21922359 after350 wheel following fractional targets. Actual forward/reverse slider thresholds and keyboard assertions unchanged."
+  },
+  "actualProviderCandidateSmoke": {
+    "film": "CCK",
+    "playerCode": "Exact same loading component as integrated release",
+    "timeSeconds": 1.887,
+    "dimensions": [
+      640,
+      360
+    ],
+    "readyState": 4,
+    "totalFrames": 51,
+    "mediaError": null
+  },
+  "iframePolicy": "Unchanged canonical Drive allowlist, sandbox, no-referrer and fullscreen/encrypted-media attributes.",
+  "limits": [
+    "Chromium and simulated phone only, not physical Safari.",
+    "Fixture checks establish UI behavior; actual provider decode is separate.",
+    "Short decode excerpts do not establish whole-film continuity, audible output or real-device smoothness."
+  ]
+}

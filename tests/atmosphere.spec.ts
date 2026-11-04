@@ -43,7 +43,8 @@ async function wheelTo(page: Page, selector: string, offset: number) {
 async function wheelBy(page: Page, distance: number) {
   const before = await page.evaluate(() => scrollY)
   await page.mouse.wheel(0, distance)
-  await expect.poll(async () => Math.abs(await page.evaluate(() => scrollY) - before - distance)).toBeLessThan(1)
+  // A fractional preceding smooth-scroll target can settle on the adjacent CSS pixel.
+  await expect.poll(async () => Math.abs(await page.evaluate(() => scrollY) - before - distance)).toBeLessThanOrEqual(1)
 }
 
 test('Studio room atmosphere loops silently while approved films remain click-to-play', async ({ page }) => {

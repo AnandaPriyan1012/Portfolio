@@ -1,0 +1,87 @@
+{
+  "extractedAt": "2026-11-04T12:59:26.286331+00:00",
+  "scope": "Approved actual-film preview frames only. No original movies, generated images or transient provider URLs are included.",
+  "processing": {
+    "method": "ffmpeg decoding of each approved original at the requested timestamp; scale to 640 pixels wide and JPEG encoding only. Selected candidate JPEG bytes copied unchanged into public/media.",
+    "ffmpegArguments": [
+      "-ss",
+      "5",
+      "-i",
+      "<approved-original>",
+      "-map",
+      "0:v:0",
+      "-frames:v",
+      "1",
+      "-vf",
+      "scale=640:-2",
+      "-q:v",
+      "2",
+      "<candidate.jpg>"
+    ],
+    "crop": false,
+    "colourGrading": false,
+    "retouching": false,
+    "addedText": false,
+    "generatedContent": false,
+    "originalLetterboxingAndMontagePreserved": true
+  },
+  "display": {
+    "objectFit": "contain",
+    "googleRequestsBeforeWatch": false,
+    "nativeMovieCopiesIncluded": false
+  },
+  "frames": [
+    {
+      "filmId": "cck-trailer",
+      "source": {
+        "provider": "Google Drive",
+        "fileId": "1FXMI8GoosQllewx87S8_lJDXRULukrYA",
+        "filename": "Trailer CCK 12th A,B.mp4",
+        "previewUrl": "https://drive.google.com/file/d/1FXMI8GoosQllewx87S8_lJDXRULukrYA/preview",
+        "bytes": 264962400,
+        "sha256": "97841116daa6cc6ea6365c5a03a7180a9c0cd7b39accf292bd246e81a4d8cded",
+        "formatDurationSeconds": 141.696,
+        "videoDurationSeconds": 141.68,
+        "durationEvidence": "ffprobe of the complete size-verified original; originals remain outside the repository."
+      },
+      "requestedTimestampSeconds": 5,
+      "image": {
+        "publicPath": "/media/cck-trailer-still.jpg",
+        "format": "JPEG",
+        "width": 640,
+        "height": 360,
+        "bytes": 34891,
+        "sha256": "f6e48a30129b680660a6423512b8513c4a0d310be1ef5c5fb1b5d167c911e6da"
+      },
+      "observedContent": "Overhead desk/notebook scene with writing hands and stationery.",
+      "people": "No faces visible.",
+      "creditStatus": "Exact contribution credits remain unconfirmed."
+    },
+    {
+      "filmId": "farewell-video",
+      "source": {
+        "provider": "Google Drive",
+        "fileId": "1zxuYX1UAG8FwYlfYhWP-SAnP4jaRx5MN",
+        "filename": "AA.mov",
+        "previewUrl": "https://drive.google.com/file/d/1zxuYX1UAG8FwYlfYhWP-SAnP4jaRx5MN/preview",
+        "bytes": 515069545,
+        "sha256": "416277ca1fdea4b895c8125f53d09833c9904a41423faeae211a5e50ba79aa75",
+        "formatDurationSeconds": 258.005333,
+        "videoDurationSeconds": 258.0,
+        "durationEvidence": "ffprobe of the complete size-verified original; originals remain outside the repository."
+      },
+      "requestedTimestampSeconds": 5,
+      "image": {
+        "publicPath": "/media/farewell-film-still.jpg",
+        "format": "JPEG",
+        "width": 640,
+        "height": 360,
+        "bytes": 46028,
+        "sha256": "47c270fc2f27826901933427c3ec3b98602140a1b3dbd073625392f4e24f2d75"
+      },
+      "observedContent": "Letterboxed collage of classroom/social portraits, clearer central images and blurred outer images.",
+      "people": "People appear in the original montage; no identities or roles are inferred.",
+      "creditStatus": "Exact contribution credits remain unconfirmed."
+    }
+  ]
+}

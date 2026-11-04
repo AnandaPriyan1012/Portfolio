@@ -2,6 +2,9 @@
   width: 100%;
   min-width: 0;
 }
+.drive-film-viewport {
+  position: relative;
+}
 .drive-film-frame {
   position: relative;
   width: 100%;
@@ -18,6 +21,49 @@
   width: 100%;
   height: 100%;
   border: 0;
+}
+.drive-film-frame iframe[inert] {
+  pointer-events: none;
+}
+.drive-film-status {
+  position: absolute;
+  inset: 1px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin: 0;
+  padding: 20px;
+  background: radial-gradient(ellipse at top, #d2b97e12, transparent 70%), #080c0c;
+  color: #e2cc9b;
+  font-size: 13px;
+  line-height: 1.6;
+  text-align: center;
+}
+.drive-film-loading-mark {
+  width: 42px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #e2cc9b, transparent);
+}
+.drive-film-status[data-frame-opened="true"] {
+  inset: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  padding: 0;
+  border: 0;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.drive-film-status[data-taking-longer="true"][data-frame-opened="false"] {
+  position: static;
+  align-items: flex-start;
+  padding: 12px 0 0;
+  background: none;
+  text-align: left;
+  font-size: 12px;
 }
 .drive-film-help {
   display: flex;
@@ -58,8 +104,15 @@
     border-color: CanvasText;
   }
   .drive-film-help p,
-  .drive-film-help a {
+  .drive-film-help a,
+  .drive-film-status {
     color: CanvasText;
+  }
+  .drive-film-status {
+    background: Canvas;
+  }
+  .drive-film-loading-mark {
+    background: CanvasText;
   }
   .drive-film-help a:focus-visible {
     outline-color: Highlight;

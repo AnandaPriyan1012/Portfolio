@@ -1,0 +1,468 @@
+{
+  "base": "http://127.0.0.1:5174",
+  "phase": "compiled",
+  "bundle": "index-Ck3j-BvP.js",
+  "date": "2026-11-04T13:30:51.319Z",
+  "routes": [
+    {
+      "path": "/",
+      "width": 1440,
+      "status": 200,
+      "heading": "Ananda\nPriyan",
+      "scrollWidth": 1440
+    },
+    {
+      "path": "/work",
+      "width": 1440,
+      "status": 200,
+      "heading": "Selected work.",
+      "scrollWidth": 1440
+    },
+    {
+      "path": "/studio",
+      "width": 1440,
+      "status": 200,
+      "heading": "The screening room.",
+      "scrollWidth": 1440
+    },
+    {
+      "path": "/about",
+      "width": 1440,
+      "status": 200,
+      "heading": "There’s a person\nbehind every project.",
+      "scrollWidth": 1440
+    },
+    {
+      "path": "/",
+      "width": 390,
+      "status": 200,
+      "heading": "Ananda\nPriyan",
+      "scrollWidth": 390
+    },
+    {
+      "path": "/work",
+      "width": 390,
+      "status": 200,
+      "heading": "Selected work.",
+      "scrollWidth": 390
+    },
+    {
+      "path": "/studio",
+      "width": 390,
+      "status": 200,
+      "heading": "The screening room.",
+      "scrollWidth": 390
+    },
+    {
+      "path": "/about",
+      "width": 390,
+      "status": 200,
+      "heading": "There’s a person\nbehind every project.",
+      "scrollWidth": 390
+    }
+  ],
+  "checks": [
+    {
+      "name": "Desktop shared editorial preview remains stable, keyboard-selectable and persistent",
+      "initialHeight": 336,
+      "observations": [
+        {
+          "id": "cirs",
+          "persistentAfterLeaving": true,
+          "visiblePanels": 1
+        },
+        {
+          "id": "community",
+          "persistentAfterLeaving": true,
+          "visiblePanels": 1
+        },
+        {
+          "id": "accuflow",
+          "persistentAfterLeaving": true,
+          "visiblePanels": 1
+        }
+      ]
+    },
+    {
+      "name": "All three shared preview images follow native project anchors",
+      "native": [
+        {
+          "id": "cirs",
+          "href": "#cirs",
+          "imageIsNativeLink": true
+        },
+        {
+          "id": "community",
+          "href": "#community",
+          "imageIsNativeLink": true
+        },
+        {
+          "id": "accuflow",
+          "href": "#accuflow",
+          "imageIsNativeLink": true
+        }
+      ]
+    },
+    {
+      "name": "Home actual CCK peek adds no directory height",
+      "height": 2391
+    },
+    {
+      "name": "Two approved local 5-second stills 1440px; complete frames before Watch",
+      "frames": [
+        {
+          "title": "CCK trailer",
+          "path": "/media/cck-trailer-still.jpg",
+          "duration": "2:22",
+          "width": 640,
+          "height": 360,
+          "fit": "contain",
+          "filter": "none",
+          "mask": "none",
+          "transform": "none",
+          "opacity": "1"
+        },
+        {
+          "title": "Farewell video",
+          "path": "/media/farewell-film-still.jpg",
+          "duration": "4:18",
+          "width": 640,
+          "height": 360,
+          "fit": "contain",
+          "filter": "none",
+          "mask": "none",
+          "transform": "none",
+          "opacity": "1"
+        }
+      ],
+      "backgroundGoogleRequests": []
+    },
+    {
+      "name": "Admissions native notes and exact capture coordinates at1440px",
+      "controls": "Overlay above captured heading",
+      "notes": [
+        {
+          "id": "portal",
+          "sourceBounds": [
+            118,
+            799,
+            230,
+            53
+          ],
+          "frame": {
+            "x": 471.359375,
+            "y": 628.90625,
+            "width": 149.234375,
+            "height": 34.390625
+          }
+        },
+        {
+          "id": "process",
+          "sourceBounds": [
+            376,
+            813,
+            177,
+            27
+          ],
+          "frame": {
+            "x": 638.765625,
+            "y": 638,
+            "width": 114.84375,
+            "height": 17.515625
+          }
+        },
+        {
+          "id": "enquiries",
+          "sourceBounds": [
+            117,
+            881,
+            961,
+            95
+          ],
+          "frame": {
+            "x": 470.703125,
+            "y": 682.125,
+            "width": 623.578125,
+            "height": 61.640625
+          }
+        }
+      ],
+      "stableHeight": 711.484375,
+      "quiet": false
+    },
+    {
+      "name": "Case arrow single-instance lifecycle and native cleanup across cases/back/Work",
+      "passed": true
+    },
+    {
+      "name": "Contact anchor keyboard h2→email→card 1440px",
+      "passed": true
+    },
+    {
+      "name": "Missing/outside-main/malformed hashes fall back safely; About anchor targets section",
+      "passed": true
+    },
+    {
+      "name": "Player honest initial/real 8-second delayed status, fallback and restored focus 1440px",
+      "initialProviderRequests": 0,
+      "delayObservedMilliseconds": 8022,
+      "requests": [
+        "https://drive.google.com/file/d/1FXMI8GoosQllewx87S8_lJDXRULukrYA/preview",
+        "https://drive.google.com/file/d/1zxuYX1UAG8FwYlfYhWP-SAnP4jaRx5MN/preview"
+      ],
+      "fixtureOnly": true,
+      "filmDecodeClaim": false
+    },
+    {
+      "name": "Two approved local 5-second stills 390px; complete frames before Watch",
+      "frames": [
+        {
+          "title": "CCK trailer",
+          "path": "/media/cck-trailer-still.jpg",
+          "duration": "2:22",
+          "width": 640,
+          "height": 360,
+          "fit": "contain",
+          "filter": "none",
+          "mask": "none",
+          "transform": "none",
+          "opacity": "1"
+        },
+        {
+          "title": "Farewell video",
+          "path": "/media/farewell-film-still.jpg",
+          "duration": "4:18",
+          "width": 640,
+          "height": 360,
+          "fit": "contain",
+          "filter": "none",
+          "mask": "none",
+          "transform": "none",
+          "opacity": "1"
+        }
+      ],
+      "backgroundGoogleRequests": []
+    },
+    {
+      "name": "Admissions native notes and exact capture coordinates at390px",
+      "controls": "Above entire capture",
+      "notes": [
+        {
+          "id": "portal",
+          "sourceBounds": [
+            118,
+            799,
+            230,
+            53
+          ],
+          "frame": {
+            "x": 57.359375,
+            "y": 361.109375,
+            "width": 52.578125,
+            "height": 12.109375
+          }
+        },
+        {
+          "id": "process",
+          "sourceBounds": [
+            376,
+            813,
+            177,
+            27
+          ],
+          "frame": {
+            "x": 116.34375,
+            "y": 364.3125,
+            "width": 40.453125,
+            "height": 6.171875
+          }
+        },
+        {
+          "id": "enquiries",
+          "sourceBounds": [
+            117,
+            881,
+            961,
+            95
+          ],
+          "frame": {
+            "x": 57.125,
+            "y": 379.84375,
+            "width": 219.703125,
+            "height": 21.703125
+          }
+        }
+      ],
+      "stableHeight": 421,
+      "quiet": true
+    },
+    {
+      "name": "Contact anchor keyboard h2→email→card 390px",
+      "passed": true
+    },
+    {
+      "name": "Player honest initial status, fallback and restored focus 390px",
+      "initialProviderRequests": 0,
+      "delayObservedMilliseconds": null,
+      "requests": [
+        "https://drive.google.com/file/d/1FXMI8GoosQllewx87S8_lJDXRULukrYA/preview",
+        "https://drive.google.com/file/d/1zxuYX1UAG8FwYlfYhWP-SAnP4jaRx5MN/preview"
+      ],
+      "fixtureOnly": true,
+      "filmDecodeClaim": false
+    },
+    {
+      "name": "390px coarse original three thumbnails and native links",
+      "widths": [
+        90,
+        90,
+        90
+      ]
+    },
+    {
+      "name": "1024px coarse original three thumbnails and native links",
+      "widths": [
+        148,
+        148,
+        148
+      ]
+    },
+    {
+      "name": "Both served posters exactly match approved unchanged 5-second-frame manifest",
+      "observations": [
+        {
+          "filmId": "cck-trailer",
+          "path": "/media/cck-trailer-still.jpg",
+          "bytes": 34891,
+          "sha256": "f6e48a30129b680660a6423512b8513c4a0d310be1ef5c5fb1b5d167c911e6da",
+          "sourceTimestamp": 5
+        },
+        {
+          "filmId": "farewell-video",
+          "path": "/media/farewell-film-still.jpg",
+          "bytes": 46028,
+          "sha256": "47c270fc2f27826901933427c3ec3b98602140a1b3dbd073625392f4e24f2d75",
+          "sourceTimestamp": 5
+        }
+      ]
+    },
+    {
+      "name": "Admissions user-motion-off usable and aligned",
+      "passed": true
+    },
+    {
+      "name": "Admissions light usable and aligned",
+      "passed": true
+    },
+    {
+      "name": "Admissions forced-colors usable and aligned",
+      "passed": true
+    },
+    {
+      "name": "Reserved lazy next image cirs→community 1440px",
+      "before": {
+        "height": 344,
+        "imgHeight": 268,
+        "closingTop": 4585.71875
+      },
+      "after": {
+        "height": 344,
+        "imgHeight": 268,
+        "closingTop": 4585.71875
+      },
+      "delta": 0
+    },
+    {
+      "name": "Reserved lazy next image community→accuflow 1440px",
+      "before": {
+        "height": 344,
+        "imgHeight": 268,
+        "closingTop": 3021.453125
+      },
+      "after": {
+        "height": 344,
+        "imgHeight": 268,
+        "closingTop": 3021.453125
+      },
+      "delta": 0
+    },
+    {
+      "name": "Reserved lazy next image accuflow→cirs 1440px",
+      "before": {
+        "height": 344,
+        "imgHeight": 268,
+        "closingTop": 3333.734375
+      },
+      "after": {
+        "height": 344,
+        "imgHeight": 268,
+        "closingTop": 3333.734375
+      },
+      "delta": 0
+    },
+    {
+      "name": "Reserved lazy next image cirs→community 390px",
+      "before": {
+        "height": 508.984375,
+        "imgHeight": 200.203125,
+        "closingTop": 5069
+      },
+      "after": {
+        "height": 508.984375,
+        "imgHeight": 200.203125,
+        "closingTop": 5069
+      },
+      "delta": 0
+    },
+    {
+      "name": "Reserved lazy next image community→accuflow 390px",
+      "before": {
+        "height": 475.984375,
+        "imgHeight": 200.203125,
+        "closingTop": 3912.015625
+      },
+      "after": {
+        "height": 475.984375,
+        "imgHeight": 200.203125,
+        "closingTop": 3912.015625
+      },
+      "delta": 0
+    },
+    {
+      "name": "Reserved lazy next image accuflow→cirs 390px",
+      "before": {
+        "height": 452.59375,
+        "imgHeight": 200.203125,
+        "closingTop": 3863.40625
+      },
+      "after": {
+        "height": 452.59375,
+        "imgHeight": 200.203125,
+        "closingTop": 3863.40625
+      },
+      "delta": 0
+    }
+  ],
+  "errors": [],
+  "networkFailures": [],
+  "scope": "Compiled/UI behavior, including real 8-second held iframe feedback with isolated documents. Actual provider playback is investigated separately; this script does not claim movie decoding.",
+  "screenshots": [
+    "/workspace/cycle-four-release-review/compiled-home-1440.png",
+    "/workspace/cycle-four-release-review/compiled-work-1440.png",
+    "/workspace/cycle-four-release-review/compiled-studio-1440.png",
+    "/workspace/cycle-four-release-review/compiled-about-1440.png",
+    "/workspace/cycle-four-release-review/compiled-work-editorial-cirs.png",
+    "/workspace/cycle-four-release-review/compiled-work-editorial-community.png",
+    "/workspace/cycle-four-release-review/compiled-work-editorial-accuflow.png",
+    "/workspace/cycle-four-release-review/compiled-cck-actual-still-1440.png",
+    "/workspace/cycle-four-release-review/compiled-farewell-actual-still-1440.png",
+    "/workspace/cycle-four-release-review/compiled-drive-eight-second-feedback-1440.png",
+    "/workspace/cycle-four-release-review/compiled-home-390.png",
+    "/workspace/cycle-four-release-review/compiled-work-390.png",
+    "/workspace/cycle-four-release-review/compiled-studio-390.png",
+    "/workspace/cycle-four-release-review/compiled-about-390.png",
+    "/workspace/cycle-four-release-review/compiled-cck-actual-still-390.png",
+    "/workspace/cycle-four-release-review/compiled-farewell-actual-still-390.png"
+  ],
+  "status": "passed"
+}
