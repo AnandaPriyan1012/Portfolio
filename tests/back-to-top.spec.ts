@@ -29,7 +29,9 @@ async function firstPageAction(page: Page, route: string): Promise<Locator> {
   if (route === '/work') return page.locator('.work-index-cirs')
   if (route === '/studio') return page.getByRole('button', { name: 'Play selected film: CCK trailer', exact: true })
   const signature = page.locator('.about-identity-signature button')
-  return await signature.count() ? signature : page.getByRole('tab', { name: 'Builder', exact: true })
+  if (await signature.count()) return signature
+  const origin = page.locator('.about-origins a[href="/projects/cirs"]')
+  return await origin.count() ? origin : page.getByRole('tab', { name: 'Builder', exact: true })
 }
 
 async function recordNavigation(page: Page) {

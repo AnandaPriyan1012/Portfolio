@@ -9,6 +9,7 @@ import { aboutLanes, creativeMedia, projectAssets } from "../content";
 import { hasApprovedNativePlayback } from "../media-readiness";
 import { isApprovedDriveEmbed } from "./DriveFilmPlayer";
 import InteractiveSignature from "./InteractiveSignature";
+import AboutOrigins from "./AboutOrigins";
 
 type Source = {
   id: string;
@@ -121,7 +122,7 @@ export default function AboutIdentity({
   selected: string;
   onSelect: (id: string) => void;
   motionEnabled: boolean;
-  onNavigate?: (path: string) => void;
+  onNavigate?: (path: string, originAnchor?: HTMLAnchorElement) => void;
 }) {
   const active = aboutLanes.find((lane) => lane.id === selected) ?? aboutLanes[0];
   const [sources, setSources] = useState(readSourceChoices);
@@ -214,7 +215,7 @@ export default function AboutIdentity({
     if (!onNavigate || event.defaultPrevented || event.button !== 0 ||
       event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     event.preventDefault();
-    onNavigate(path);
+    onNavigate(path, event.currentTarget);
   }
   function link(path: string, label: string) {
     return <a href={path} onClick={(event) => navigate(event, path)}>{label}</a>;
@@ -232,6 +233,9 @@ export default function AboutIdentity({
           <InteractiveSignature enabled={motionEnabled && !forcedColors} />
         </div>
       </header>
+
+      <AboutOrigins motionEnabled={motionEnabled}
+        onProject={onNavigate ? (id, anchor) => onNavigate(`/projects/${id}`, anchor) : undefined} />
 
       <section id="about" className="about-identity-interests" ref={scene} aria-labelledby="about-interests-heading" data-transition="static" data-lane={active.id}>
         <h2 id="about-interests-heading">Code, film &amp; freestyle.</h2>

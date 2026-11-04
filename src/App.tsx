@@ -108,14 +108,14 @@ function readHistoryPositions(initial: HistoryPosition) {
   return entries;
 }
 
-function historyFocus(): HistoryFocus | undefined {
-  const active = document.activeElement;
-  if (!(active instanceof HTMLAnchorElement) || !active.closest("main")) return;
+function historyFocus(active: Element | null = document.activeElement): HistoryFocus | undefined {
+  if (!(active instanceof HTMLAnchorElement) || !document.querySelector("main")?.contains(active)) return;
   const href = active.getAttribute("href");
   if (!href) return;
   const peers = [...document.querySelectorAll<HTMLAnchorElement>("main a[href]")]
     .filter((link) => link.getAttribute("href") === href);
-  return { href, occurrence: peers.indexOf(active) };
+  const occurrence = peers.indexOf(active);
+  if (occurrence >= 0) return { href, occurrence };
 }
 
 function restoreHistoryFocus(origin?: HistoryFocus) {
@@ -124,8 +124,10 @@ function restoreHistoryFocus(origin?: HistoryFocus) {
     .filter((link) => link.getAttribute("href") === origin.href)[origin.occurrence];
   const bounds = target?.getBoundingClientRect();
   // Only the exact native origin in the restored viewport can take focus.
-  if (target && bounds && bounds.height > 0 && bounds.bottom > 0 && bounds.top < innerHeight)
+  if (target && bounds && bounds.height > 0 && bounds.bottom > 0 && bounds.top < innerHeight) {
     target.focus({ preventScroll: true });
+    return document.activeElement === target;
+  }
 }
 
 function readStorage(key: string, fallback: string) {
@@ -518,7 +520,7 @@ export default function App() {
   const navigationSequence = useRef(0);
   const historyIntent = useRef<{ sequence: number; cancelled: boolean } | null>(null);
 
-  const caseReturn = useRef<{ path: string; top: number; originHref?: string; originToken?: string }>({ path: "/work", top: 0 });
+  const caseReturn = useRef<{ path: string; top: number; originHref?: string; originToken?: string; originFocus?: HistoryFocus }>({ path: "/work", top: 0 });
   const currentProject = projects.find(
     (project) => route === `/projects/${project.id}`,
   );
@@ -704,7 +706,7 @@ export default function App() {
     window.addEventListener("keydown", close);
     return () => window.removeEventListener("keydown", close);
   }, [menuOpen]);
-  function focusDestination(originHref?: string, originToken?: string) {
+  function focusDestination(originHref?: string, originToken?: string, originFocus?: HistoryFocus) {
     const main = document.querySelector("main");
     if (originToken === "tour-launcher") {
       const origin = document.querySelector<HTMLElement>('[data-navigation-origin="tour-launcher"]');
@@ -722,9 +724,10 @@ export default function App() {
         return;
       }
     }
-    // Return to the exact native project link used in Work or About. Ordinary
-    // page/hash navigation retains its heading or summary focus.
-    if (originHref && main && ["about", "work"].includes(main.dataset.page ?? "") && !window.location.hash) {
+    if (originFocus && !window.location.hash && restoreHistoryFocus(originFocus)) return;
+    // Legacy/programmatic origins retain their existing project-link fallback.
+    // A missing exact native origin must not select a different duplicate.
+    if (!originFocus && originHref && main && ["about", "work"].includes(main.dataset.page ?? "") && !window.location.hash) {
       const links = main.dataset.page === "about" ? ".about-identity-links a" : ".work-page a[href]";
       const origin = [...main.querySelectorAll<HTMLAnchorElement>(links)]
         .find((link) => link.getAttribute("href") === originHref);
@@ -758,7 +761,7 @@ export default function App() {
       focusTarget.focus({ preventScroll: true });
     }
   }
-  function navigate(destination: string, restoreTop = 0, originHref?: string, originToken?: string) {
+  function navigate(destination: string, restoreTop = 0, originHref?: string, originToken?: string, originFocus?: HistoryFocus) {
     const next = destination.split("#")[0].replace(/\/+$/, "") || "/";
     saveHistoryPosition();
     historyIntent.current = null;
@@ -779,11 +782,17 @@ export default function App() {
       // A tour return retains the film fragment as selection state while
       // restoring the footer. Ordinary fragment links still reach their anchor.
       const returningToTour = originToken === "tour-launcher";
-      if (window.location.hash && !returningToTour) storyMotion.scrollTo(window.location.hash);
-      else storyMotion.restoreTo(restoreTop, next, originToken ? () => {
-        if (sequence === navigationSequence.current) focusDestination(undefined, originToken);
+      const restoringOrigin = Boolean(originToken || originFocus);
+      if (window.location.hash && !returningToTour) {
+        // Selecting another lane changes its height and refreshes the layout.
+        // A direct same-page handoff survives that refresh on native scrollers.
+        const laneHandoff = next === route && next === "/about" && window.location.hash === "#about";
+        storyMotion.scrollTo(window.location.hash, { immediate: laneHandoff });
+      }
+      else storyMotion.restoreTo(restoreTop, next, restoringOrigin ? () => {
+        if (sequence === navigationSequence.current) focusDestination(originHref, originToken, originFocus);
       } : undefined, { preserveHash: returningToTour });
-      if (!originToken || (window.location.hash && !returningToTour)) focusDestination(originHref);
+      if (!restoringOrigin || (window.location.hash && !returningToTour)) focusDestination(originHref);
     });
   }
   function navigateSection(id: string) {
@@ -802,20 +811,24 @@ export default function App() {
     activeHistory.current = position;
     saveHistoryPosition(false);
   }
-  function page(id: Project["id"], aboutHref?: string, originToken?: string) {
+  function page(id: Project["id"], aboutHref?: string, originToken?: string, actualOriginAnchor?: HTMLAnchorElement) {
     const focused = document.activeElement;
     const workHref = route === "/work" && focused instanceof HTMLAnchorElement &&
       focused.closest(".work-page") && focused.getAttribute("href") === `/projects/${id}`
       ? focused.getAttribute("href")! : undefined;
     const originHref = route === "/about" ? aboutHref : workHref;
+    const nativeOrigin = ["/about", "/work"].includes(route)
+      ? historyFocus(actualOriginAnchor ?? focused) : undefined;
+    const originFocus = nativeOrigin?.href === `/projects/${id}` ? nativeOrigin : undefined;
     caseReturn.current = { path: originToken === "tour-launcher" ? `${route}${window.location.hash}` : route,
       top: scrollY, ...(originHref ? { originHref } : {}),
+      ...(originFocus ? { originFocus } : {}),
       ...((route === "/" && (originToken === "selected-preview" || originToken === "cirs-scene")) ||
         (mainRoutes.includes(route) && originToken === "tour-launcher") ? { originToken } : {}) };
     navigate(`/projects/${id}`);
   }
   function home() {
-    navigate(caseReturn.current.path, caseReturn.current.top, caseReturn.current.originHref, caseReturn.current.originToken);
+    navigate(caseReturn.current.path, caseReturn.current.top, caseReturn.current.originHref, caseReturn.current.originToken, caseReturn.current.originFocus);
   }
   function quick(id: Project["id"]) {
     setOsOpen(false);
@@ -1002,9 +1015,9 @@ export default function App() {
               selected={lane}
               onSelect={setLane}
               motionEnabled={preferences.motion}
-              onNavigate={(path) => {
+              onNavigate={(path, originAnchor?: HTMLAnchorElement) => {
                 const target = projects.find((item) => path === `/projects/${item.id}`);
-                if (target) page(target.id, path);
+                if (target) page(target.id, path, undefined, originAnchor);
                 else navigate(path);
               }}
             />
