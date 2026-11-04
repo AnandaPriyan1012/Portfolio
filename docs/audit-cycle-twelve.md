@@ -38,15 +38,26 @@ other calls unchanged. No completion-time focus retry can override a visitor's
 next key. Native modified/middle activation, history and current film fragments
 are preserved, and the separate case-study footer remains untouched.
 
+Public verification exposed a native-focus race that the first local run did
+not catch: focus could scroll to the footer before Lenis consumed the scroll
+event, leaving its cached target at zero. A top request could then be ignored as
+redundant. The numeric scroll path now refreshes Lenis's dimensions and actual
+position before requesting a target, as the existing element path already did.
+Two same-task native focus/activation regressions reproduced both failures before
+the correction. The public failure evidence is retained with the release checks.
+
 All exact AP assets, original films and C11 frame derivatives, approved
 source gates, Gaurav qualifications and private-source exclusions remain. No new
 media or dependencies were introduced. The prior Library materialization HTTP
 401 was not retried and no Drive sharing changed.
 
-Validation passed: 130 combined checks, the final build/typecheck, three cache
-checks and the existing original-film/frame integrity checker. Independent
-compiled review passed nine visual/status/dialog flows and twelve Back-to-top
-flows across 1440, 390 and 320px. The corrected light brief sampled at least
+The initial 130 combined checks passed. After the public race correction, all
+74 focused navigation, Back-to-top, history and scroll-scene checks passed,
+including the two regressions that failed before the fix. The final
+build/typecheck, three cache checks and original-film/frame integrity checker
+passed. Independent fixed-build review passed twelve Back-to-top flows and four
+repeated trusted-input timing probes; the nine visual/status/dialog flows retain
+the same verified CSS. The corrected light brief sampled at least
 5.31:1 against its rendered backgrounds; the opened study's description and
 controls sampled above 7:1. Other dark project briefs retain their contrast.
 

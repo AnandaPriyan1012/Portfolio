@@ -53,6 +53,31 @@ async function activate(page: Page) {
   return destination
 }
 
+test.describe('native focus before the smooth-scroller scroll event', () => {
+  test.use({ reducedMotion: 'no-preference' })
+  for (const route of ['/', '/work']) test(`${route} honors a same-turn footer focus and activation from a cached top position`, async ({ page }) => {
+    await ready(page, route)
+    await expect(page.locator('main')).toHaveAttribute('data-scroll-engine', 'gsap-lenis')
+    await expect.poll(() => page.evaluate(() => scrollY)).toBeLessThan(4)
+    // Native focus can move the viewport before the browser delivers its scroll
+    // event. Exercise that real DOM sequence in one task, without changing any
+    // library internals or waiting for an event that hides the race.
+    const result = await page.getByRole('link', { name: 'Back to top', exact: true }).evaluate(node => {
+      const link = node as HTMLAnchorElement
+      link.focus()
+      const before = scrollY
+      link.click()
+      return { before, after: scrollY, inMain: Boolean(document.activeElement?.closest('main')) }
+    })
+    expect(result.before).toBeGreaterThan(500)
+    expect(result.after).toBeLessThan(4)
+    expect(result.inMain).toBe(true)
+    await page.keyboard.press('Tab')
+    expect(await page.evaluate(() => Boolean(document.activeElement?.closest('main')))).toBe(true)
+    expect(await page.evaluate(() => Boolean(document.activeElement?.closest('footer')))).toBe(false)
+  })
+})
+
 for (const variant of variants) test.describe(`${variant.width}px ${variant.motion} Back to top`, () => {
   test.use({ viewport: { width: variant.width, height: variant.height }, hasTouch: variant.touch,
     isMobile: variant.touch, reducedMotion: variant.motion })

@@ -1034,9 +1034,12 @@ export default function useScrollStory({ root, enabled, route }: Options) {
     (target: ScrollTarget, options?: { immediate?: boolean }) => {
       const lenis = lenisRef.current;
       if (lenis) {
-        if (typeof target === "number")
+        if (typeof target === "number") {
+          // Native focus may have scrolled before its scroll event arrives.
+          // Sync the real position before Lenis compares its cached target.
+          lenis.resize();
           lenis.scrollTo(target, { duration: 0.85, immediate: options?.immediate });
-        else {
+        } else {
           let destination: Element | null =
             target instanceof Element ? target : null;
           if (typeof target === "string") {
