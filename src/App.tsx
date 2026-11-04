@@ -75,6 +75,58 @@ function normalizedPath() {
   return path;
 }
 
+type HistoryFocus = { href: string; occurrence: number };
+type HistoryPosition = { key: string; url: string; top: number; focus?: HistoryFocus };
+const historyStateKey = "apPortfolioPosition";
+const historyCacheKey = "ap-history-positions-v1";
+
+function historyPosition(): HistoryPosition {
+  const url = `${location.pathname}${location.hash}`;
+  const saved = history.state?.[historyStateKey] as HistoryPosition | undefined;
+  if (saved && typeof saved.key === "string" && saved.url === url && Number.isFinite(saved.top))
+    return saved;
+  const position = { key: crypto.randomUUID(), url, top: window.scrollY };
+  history.replaceState({ ...history.state, [historyStateKey]: position }, "");
+  return position;
+}
+
+function readHistoryPositions(initial: HistoryPosition) {
+  const entries = new Map<string, HistoryPosition>();
+  try {
+    const saved: unknown = JSON.parse(sessionStorage.getItem(historyCacheKey) ?? "[]");
+    if (Array.isArray(saved)) saved.slice(-64).forEach((item) => {
+      if (!item || typeof item.key !== "string" || typeof item.url !== "string" ||
+          !item.url.startsWith("/") || !Number.isFinite(item.top)) return;
+      const focus = item.focus && typeof item.focus.href === "string" &&
+        Number.isInteger(item.focus.occurrence) && item.focus.occurrence >= 0
+        ? { href: item.focus.href, occurrence: item.focus.occurrence } : undefined;
+      entries.set(item.key, { key: item.key, url: item.url, top: Math.max(0, item.top), focus });
+    });
+  } catch { /* Optional session history must not prevent navigation. */ }
+  if (!entries.has(initial.key)) entries.set(initial.key, initial);
+  return entries;
+}
+
+function historyFocus(): HistoryFocus | undefined {
+  const active = document.activeElement;
+  if (!(active instanceof HTMLAnchorElement) || !active.closest("main")) return;
+  const href = active.getAttribute("href");
+  if (!href) return;
+  const peers = [...document.querySelectorAll<HTMLAnchorElement>("main a[href]")]
+    .filter((link) => link.getAttribute("href") === href);
+  return { href, occurrence: peers.indexOf(active) };
+}
+
+function restoreHistoryFocus(origin?: HistoryFocus) {
+  if (!origin) return;
+  const target = [...document.querySelectorAll<HTMLAnchorElement>("main a[href]")]
+    .filter((link) => link.getAttribute("href") === origin.href)[origin.occurrence];
+  const bounds = target?.getBoundingClientRect();
+  // Only the exact native origin in the restored viewport can take focus.
+  if (target && bounds && bounds.height > 0 && bounds.bottom > 0 && bounds.top < innerHeight)
+    target.focus({ preventScroll: true });
+}
+
 function readStorage(key: string, fallback: string) {
   try {
     return localStorage.getItem(key) ?? fallback;
@@ -438,6 +490,17 @@ export default function App() {
   const [question, setQuestion] = useState<string | null>(null);
   const [route, setRoute] = useState(normalizedPath());
   const { visitedPaths, resetVisits } = useVisitTrail(route);
+  const [initialNavigation] = useState(() => {
+    const entry = historyPosition();
+    const positions = readHistoryPositions(entry);
+    return { entry: positions.get(entry.key)!, positions };
+  });
+  const initialHistory = initialNavigation.entry;
+  const activeHistory = useRef(initialHistory);
+  const historyPositions = useRef(initialNavigation.positions);
+  const navigationSequence = useRef(0);
+  const historyIntent = useRef<{ sequence: number; cancelled: boolean } | null>(null);
+
   const caseReturn = useRef<{ path: string; top: number; aboutHref?: string }>({ path: "/work", top: 0 });
   const currentProject = projects.find(
     (project) => route === `/projects/${project.id}`,
@@ -484,8 +547,59 @@ export default function App() {
   const contactReady = Boolean(
     copy.contact.email || copy.contact.socials.length,
   );
+  function saveHistoryPosition(persist = true) {
+    const position = { ...activeHistory.current, top: window.scrollY, focus: historyFocus() };
+    historyPositions.current.set(position.key, position);
+    // Keep the cache bounded by history entries, rather than by pathname: two
+    // visits to Studio can have different positions and native origin links.
+    if (historyPositions.current.size > 64)
+      historyPositions.current.delete(historyPositions.current.keys().next().value!);
+    if (persist && history.state?.[historyStateKey]?.key === position.key)
+      history.replaceState({ ...history.state, [historyStateKey]: position }, "");
+    try {
+      // Preserve newer positions of Forward entries across a reload of an
+      // earlier entry. No scroll polling, retry timers or per-frame writes.
+      sessionStorage.setItem(historyCacheKey, JSON.stringify([...historyPositions.current.values()]));
+    } catch { /* History still works within this document without storage. */ }
+  }
+  useLayoutEffect(() => {
+    const previous = history.scrollRestoration;
+    history.scrollRestoration = "manual";
+    // A reload can reuse this entry's own position. Fresh hash links retain
+    // the existing anchor coordinator and its loading/layout correction.
+    if (!location.hash && initialHistory.top > 0)
+      storyMotion.restoreTo(initialHistory.top, route);
+    const save = () => saveHistoryPosition();
+    const cancelRestore = () => {
+      if (historyIntent.current) historyIntent.current.cancelled = true;
+    };
+    window.addEventListener("wheel", cancelRestore, { passive: true });
+    window.addEventListener("touchstart", cancelRestore, { passive: true });
+    window.addEventListener("pointerdown", cancelRestore, { passive: true });
+    window.addEventListener("keydown", cancelRestore);
+    window.addEventListener("pagehide", save);
+    window.addEventListener("beforeunload", save);
+    return () => {
+      history.scrollRestoration = previous;
+      window.removeEventListener("wheel", cancelRestore);
+      window.removeEventListener("touchstart", cancelRestore);
+      window.removeEventListener("pointerdown", cancelRestore);
+      window.removeEventListener("keydown", cancelRestore);
+      window.removeEventListener("pagehide", save);
+      window.removeEventListener("beforeunload", save);
+    };
+  }, []);
   useEffect(() => {
     const back = () => {
+      // popstate has already selected the destination entry, so preserve the
+      // outgoing entry in memory before pin cleanup changes its native Y.
+      saveHistoryPosition(false);
+      const entry = historyPosition();
+      const saved = historyPositions.current.get(entry.key) ?? entry;
+      activeHistory.current = saved;
+      const sequence = ++navigationSequence.current;
+      const intent = { sequence, cancelled: false };
+      historyIntent.current = intent;
       const next = normalizedPath();
       if (next !== route) storyMotion.beforeNavigate();
       setRoute(next);
@@ -493,10 +607,32 @@ export default function App() {
       setMenuOpen(false);
       setOsOpen(false);
       setTourOpen(false);
+      requestAnimationFrame(() => {
+        if (sequence !== navigationSequence.current || activeHistory.current.key !== saved.key || intent.cancelled) return;
+        if (location.hash) {
+          historyIntent.current = null;
+          if (next.startsWith("/projects/")) {
+            // Keep the reader's native section focus and CSS scroll margin.
+            // A late smooth scroll must not overwrite the next reading move.
+            try {
+              document.getElementById(decodeURIComponent(location.hash.slice(1)))
+                ?.scrollIntoView({ behavior: "instant" });
+            } catch { /* Invalid fragments retain the current reading position. */ }
+          } else {
+            storyMotion.scrollTo(location.hash);
+            focusDestination();
+          }
+        } else storyMotion.restoreTo(saved.top, next, () => {
+          if (sequence === navigationSequence.current && activeHistory.current.key === saved.key && !intent.cancelled) {
+            historyIntent.current = null;
+            restoreHistoryFocus(saved.focus);
+          }
+        });
+      });
     };
     window.addEventListener("popstate", back);
     return () => window.removeEventListener("popstate", back);
-  }, [route, storyMotion.beforeNavigate]);
+  }, [route, storyMotion.beforeNavigate, storyMotion.restoreTo, storyMotion.scrollTo]);
   useEffect(() => {
     const coverDialogs = (event: Event) => {
       if (!(event as CustomEvent<{ active: boolean }>).detail?.active) return;
@@ -551,54 +687,64 @@ export default function App() {
     window.addEventListener("keydown", close);
     return () => window.removeEventListener("keydown", close);
   }, [menuOpen]);
+  function focusDestination(aboutHref?: string) {
+    const main = document.querySelector("main");
+    // Only an explicit return from an About evidence link restores that
+    // native link. Ordinary page/hash navigation keeps its heading focus.
+    if (aboutHref && main?.dataset.page === "about" && !window.location.hash) {
+      const origin = [...main.querySelectorAll<HTMLAnchorElement>(".about-identity-links a")]
+        .find((link) => link.getAttribute("href") === aboutHref);
+      if (origin) {
+        origin.focus({ preventScroll: true });
+        return;
+      }
+    }
+    let focusTarget = main?.querySelector<HTMLElement>("h1");
+    if (window.location.hash) {
+      try {
+        const target = document.getElementById(
+          decodeURIComponent(window.location.hash.slice(1)),
+        );
+        if (target && main?.contains(target)) {
+          const headings = "h1, h2, h3, h4, h5, h6";
+          const closedDisclosure = target instanceof HTMLDetailsElement && !target.open;
+          focusTarget = closedDisclosure
+            ? target.querySelector<HTMLElement>(":scope > summary") ?? target
+            : target.matches(headings)
+            ? target
+            : target.querySelector<HTMLElement>(headings) ?? target;
+        }
+      } catch {
+        // An invalid fragment retains the page-heading focus fallback.
+      }
+    }
+    if (focusTarget) {
+      // A summary already has native focus and Enter/Space behaviour.
+      if (!focusTarget.matches("summary")) focusTarget.tabIndex = -1;
+      focusTarget.focus({ preventScroll: true });
+    }
+  }
   function navigate(destination: string, restoreTop = 0, aboutHref?: string) {
     const next = destination.split("#")[0].replace(/\/+$/, "") || "/";
+    saveHistoryPosition();
+    historyIntent.current = null;
+    const sequence = ++navigationSequence.current;
     if (next !== route) storyMotion.beforeNavigate();
     setMenuOpen(false);
     setModal(null);
     setTourOpen(false);
     setOsOpen(false);
-    history.pushState({}, "", destination);
+    const position: HistoryPosition = { key: crypto.randomUUID(), url: destination, top: restoreTop };
+    history.pushState({ [historyStateKey]: position }, "", destination);
+    activeHistory.current = position;
+    historyPositions.current.set(position.key, position);
     setRoute(normalizedPath());
     window.dispatchEvent(new Event("ap:pathnamechange"));
     requestAnimationFrame(() => {
+      if (sequence !== navigationSequence.current) return;
       if (window.location.hash) storyMotion.scrollTo(window.location.hash);
       else storyMotion.restoreTo(restoreTop, next);
-      const main = document.querySelector("main");
-      // Only an explicit return from an About evidence link restores that
-      // native link. Ordinary page/hash navigation keeps its heading focus.
-      if (aboutHref && main?.dataset.page === "about" && !window.location.hash) {
-        const origin = [...main.querySelectorAll<HTMLAnchorElement>(".about-identity-links a")]
-          .find((link) => link.getAttribute("href") === aboutHref);
-        if (origin) {
-          origin.focus({ preventScroll: true });
-          return;
-        }
-      }
-      let focusTarget = main?.querySelector<HTMLElement>("h1");
-      if (window.location.hash) {
-        try {
-          const target = document.getElementById(
-            decodeURIComponent(window.location.hash.slice(1)),
-          );
-          if (target && main?.contains(target)) {
-            const headings = "h1, h2, h3, h4, h5, h6";
-            const closedDisclosure = target instanceof HTMLDetailsElement && !target.open;
-            focusTarget = closedDisclosure
-              ? target.querySelector<HTMLElement>(":scope > summary") ?? target
-              : target.matches(headings)
-              ? target
-              : target.querySelector<HTMLElement>(headings) ?? target;
-          }
-        } catch {
-          // An invalid fragment retains the page-heading focus fallback.
-        }
-      }
-      if (focusTarget) {
-        // A summary already has native focus and Enter/Space behaviour.
-        if (!focusTarget.matches("summary")) focusTarget.tabIndex = -1;
-        focusTarget.focus({ preventScroll: true });
-      }
+      focusDestination(aboutHref);
     });
   }
   function navigateSection(id: string) {
@@ -799,11 +945,11 @@ export default function App() {
             <div className="page-width">
               <section className="recognition-section" id="recognition">
                 <div>
-                  <p className="section-label">Learning & competition</p>
+                  <p className="section-label">Recognition & responsibility</p>
                   <h2>
-                    Academic
+                    School, sport
                     <br />
-                    <em>distinctions.</em>
+                    <em>&amp; study.</em>
                   </h2>
                 </div>
                 <div className="achievement-list">
@@ -818,6 +964,12 @@ export default function App() {
                       </summary>
                       <div className="achievement-detail">
                         <p>{item.description}</p>
+                        {item.verification && (
+                          <div className="achievement-verification">
+                            <a href={item.verification.url} target="_blank" rel="noreferrer">Verify with ICSC</a>
+                            <span>Verification ID: <code>{item.verification.code}</code></span>
+                          </div>
+                        )}
                         {item.certificate ? (
                           <a
                             href={item.certificate}
@@ -827,8 +979,8 @@ export default function App() {
                             View certificate
                           </a>
                         ) : (
-                          <span className="certificate-placeholder">
-                            Certificate to be supplied
+                          <span className="achievement-source">
+                            {item.record}
                           </span>
                         )}
                       </div>

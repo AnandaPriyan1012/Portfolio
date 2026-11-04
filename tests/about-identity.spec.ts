@@ -62,8 +62,9 @@ test('the identity scene keeps one page title, native four-lane navigation and t
   expect((await identity.locator('.about-identity-swimming').boundingBox())!.height).toBeLessThanOrEqual(190)
   await identity.locator('.about-identity-perspectives > summary').click()
   await expect(identity.locator('.about-identity-perspectives h4')).toHaveCount(4)
-  await expect(page.locator('.achievement')).toHaveCount(2)
-  await expect(page.locator('body')).not.toContainText(/gaurav|isolated about study|prototype boundary|the original mark/i)
+  await expect(page.locator('.achievement')).toHaveCount(5)
+  await expect(page.locator('.achievement').first().locator('h3')).toHaveText('Chinmaya Gaurav Award')
+  await expect(page.locator('body')).not.toContainText(/isolated about study|prototype boundary|the original mark/i)
 })
 
 test('real website captures and both current C4 film frames are uncropped and manually selectable', async ({ page, request }) => {

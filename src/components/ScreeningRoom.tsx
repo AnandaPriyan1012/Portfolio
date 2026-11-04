@@ -336,6 +336,8 @@ export default function ScreeningRoom({
                   {film.posterUrl ? (
                     <img
                       src={film.posterUrl}
+                      srcSet={film.thumbnailSrcSet}
+                      sizes="(max-width: 767px) calc(88vw - 2px), 568px"
                       alt={hasApprovedNativePlayback(film) ? `${film.title} — poster` : `${film.title} — original film still`}
                       width={640}
                       height={360}

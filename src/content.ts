@@ -112,7 +112,7 @@ export const siteContent = {
     eyebrow: "Milestones, not a finish line",
     title: "A little evidence.\nA lot more to explore.",
     description: "A few recognitions from learning, competing and showing up.",
-    certificateStatus: "Certificate to be supplied",
+    certificateStatus: "Source details",
   },
   contact: {
     eyebrow: "The next idea starts with a conversation",
@@ -379,8 +379,8 @@ export const aboutLanes = [
     label: "Swimmer",
     title: "Freestyle and breaststroke.",
     description:
-      "I’m a swimmer, too. I started at CIRS in Class 10, focusing on freestyle and breaststroke.",
-    detail: "A part of life beyond the screen.",
+      "I’m a swimmer, too. I started at CIRS in Class 10, focusing on freestyle and breaststroke. I was part of the school swimming team from 2024 to 2026.",
+    detail: "Early practice, team sessions and the work of improving one length at a time.",
   },
   {
     id: "curious",
@@ -394,11 +394,21 @@ export const aboutLanes = [
 
 export const achievements = [
   {
+    id: "gaurav",
+    title: "Chinmaya Gaurav Award",
+    distinction: "Chinmaya International Residential School · 2026",
+    description:
+      "School recognition from Chinmaya International Residential School, recorded in my 2026 CV.",
+    record: "CV record",
+    certificate: null,
+  },
+  {
     id: "icsc",
     title: "ICSC 2026",
     distinction: "Silver Honour · Top 1%",
     description:
-      "Award and placement supplied by Ananda Priyan. Certificate, organizer details and further context are awaiting upload.",
+      "Silver Honour and a Top 1% placement, as recorded in my CV. An original result certificate is not displayed here.",
+    record: "CV record",
     certificate: null,
   },
   {
@@ -406,7 +416,30 @@ export const achievements = [
     title: "International Chemistry Competition 2026",
     distinction: "Gold Honour · Top 2%",
     description:
-      "Award and placement supplied by Ananda Priyan. Certificate and further competition context are awaiting upload.",
+      "Gold Honour and a Top 2% placement, as recorded in my CV. An original result certificate is not displayed here.",
+    record: "CV record",
+    certificate: null,
+  },
+  {
+    id: "icsc-ambassador",
+    title: "International Computer Science Competition",
+    distinction: "Ambassador certificate · 2026 edition",
+    description:
+      "The ambassador certificate names Ananda Priyan and was issued on 30 August 2026. It recognises a role in encouraging student participation in computer science; it is separate from the competition result above.",
+    record: "Ambassador certificate details",
+    verification: {
+      url: "https://icscompetition.org/en/verify",
+      code: "AC-2026-APRIYAN",
+    },
+    certificate: null,
+  },
+  {
+    id: "cirsmun-appreciation",
+    title: "CIRSMUN 2026",
+    distinction: "Certificate of Appreciation · Technology & Digital Operations",
+    description:
+      "The team certificate names Ananda Priyan as Under-Secretary-General for Technology and Digital Operations at CIRSMUN 2026.",
+    record: "Team certificate details",
     certificate: null,
   },
 ];
@@ -430,6 +463,7 @@ export const creativeMedia: {
   videoUrl: string | null;
   embedUrl?: string | null;
   posterUrl: string | null;
+  thumbnailSrcSet?: string;
   caption: string;
   credits: string | null;
   nativePlaybackApproved?: boolean;
@@ -439,6 +473,7 @@ export const creativeMedia: {
     videoUrl: null,
     embedUrl: "https://drive.google.com/file/d/1FXMI8GoosQllewx87S8_lJDXRULukrYA/preview",
     credits: null, posterUrl: "/media/cck-trailer-still.jpg",
+    thumbnailSrcSet: "/media/film-thumbnails/cck-trailer-still-320.webp 320w, /media/film-thumbnails/cck-trailer-still-640.webp 640w",
     caption: "Trailer · Public export, 2:22.",
   },
   {
@@ -446,6 +481,7 @@ export const creativeMedia: {
     videoUrl: null,
     embedUrl: "https://drive.google.com/file/d/1zxuYX1UAG8FwYlfYhWP-SAnP4jaRx5MN/preview",
     credits: null, posterUrl: "/media/farewell-film-still.jpg",
+    thumbnailSrcSet: "/media/film-thumbnails/farewell-film-still-320.webp 320w, /media/film-thumbnails/farewell-film-still-640.webp 640w",
     caption: "Farewell AA · 4:18.",
   },
   {
@@ -453,6 +489,7 @@ export const creativeMedia: {
     alternateTitle: "Masquerade trailer", legacyIds: ["masquerade-trailer"],
     videoUrl: "/media/vantara-masquerade-web-720p.mp4",
     posterUrl: "/media/vantara-masquerade-poster.jpg",
+    thumbnailSrcSet: "/media/film-thumbnails/vantara-masquerade-poster-320.webp 320w, /media/film-thumbnails/vantara-masquerade-poster-640.webp 640w",
     credits: null, nativePlaybackApproved: true,
     caption: "Masquerade trailer · 2:46.",
   },
@@ -460,6 +497,7 @@ export const creativeMedia: {
     id: "ted-ed-2026", title: "TED-Ed auditions", type: "Auditions",
     videoUrl: "/media/teded-auditions-web.mp4",
     posterUrl: "/media/teded-auditions-poster.jpg",
+    thumbnailSrcSet: "/media/film-thumbnails/teded-auditions-poster-320.webp 320w, /media/film-thumbnails/teded-auditions-poster-640.webp 640w",
     credits: null, nativePlaybackApproved: true,
     caption: "Final auditions export · 0:32.",
   },
@@ -467,6 +505,7 @@ export const creativeMedia: {
     id: "cirs-website-launch", title: "CIRS website launch", type: "Launch film",
     videoUrl: "/media/cirs-website-launch-web.mp4",
     posterUrl: "/media/cirs-website-launch-poster.jpg",
+    thumbnailSrcSet: "/media/film-thumbnails/cirs-website-launch-poster-320.webp 320w, /media/film-thumbnails/cirs-website-launch-poster-640.webp 640w",
     credits: null, nativePlaybackApproved: true,
     caption: "Website launch film · 0:38.",
   },

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
 import {
   ArrowDown,
   ArrowLeft,
@@ -147,7 +147,9 @@ export default function CaseStudyPage({
   ).filter((section) => section.body.trim());
   const anchor = (id: string) => `case-${project.id}-${id}`;
 
-  useEffect(() => {
+  // Initialize the case before App's layout-phase history restoration. A
+  // later passive reset would overwrite a saved nonzero reload position.
+  useLayoutEffect(() => {
     setMediaFailed(false);
     const previous = document.title;
     document.title = `${project.title} — Ananda Priyan`;

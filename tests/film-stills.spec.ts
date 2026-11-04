@@ -68,6 +68,31 @@ async function expectCompleteFrame(image: Locator, path: string) {
   })
 }
 
+async function expectCompleteThumbnail(image: Locator, path: string) {
+  await expect(image).toHaveAttribute('src', path)
+  await image.evaluate(node => (node as HTMLImageElement).decode())
+  const frame = await image.evaluate(async node => {
+    const image = node as HTMLImageElement, style = getComputedStyle(image)
+    const bitmap = await createImageBitmap(await (await fetch(image.currentSrc)).blob())
+    try {
+      return {
+        path: new URL(image.currentSrc).pathname,
+        dimensions: [bitmap.width, bitmap.height],
+        fit: style.objectFit, position: style.objectPosition, opacity: style.opacity,
+        filter: style.filter, mask: style.maskImage, transform: style.transform,
+      }
+    } finally { bitmap.close() }
+  })
+  const thumbnail = path.replace('/media/', '/media/film-thumbnails/').replace('.jpg', '')
+  expect([`${thumbnail}-320.webp`, `${thumbnail}-640.webp`]).toContain(frame.path)
+  expect(frame).toEqual({
+    path: frame.path,
+    dimensions: frame.path.endsWith('-320.webp') ? [320, 180] : [640, 360],
+    fit: 'contain', position: '50% 50%', opacity: '1',
+    filter: 'none', mask: 'none', transform: 'none',
+  })
+}
+
 for (const width of [320, 390, 1440]) {
   test(`both actual frames remain complete and keyboard-selectable at ${width}px without Google requests`, async ({ page }) => {
     await page.setViewportSize({ width, height: 1000 })
@@ -97,7 +122,7 @@ for (const width of [320, 390, 1440]) {
       expect(aperture.x + aperture.width).toBeLessThanOrEqual(width)
       expect(title.y, 'The title and Watch control sit below the full frame').toBeGreaterThanOrEqual(aperture.y + aperture.height - 1)
       const reelImage = page.getByRole('button', { name: `Play ${approved.title}`, exact: true }).locator('img')
-      await expectCompleteFrame(reelImage, approved.path)
+      await expectCompleteThumbnail(reelImage, approved.path)
       await expect(page.locator('iframe')).toHaveCount(0)
     }
     await page.keyboard.press('ArrowUp')

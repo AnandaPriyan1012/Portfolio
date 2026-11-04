@@ -4,7 +4,17 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "routes": [
+    {
+      "src": "^/assets/[A-Za-z0-9_-]+-[A-Za-z0-9_-]{8}\\.(?:js|css|woff2?)$",
+      "headers": { "Cache-Control": "public, max-age=31536000, immutable" },
+      "continue": true
+    },
     { "handle": "filesystem" },
-    { "src": "/.*", "dest": "/404.html", "status": 404 }
+    {
+      "src": "/.*",
+      "dest": "/404.html",
+      "status": 404,
+      "headers": { "Cache-Control": "public, max-age=0, must-revalidate" }
+    }
   ]
 }

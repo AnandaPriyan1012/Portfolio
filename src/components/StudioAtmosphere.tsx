@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 
-type Artwork = { id: string; title: string; posterUrl: string | null };
+type Artwork = { id: string; title: string; posterUrl: string | null; thumbnailSrcSet?: string };
 const accents: Record<string, string> = {
   "cck-trailer": "#d0aa65", "farewell-video": "#bd9473", vantara: "#81a6b8",
   "ted-ed-2026": "#ca8273", "cirs-website-launch": "#c6b778",
@@ -34,7 +34,7 @@ export default function StudioAtmosphere({ enabled, films, selectedId }: {
       <div className="studio-contact-frames">
         {films.filter(film => film.posterUrl).map((film, index) => (
           <figure key={film.id} data-film={film.id} data-active={film.id === selectedId} style={{ "--contact-order": index } as CSSProperties}>
-            <div className="studio-contact-image"><img src={film.posterUrl!} alt="" width={640} height={360} loading="lazy" decoding="async" /></div>
+            <div className="studio-contact-image"><img src={film.posterUrl!} srcSet={film.thumbnailSrcSet} sizes="(min-width: 1455px) 219px, (min-width: 1024px) calc(17.6vw - 37.2px), (min-width: 768px) calc(17.4vw - 37.2px), calc(17.6vw - 15.6px)" alt="" width={640} height={360} loading="lazy" decoding="async" /></div>
             <figcaption><span>{String(index + 1).padStart(2, "0")}</span>{film.title}</figcaption>
           </figure>
         ))}

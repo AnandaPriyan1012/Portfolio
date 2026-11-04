@@ -52,12 +52,17 @@ async function expectArtwork(page: Page) {
     await expect(image).toHaveAttribute('alt', '')
     await image.scrollIntoViewIfNeeded()
     await image.evaluate(node => (node as HTMLImageElement).decode())
-    const source = await image.evaluate(node => {
+    const source = await image.evaluate(async node => {
       const image = node as HTMLImageElement, box = image.getBoundingClientRect()
-      return { width: image.naturalWidth, height: image.naturalHeight, fit: getComputedStyle(image).objectFit, renderedWidth: box.width, renderedHeight: box.height }
+      const bitmap = await createImageBitmap(await (await fetch(image.currentSrc)).blob())
+      try {
+        return { path: new URL(image.currentSrc).pathname, width: bitmap.width, height: bitmap.height, fit: getComputedStyle(image).objectFit, renderedWidth: box.width, renderedHeight: box.height }
+      } finally { bitmap.close() }
     })
-    expect(source.width).toBeGreaterThanOrEqual(640)
-    expect(source.width / source.height).toBeCloseTo(16 / 9, 2)
+    const thumbnail = path.replace('/media/', '/media/film-thumbnails/').replace('.jpg', '')
+    expect([`${thumbnail}-320.webp`, `${thumbnail}-640.webp`]).toContain(source.path)
+    expect([source.width, source.height]).toEqual(source.path.endsWith('-320.webp') ? [320, 180] : [640, 360])
+    expect(source.width / source.height).toBeCloseTo(16 / 9, 5)
     expect(source.fit).toBe('contain')
     expect(source.renderedWidth).toBeGreaterThan(15)
     expect(source.renderedHeight).toBeGreaterThan(10)

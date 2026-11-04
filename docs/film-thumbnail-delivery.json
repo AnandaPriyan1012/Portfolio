@@ -1,0 +1,172 @@
+{
+  "scope": "Uncropped size-only delivery derivatives of five existing approved film stills/posters. Original images and film sources unchanged. No generated artwork, retouching, lettering, crop, or credits added.",
+  "operation": {
+    "tool": "Pillow",
+    "version": "13.0.0",
+    "resampler": "LANCZOS",
+    "encoding": "WebP quality88 method6; normal web-delivery compression",
+    "widths": [
+      320,
+      640
+    ],
+    "colour_mode": "RGB from original decoded JPEG",
+    "geometry": "Entire original frame resized proportionally to exact16:9; no fit/cover/crop."
+  },
+  "records": [
+    {
+      "original": "/media/cck-trailer-still.jpg",
+      "original_dimensions": [
+        640,
+        360
+      ],
+      "original_bytes": 34891,
+      "original_sha256": "f6e48a30129b680660a6423512b8513c4a0d310be1ef5c5fb1b5d167c911e6da",
+      "derivatives": [
+        {
+          "url": "/media/film-thumbnails/cck-trailer-still-320.webp",
+          "dimensions": [
+            320,
+            180
+          ],
+          "bytes": 8322,
+          "sha256": "5799a7fa09012c68fc5666f09bc5819358797e1dd78acd724789ed24466fbc2f"
+        },
+        {
+          "url": "/media/film-thumbnails/cck-trailer-still-640.webp",
+          "dimensions": [
+            640,
+            360
+          ],
+          "bytes": 20886,
+          "sha256": "98b4ff1d8d9a46048c7de4e340e1a04f2b985b01ffc837762516a8072c20814c"
+        }
+      ],
+      "approval_evidence": "docs/film-still-sources.json"
+    },
+    {
+      "original": "/media/farewell-film-still.jpg",
+      "original_dimensions": [
+        640,
+        360
+      ],
+      "original_bytes": 46028,
+      "original_sha256": "47c270fc2f27826901933427c3ec3b98602140a1b3dbd073625392f4e24f2d75",
+      "derivatives": [
+        {
+          "url": "/media/film-thumbnails/farewell-film-still-320.webp",
+          "dimensions": [
+            320,
+            180
+          ],
+          "bytes": 12806,
+          "sha256": "30fd7477e4c48d043cec1890617d6476cb766046a2a03e928057924b87454e81"
+        },
+        {
+          "url": "/media/film-thumbnails/farewell-film-still-640.webp",
+          "dimensions": [
+            640,
+            360
+          ],
+          "bytes": 30046,
+          "sha256": "fbd0e696a2c59f5cd6730ffd1d717716244e85d50f78a33fbe1cebe2ccafe4eb"
+        }
+      ],
+      "approval_evidence": "docs/film-still-sources.json"
+    },
+    {
+      "original": "/media/vantara-masquerade-poster.jpg",
+      "original_dimensions": [
+        1920,
+        1080
+      ],
+      "original_bytes": 187986,
+      "original_sha256": "d1529b30ef59ffcc82d8bd28300bb90c0a68db9d2e211d9c1dc969039810847b",
+      "derivatives": [
+        {
+          "url": "/media/film-thumbnails/vantara-masquerade-poster-320.webp",
+          "dimensions": [
+            320,
+            180
+          ],
+          "bytes": 10008,
+          "sha256": "c644681bdafd4769a2772bad60b5a14b6df113eb30144c6eb7650b5741f7eb19"
+        },
+        {
+          "url": "/media/film-thumbnails/vantara-masquerade-poster-640.webp",
+          "dimensions": [
+            640,
+            360
+          ],
+          "bytes": 28294,
+          "sha256": "b898447db3139ee6d7181031886965e8c476e4c37b7de73d338177079300e76d"
+        }
+      ],
+      "approval_evidence": "docs/approved-native-films.json"
+    },
+    {
+      "original": "/media/teded-auditions-poster.jpg",
+      "original_dimensions": [
+        1920,
+        1080
+      ],
+      "original_bytes": 54634,
+      "original_sha256": "b94d62d9868a019338d9423f96165ad38fd9ef81beea5b470e59008a76a773c9",
+      "derivatives": [
+        {
+          "url": "/media/film-thumbnails/teded-auditions-poster-320.webp",
+          "dimensions": [
+            320,
+            180
+          ],
+          "bytes": 3190,
+          "sha256": "97c67877b246fb809d0164c7ae13dbae27300f3c27611a6f925118a6f8eea798"
+        },
+        {
+          "url": "/media/film-thumbnails/teded-auditions-poster-640.webp",
+          "dimensions": [
+            640,
+            360
+          ],
+          "bytes": 7372,
+          "sha256": "f7d591731a2d500d65a06277de29d00411d90524d2e5b741f51b387afe71fb28"
+        }
+      ],
+      "approval_evidence": "docs/approved-native-films.json"
+    },
+    {
+      "original": "/media/cirs-website-launch-poster.jpg",
+      "original_dimensions": [
+        1920,
+        1080
+      ],
+      "original_bytes": 97319,
+      "original_sha256": "4d325af8ffc6964be9733d4835b5e8d95042d9d1dcb0af41ac2fdf1f1ffec674",
+      "derivatives": [
+        {
+          "url": "/media/film-thumbnails/cirs-website-launch-poster-320.webp",
+          "dimensions": [
+            320,
+            180
+          ],
+          "bytes": 4724,
+          "sha256": "ace63f3067e203a74f3c98fc6384c6836a06edde1390807d18aed3e84f5791eb"
+        },
+        {
+          "url": "/media/film-thumbnails/cirs-website-launch-poster-640.webp",
+          "dimensions": [
+            640,
+            360
+          ],
+          "bytes": 12586,
+          "sha256": "2ec0c8391ee6c71ffc87928a558d019cfe344f1f65e0f24b4a0d14af58b235da"
+        }
+      ],
+      "approval_evidence": "docs/approved-native-films.json"
+    }
+  ],
+  "totals": {
+    "original_bytes": 420858,
+    "320_derivative_bytes": 39050,
+    "640_derivative_bytes": 99184
+  }
+}

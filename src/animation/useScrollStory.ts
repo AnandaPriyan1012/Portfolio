@@ -461,7 +461,7 @@ export default function useScrollStory({ root, enabled, route }: Options) {
   const lenisRef = useRef<Lenis | null>(null);
   const reduceRef = useRef(false);
   const cleanupRef = useRef<(() => void) | null>(null);
-  const pendingRestore = useRef<{ route: string; top: number } | null>(null);
+  const pendingRestore = useRef<{ route: string; top: number; onRestored?: () => void } | null>(null);
   const restoreCoordinator = useRef<{ route: string; refresh: () => void } | null>(null);
 
   useLayoutEffect(() => {
@@ -560,6 +560,7 @@ export default function useScrollStory({ root, enabled, route }: Options) {
           if (lenis) lenis.scrollTo(restoration.top, { immediate: true, force: true });
           else window.scrollTo({ top: restoration.top, behavior: "instant" });
           ScrollTrigger.update();
+          restoration.onRestored?.();
           return;
         }
         correctInitialAnchor();
@@ -1090,11 +1091,11 @@ export default function useScrollStory({ root, enabled, route }: Options) {
   );
 
   const beforeNavigate = useCallback(() => cleanupRef.current?.(), []);
-  const restoreTo = useCallback((top: number, destination: string) => {
+  const restoreTo = useCallback((top: number, destination: string, onRestored?: () => void) => {
     const currentPath = window.location.pathname.replace(/\/+$/, "") || "/";
     if (destination !== currentPath || window.location.hash) return;
     const position = Number.isFinite(top) ? Math.max(0, top) : 0;
-    pendingRestore.current = { route: destination, top: position };
+    pendingRestore.current = { route: destination, top: position, onRestored };
     const coordinator = restoreCoordinator.current;
     if (coordinator?.route === destination) coordinator.refresh();
     else {
@@ -1102,7 +1103,10 @@ export default function useScrollStory({ root, enabled, route }: Options) {
       // will consume the route-tagged request in its first refresh instead.
       window.scrollTo({ top: position, behavior: "instant" });
       ScrollTrigger.update();
-      if (destination.startsWith("/projects/")) pendingRestore.current = null;
+      if (destination.startsWith("/projects/")) {
+        pendingRestore.current = null;
+        onRestored?.();
+      }
     }
   }, []);
   return { scrollTo, beforeNavigate, restoreTo };

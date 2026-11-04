@@ -218,6 +218,17 @@ export default function AboutIdentity({
             <h3>{headings[active.id].map((line) => <span key={line}>{line}</span>)}</h3>
             <p>{active.description}</p>
             {active.id === "swimmer" && <p className="about-identity-quiet">{active.detail}</p>}
+            {active.id === "swimmer" && (
+              <details className="about-swim-records">
+                <summary>Swimming record</summary>
+                <dl>
+                  <div><dt>50 m breaststroke</dt><dd>41.48 s</dd></div>
+                  <div><dt>100 m freestyle</dt><dd>1 min 6 s</dd></div>
+                </dl>
+                <p>Personal bests recorded in my CV.</p>
+                <p>My CV also records a relay-team bronze at the Infinity State Level Swimming Competition, Life Spring Swimming Club, Coimbatore, in 2026.</p>
+              </details>
+            )}
             <div className="about-identity-links">
               {active.id === "builder" && <>{link("/projects/cirs", "Read the CIRS project")}{link("/projects/community", "Explore the Vallalar work")}</>}
               {active.id === "storyteller" && link("/studio", "Watch the films in Studio")}
