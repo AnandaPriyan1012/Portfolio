@@ -79,7 +79,7 @@ test('AccuFlow has honest quick and deep views and a reloadable full case study'
 
 test('CIRS evidence links are real and Escape returns focus to the quick-view button', async ({ page }) => {
   await page.goto('/')
-  await expect(page.getByRole('link', { name: 'Visit the official CIRS website', exact: true })).toHaveAttribute('href', 'https://cirschool.org')
+  await expect(page.locator('.cirs-browser-body')).toHaveAttribute('href', 'https://cirschool.org/admissions.html')
   await page.goto('/work')
   await expect(page.getByRole('link', { name: 'Explore Admissions', exact: true })).toHaveAttribute('href', 'https://cirschool.org/admissions.html')
   await page.locator('.admissions-detail img').evaluate(node => (node as HTMLImageElement).decode())

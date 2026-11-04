@@ -38,7 +38,7 @@ for (const width of [320, 375, 390, 768, 1024, 1440]) test(`scroll story fits ${
   const mobile = width < 768
   await expect(page.locator('main')).toHaveAttribute('data-scroll-engine', 'static')
   const source = await page.locator('.cirs-browser-image').evaluate(node => (node as HTMLImageElement).currentSrc)
-  expect(source).toContain(mobile ? 'cirs-home-mobile.webp' : 'cirs-home-desktop.webp')
+  expect(source).toContain(mobile ? 'atlas-cirs-admissions-mobile.webp' : 'atlas-cirs-admissions-desktop.webp')
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width)
   for (const selector of ['.hero-story-copy h1', '.hero-factual-intro', '.view-work-button', '.cirs-visual-frame']) {
     const box = await page.locator(selector).boundingBox()
@@ -116,7 +116,7 @@ test('desktop wheel scrolling expands and reverses the real CIRS scene and captu
   await expect(page.locator('#accuflow [data-flow-stage]').first()).toBeVisible()
   await expect(page.locator('#accuflow')).toContainText('prototype')
   await page.screenshot({ path: `docs/${prefix}-end.png` })
-  await testInfo.attach('measured-cirs-expansion', { body: JSON.stringify({ initial, expanded, verifiedAsset: 'cirs-home-desktop.webp' }, null, 2), contentType: 'application/json' })
+  await testInfo.attach('measured-cirs-expansion', { body: JSON.stringify({ initial, expanded, verifiedAssets: ['atlas-cirs-home-desktop.webp', 'atlas-cirs-admissions-desktop.webp'] }, null, 2), contentType: 'application/json' })
 })
 
 test('mobile retains native scrolling and captures school, community and AccuFlow stages', async ({ page, browserName }) => {
@@ -125,7 +125,8 @@ test('mobile retains native scrolling and captures school, community and AccuFlo
   await ready(page)
   await expect(page.locator('main')).toHaveAttribute('data-scroll-engine', 'gsap-native')
   await expect(page.locator('.pin-spacer')).toHaveCount(0)
-  expect(await page.locator('.cirs-visual-frame').evaluate(node => getComputedStyle(node).position)).toBe('absolute')
+  expect(await page.locator('.cirs-visual-frame').evaluate(node => getComputedStyle(node).position)).toBe('relative')
+  expect((await page.locator('.cirs-visual-frame').boundingBox())!.width).toBeGreaterThan(300)
   expect(await page.locator('.hero-room img').evaluate(node => (node as HTMLImageElement).currentSrc)).toContain('atelier-room-portrait.webp')
   const prefix = browserName === 'chromium' ? 'refinement-regression-scroll-mobile' : `refinement-regression-scroll-${browserName}-mobile`
   await page.screenshot({ path: `docs/${prefix}-start.png` })
@@ -154,12 +155,15 @@ test('reduced motion removes pins and expansion while retaining the actual conte
 
 test('a failed real screenshot yields a usable static fallback instead of a pinned empty scene', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' })
-  await page.route('**/media/cirs-home-*.webp', route => route.abort())
+  await page.route(/\/media\/atlas-cirs-(?:home|admissions)-(?:desktop|mobile)\.webp$/, route => route.abort())
   await page.goto('/')
-  await expect(page.locator('.cirs-image-fallback')).toBeVisible()
+  await expect(page.locator('.home-proof-fallback')).toContainText('The captures could not load')
   await expect(page.locator('main')).toHaveAttribute('data-scroll-engine', 'static')
   await expect(page.locator('.pin-spacer')).toHaveCount(0)
-  await expect(page.getByRole('link', { name: 'Visit the official CIRS website' })).toHaveAttribute('href', 'https://cirschool.org')
+  const fallback = new URL((await page.locator('.cirs-browser-body').getAttribute('href'))!)
+  expect(fallback.origin).toBe('https://cirschool.org')
+  expect(['/', '/admissions.html']).toContain(fallback.pathname)
+  await expect(page.locator('.cirs-scene-case-link')).toHaveAttribute('href', '/projects/cirs')
 })
 
 test('legacy anchors and full case-study navigation clean up scroll pins and restore Work', async ({ page }) => {

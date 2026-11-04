@@ -21,6 +21,8 @@ for (const width of [1440, 390, 320]) {
       await expect(origin).toBeInViewport()
       expect((await origin.boundingBox())!.height).toBeGreaterThanOrEqual(44)
       await expect(origin).toHaveAttribute('href', '/projects/cirs')
+      const proofHref = await page.locator('.cirs-browser-body').getAttribute('href')
+      expect(['https://cirschool.org/', 'https://cirschool.org/admissions.html']).toContain(new URL(proofHref!).href)
       await origin.evaluate(node => node.addEventListener('click', () => {
         (window as Window & { __sceneDeparture?: number }).__sceneDeparture = scrollY
       }, { capture: true, once: true }))
@@ -36,7 +38,7 @@ for (const width of [1440, 390, 320]) {
       await expect(origin).toBeFocused()
       await expect(origin).toBeInViewport()
       expect(await origin.getAttribute('tabindex')).toBeNull()
-      await expect(page.locator('.cirs-browser-body')).toHaveAttribute('href', 'https://cirschool.org')
+      await expect(page.locator('.cirs-browser-body')).toHaveAttribute('href', proofHref!)
     } finally {
       await context.close()
     }

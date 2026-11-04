@@ -478,6 +478,26 @@ export default function useScrollStory({ root, enabled, route }: Options) {
     let layoutReady = false;
     let interacted = false;
     const initialHash = window.location.hash;
+    const homeProof = route === "/" ? element.querySelector<HTMLElement>(".home-cirs-proof") : null;
+    const initialProofFocus = document.activeElement;
+    let proofFocus: HTMLElement | null = initialProofFocus instanceof HTMLElement && homeProof?.contains(initialProofFocus)
+      ? initialProofFocus : null;
+    const rememberProofFocus = (event: FocusEvent) => {
+      const target = event.target;
+      proofFocus = target instanceof HTMLElement && homeProof?.contains(target) ? target : null;
+    };
+    const restoreProofFocus = () => {
+      // Pin refresh/reparenting can drop a native control to BODY. Restore only
+      // that same connected control, synchronously, while this page owns focus.
+      if (alive && document.hasFocus() && document.activeElement === document.body &&
+          proofFocus?.isConnected && homeProof?.contains(proofFocus))
+        proofFocus.focus({ preventScroll: true });
+    };
+    if (homeProof) {
+      window.addEventListener("focusin", rememberProofFocus);
+      ScrollTrigger.addEventListener("refresh", restoreProofFocus);
+      ScrollTrigger.addEventListener("matchMedia", restoreProofFocus);
+    }
 
     // Native hash positioning happens before ScrollTrigger adds pin spacing.
     // Resolve by ID (never by an untrusted CSS selector), then correct it once
@@ -519,7 +539,8 @@ export default function useScrollStory({ root, enabled, route }: Options) {
       if (!interacted && window.location.hash === initialHash)
         placeAnchor(initialHash, true);
     };
-    const markInteraction = () => {
+    const markInteraction = (event: Event) => {
+      if (event.target instanceof Node && !homeProof?.contains(event.target)) proofFocus = null;
       interacted = true;
       initialHashPending = false;
       pendingRestore.current = null;
@@ -646,10 +667,12 @@ export default function useScrollStory({ root, enabled, route }: Options) {
           mobileOrTablet: "(max-width: 1023px)",
           capablePointer: "(hover: hover) and (pointer: fine)",
           reduced: "(prefers-reduced-motion: reduce)",
+          forced: route === "/" ? "(forced-colors: active)" : "not all",
         },
         (match) => {
           const conditions = match.conditions ?? {};
           const reduced = Boolean(conditions.reduced);
+          const forcedHome = route === "/" && Boolean(conditions.forced);
           const device = navigator as Navigator & {
             connection?: { saveData?: boolean };
             deviceMemory?: number;
@@ -660,15 +683,17 @@ export default function useScrollStory({ root, enabled, route }: Options) {
                 navigator.hardwareConcurrency <= 2) ||
               (device.deviceMemory && device.deviceMemory <= 2),
           );
-          reduceRef.current = reduced || lowPower;
+          reduceRef.current = reduced || lowPower || forcedHome;
           element.dataset.motionFallback = lowPower
             ? "device"
+            : forcedHome
+              ? "forced"
             : reduced
               ? "reduced"
               : enabled
                 ? "none"
                 : "preference";
-          if (!enabled || reduced || lowPower) {
+          if (!enabled || reduced || lowPower || forcedHome) {
             element.dataset.scrollEngine = "static";
             return;
           }
@@ -685,6 +710,7 @@ export default function useScrollStory({ root, enabled, route }: Options) {
           let lenis: Lenis | null = null;
           let ticker: ((time: number) => void) | null = null;
           let clearChapterScenes = () => {};
+          let clearHomeProof = () => {};
           let resumeAfterVisibility = false;
           const previousScrollBehavior =
             document.documentElement.style.scrollBehavior;
@@ -772,6 +798,16 @@ export default function useScrollStory({ root, enabled, route }: Options) {
             const title = select(".cirs-scene-title");
             const captions = select(".cirs-scene-captions");
             if (scene && frame) {
+              const proof = (mode: "scroll" | "static", view: "campus" | "admissions") => {
+                if (frame.dataset.proofMode === mode && frame.dataset.proofView === view) return;
+                frame.dataset.proofMode = mode;
+                frame.dataset.proofView = view;
+                if (frame.isConnected) frame.dispatchEvent(new CustomEvent("ap:cirs-proof-change", {
+                  detail: { mode, view },
+                }));
+              };
+              proof("scroll", "campus");
+              clearHomeProof = () => proof("static", "admissions");
               const sceneBounds = scene.getBoundingClientRect();
               const frameBounds = frame.getBoundingClientRect();
               const initialFrame = {
@@ -816,12 +852,14 @@ export default function useScrollStory({ root, enabled, route }: Options) {
                   anticipatePin: 1,
                   onUpdate: (trigger) => {
                     scene.dataset.progress = trigger.progress.toFixed(3);
+                    proof("scroll", trigger.progress >= 0.7 ? "admissions" : "campus");
                     ambientInOpening = trigger.progress < 0.48;
                     syncAmbient();
                   },
                   onRefresh: (trigger) => {
                     if (title) gsap.set(title, { top: headerClearance() });
                     scene.dataset.progress = trigger.progress.toFixed(3);
+                    proof("scroll", trigger.progress >= 0.7 ? "admissions" : "campus");
                     ambientInOpening = trigger.progress < 0.48;
                     syncAmbient();
                   },
@@ -899,6 +937,9 @@ export default function useScrollStory({ root, enabled, route }: Options) {
                 opening.to(title, { autoAlpha: 1, duration: 0.12 }, 0.42);
               if (captions)
                 opening.to(captions, { autoAlpha: 1, duration: 0.12 }, 0.58);
+              opening.fromTo(frame, { "--home-proof-progress": 0 }, {
+                "--home-proof-progress": 1, duration: 0.08,
+              }, 0.66);
               // Keep normalized progress at 0–1 and reserve the final quarter for
               // the fully expanded view and fully opaque, stationary captions.
               opening.to({}, { duration: 0.26 }, 0.74);
@@ -995,6 +1036,7 @@ export default function useScrollStory({ root, enabled, route }: Options) {
             ambient?.kill();
             clearMaterial();
             clearChapterScenes();
+            clearHomeProof();
             document.removeEventListener("visibilitychange", visibility);
             if (ticker) gsap.ticker.remove(ticker);
             if (lenis) {
@@ -1025,6 +1067,11 @@ export default function useScrollStory({ root, enabled, route }: Options) {
       window.removeEventListener("pointerdown", markInteraction);
       window.removeEventListener("keydown", markInteraction);
       window.removeEventListener("hashchange", hashChange);
+      if (homeProof) {
+        window.removeEventListener("focusin", rememberProofFocus);
+        ScrollTrigger.removeEventListener("refresh", restoreProofFocus);
+        ScrollTrigger.removeEventListener("matchMedia", restoreProofFocus);
+      }
       contentResize?.disconnect();
       readinessCleanups.forEach((cleanup) => cleanup());
       images.forEach((image) => {

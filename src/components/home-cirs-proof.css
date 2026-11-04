@@ -1,0 +1,54 @@
+.scroll-opening .home-cirs-proof { display: flex; flex-direction: column; background: #0b1010; }
+.scroll-opening .home-cirs-proof .cirs-browser-bar { flex: none; min-height: 48px; height: 48px; padding: 0 12px; gap: 12px; color: #d7dccd; font-size: 10px; }
+.home-proof-address { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.home-cirs-proof .cirs-scene-case-link { flex-shrink: 0; }
+.home-proof-controls { display: flex; align-items: center; flex: none; flex-wrap: wrap; gap: 4px; padding: 3px 8px; border-bottom: 1px solid #d0d4be26; }
+.home-proof-controls > button { display: inline-flex; flex-direction: column; justify-content: center; align-items: center; gap: 2px; min-height: 44px; min-width: 60px; padding: 8px 11px; border: 1px solid transparent; border-radius: 2px; color: #c2cbb7; font-size: 11px; line-height: 1.4; }
+.home-proof-controls > button[aria-pressed="true"] { color: #f0dfb7; border-color: #d4b78166; background: #d4b78110; }
+.home-proof-controls > button[aria-disabled="true"] { color: #a8afa0; }
+.home-proof-controls small { font-size: 9px; }
+.home-proof-controls > .home-proof-follow { margin-left: auto; font-size: 10px; }
+.home-cirs-proof :is(a,button):focus-visible { outline: 2px solid #e1c791; outline-offset: -3px; }
+.scroll-opening .home-cirs-proof .cirs-browser-body { position: relative; flex: 1; min-height: 0; height: auto; background: #050807; }
+.home-cirs-proof .home-proof-layer { position: absolute; inset: 0; display: block; width: 100%; height: 100%; opacity: 0; pointer-events: none; }
+.home-cirs-proof .home-proof-layer[data-effective] { opacity: 1; }
+.scroll-opening .home-cirs-proof .home-proof-image { display: block; width: 100%; height: 100%; object-fit: contain !important; object-position: center !important; filter: none !important; transform: none !important; }
+.home-cirs-proof[data-proof-blend] .home-proof-layer[data-proof-layer="campus"] { opacity: calc(1 - clamp(0, var(--home-proof-progress, 0), 1)); }
+.home-cirs-proof[data-proof-blend] .home-proof-layer[data-proof-layer="admissions"] { opacity: clamp(0, var(--home-proof-progress, 0), 1); }
+.home-proof-fallback { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 12px; padding: 24px; background: #101816; color: #e1e6d7; text-align: center; }
+.home-proof-fallback strong { font: 500 clamp(20px,2vw,32px)/1.2 var(--font-display); }
+.home-proof-fallback p { max-width: 320px; margin: 0; color: #bdc8b4; font-size: 12px; line-height: 1.7; }
+.home-proof-caption { flex: none; margin: 0; padding: 8px 12px; min-height: 32px; border-top: 1px solid #d0d4be26; color: #b8c4ac; font-size: 10px; line-height: 1.6; }
+/* Quiet layouts preserve the original hero above a readable, normal-flow proof. */
+@media (min-width: 768px) {
+  main:is([data-scroll-engine="static"],[data-scroll-engine="gsap-native"]) .scroll-opening:has(.home-cirs-proof) { --home-proof-hero-height: clamp(760px,100svh,1100px); height: auto; min-height: 0; max-height: none; padding-top: var(--home-proof-hero-height); padding-bottom: 36px; overflow: hidden; }
+  main:is([data-scroll-engine="static"],[data-scroll-engine="gsap-native"]) .scroll-opening:has(.home-cirs-proof) .hero-room { bottom: auto; height: var(--home-proof-hero-height); }
+  main:is([data-scroll-engine="static"],[data-scroll-engine="gsap-native"]) .scroll-opening:has(.home-cirs-proof) .hero-story-copy { top: calc(var(--home-proof-hero-height) * .35); }
+  main:is([data-scroll-engine="static"],[data-scroll-engine="gsap-native"]) .scroll-opening:has(.home-cirs-proof) .opening-edition { top: calc(var(--home-proof-hero-height) - 48px); bottom: auto; }
+  main:is([data-scroll-engine="static"],[data-scroll-engine="gsap-native"]) .scroll-opening .home-cirs-proof { position: relative !important; inset: auto !important; width: 88% !important; max-width: 1100px; height: auto !important; margin: 24px auto 0 !important; opacity: 1 !important; clip-path: none !important; transform: none !important; }
+  main:is([data-scroll-engine="static"],[data-scroll-engine="gsap-native"]) .scroll-opening .home-cirs-proof .cirs-browser-body { flex: none; aspect-ratio: 1440/1000; }
+  main:is([data-scroll-engine="static"],[data-scroll-engine="gsap-native"]) .scroll-opening:has(.home-cirs-proof) .cirs-scene-captions { position: static; width: 88%; margin: 24px auto 0; }
+}
+@media (max-width: 767px) {
+  .scroll-opening:has(.home-cirs-proof), main[data-scroll-engine="static"] .scroll-opening:has(.home-cirs-proof) { --home-proof-hero-height: max(620px,min(760px,100svh)); height: auto !important; min-height: 0 !important; max-height: none; padding: var(--home-proof-hero-height) 0 28px !important; display: block; overflow: hidden; }
+  .scroll-opening:has(.home-cirs-proof) .hero-room { inset: 0 0 auto; height: var(--home-proof-hero-height); }
+  .scroll-opening:has(.home-cirs-proof) .hero-story-copy { top: calc(var(--home-proof-hero-height) * .27); }
+  .scroll-opening:has(.home-cirs-proof) .opening-edition { top: calc(var(--home-proof-hero-height) - 38px); bottom: auto; }
+  .scroll-opening .home-cirs-proof { position: relative !important; inset: auto !important; width: 88% !important; height: auto !important; margin: 24px auto 0 !important; opacity: 1 !important; clip-path: none !important; transform: none !important; }
+  .scroll-opening .home-cirs-proof .cirs-browser-body { flex: none; aspect-ratio: 390/1000; }
+  .scroll-opening .home-cirs-proof .cirs-browser-bar { padding-inline: 10px; font-size: 10px; }
+}
+@media (max-width: 359px) {
+  .scroll-opening:has(.home-cirs-proof), main[data-scroll-engine="static"] .scroll-opening:has(.home-cirs-proof) { --home-proof-hero-height: max(620px,100svh); }
+  .scroll-opening:has(.home-cirs-proof) .hero-story-copy { top: calc(var(--home-proof-hero-height) * .25); }
+  .home-proof-controls > button { padding-inline: 8px; }
+}
+@media (forced-colors: active) {
+  .home-cirs-proof, .home-cirs-proof .cirs-browser-bar, .home-proof-controls, .home-proof-caption { background: Canvas; color: CanvasText; border-color: CanvasText; box-shadow: none; }
+  .home-proof-controls > button, .home-proof-caption { color: CanvasText; }
+  .home-proof-controls > button[aria-pressed="true"] { color: CanvasText; background: Canvas; border-color: Highlight; outline: 1px solid Highlight; outline-offset: -2px; }
+  .home-cirs-proof a { color: LinkText; }
+  .home-cirs-proof :is(a,button):focus-visible { outline: 2px solid Highlight; outline-offset: -3px; }
+  .home-cirs-proof .home-proof-layer { opacity: 0 !important; }
+  .home-cirs-proof .home-proof-layer[data-effective] { opacity: 1 !important; }
+}

@@ -28,6 +28,7 @@ import { GuidedTour } from "./components/Discovery";
 import AtelierNavigation from "./components/AtelierNavigation";
 import ScreeningRoom from "./components/ScreeningRoom";
 import HeroFilm from "./components/HeroFilm";
+import HomeCirsProof from "./components/HomeCirsProof";
 import WorkPage from "./components/WorkPage";
 import HomeDirectory from "./components/HomeDirectory";
 import AboutIdentity from "./components/AboutIdentity";
@@ -225,9 +226,6 @@ function ScrollOpening({
   onDirector: () => void;
   motionEnabled: boolean;
 }) {
-  const cirs = projects.find((project) => project.id === "cirs")!;
-  const asset = projectAssets.cirs;
-  const [failed, setFailed] = useState(false);
   const [filmActive, setFilmActive] = useState(false);
   return (
     <section
@@ -287,62 +285,7 @@ function ScrollOpening({
           Visit the live website
         </a>
       </div>
-      <div className="cirs-visual-frame">
-        <div className="cirs-browser-bar">
-          <span>cirschool.org</span>
-          <span>Official school website</span>
-          <a
-            className="cirs-scene-case-link"
-            href="/projects/cirs"
-            data-home-origin="cirs-scene"
-            aria-label="Read the CIRS case study"
-            onClick={(event) => {
-              if (!onCaseStudy || event.defaultPrevented || event.button !== 0 ||
-                event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-              event.preventDefault();
-              onCaseStudy();
-            }}
-          >
-            Read case study
-          </a>
-        </div>
-        <a
-          href="https://cirschool.org"
-          target="_blank"
-          rel="noreferrer"
-          className="cirs-browser-body"
-          data-cursor="view"
-          aria-label="Visit the official CIRS website"
-        >
-          {asset.previewUrl && !failed ? (
-            <picture>
-              {asset.mobilePreviewUrl && (
-                <source
-                  media="(max-width: 767px)"
-                  srcSet={asset.mobilePreviewUrl}
-                />
-              )}
-              <img
-                className="cirs-browser-image"
-                src={asset.previewUrl}
-                alt="Real homepage of Chinmaya International Residential School, captured from cirschool.org"
-                fetchPriority="high"
-                decoding="async"
-                onError={() => {
-                  setFailed(true);
-                  onImageError();
-                }}
-              />
-            </picture>
-          ) : (
-            <div className="cirs-image-fallback">
-              <strong>{cirs.title}</strong>
-              <p>The live website is available at cirschool.org.</p>
-              <span>Open the school website</span>
-            </div>
-          )}
-        </a>
-      </div>
+      <HomeCirsProof onCaseStudy={onCaseStudy} onImagesUnavailable={onImageError} />
       <div className="cirs-scene-captions">
         {scrollStoryCopy.captions.map((caption) => (
           <p key={caption.label}>
