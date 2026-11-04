@@ -1,5 +1,5 @@
-import { useEffect, useId, useRef, useState } from "react";
-import { ArrowDownToLine, ArrowRight, RotateCw } from "lucide-react";
+import { useEffect, useId, useRef, useState, type MouseEvent } from "react";
+import { ArrowDownToLine, ArrowRight } from "lucide-react";
 
 type Device = Navigator & {
   connection?: EventTarget & { saveData?: boolean };
@@ -16,8 +16,23 @@ export default function IdentityCard({
 }) {
   const root = useRef<HTMLElement>(null);
   const stage = useRef<HTMLDivElement>(null);
+  const signatureButton = useRef<HTMLButtonElement>(null);
+  const contactButton = useRef<HTMLButtonElement>(null);
+  const focusAfterTurn = useRef(false);
   const [contactSide, setContactSide] = useState(false);
   const faceId = useId();
+
+  const turnCard = (event: MouseEvent<HTMLButtonElement>) => {
+    focusAfterTurn.current = event.detail === 0;
+    setContactSide((side) => !side);
+  };
+
+  useEffect(() => {
+    if (!focusAfterTurn.current) return;
+    focusAfterTurn.current = false;
+    const nextButton = contactSide ? contactButton : signatureButton;
+    nextButton.current?.focus({ preventScroll: true });
+  }, [contactSide]);
 
   useEffect(() => {
     const host = root.current;
@@ -117,10 +132,19 @@ export default function IdentityCard({
         <div className="identity-card-motion">
           <div className="identity-card-turn">
             <div
+              id={`${faceId}-signature`}
               className="identity-card-face identity-card-front"
               aria-hidden={contactSide}
               inert={contactSide}
             >
+              <button
+                ref={signatureButton}
+                className="identity-card-flip"
+                type="button"
+                aria-label="Show contact side"
+                aria-controls={`${faceId}-contact`}
+                onClick={turnCard}
+              />
               <div className="identity-card-topline">
                 <span>A personal introduction</span>
                 <span
@@ -144,11 +168,19 @@ export default function IdentityCard({
               <span className="identity-card-engraving" aria-hidden="true" />
             </div>
             <div
-              id={faceId}
+              id={`${faceId}-contact`}
               className="identity-card-face identity-card-back"
               aria-hidden={!contactSide}
               inert={!contactSide}
             >
+              <button
+                ref={contactButton}
+                className="identity-card-flip"
+                type="button"
+                aria-label="Show signature side"
+                aria-controls={`${faceId}-signature`}
+                onClick={turnCard}
+              />
               <div className="identity-card-topline">
                 <span>Ananda Priyan / Contact</span>
                 <span
@@ -174,15 +206,6 @@ export default function IdentityCard({
           Personal card / {contactSide ? "Contact" : "Signature"}
         </span>
         <div className="identity-card-controls">
-          <button
-            type="button"
-            aria-pressed={contactSide}
-            aria-controls={faceId}
-            onClick={() => setContactSide((side) => !side)}
-          >
-            <RotateCw size={14} aria-hidden="true" />
-            Turn card
-          </button>
           <a
             href={`data:text/vcard;charset=utf-8,${encodeURIComponent(contactFile)}`}
             download="ananda-priyan.vcf"

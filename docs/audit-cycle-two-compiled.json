@@ -1,0 +1,190 @@
+{
+  "phase": "compiled",
+  "base": "http://127.0.0.1:5174",
+  "expectedBundle": "index-Dvm4Rpdl.js",
+  "date": "2026-11-04T12:06:39.781Z",
+  "routes": [
+    {
+      "path": "/",
+      "view": "desktop",
+      "status": 200,
+      "heading": "Ananda\nPriyan",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "engine": "gsap-lenis",
+      "font": "\"Syne Variable\", Arial, sans-serif"
+    },
+    {
+      "path": "/work",
+      "view": "desktop",
+      "status": 200,
+      "heading": "Selected work.",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "engine": "gsap-lenis",
+      "font": "\"Syne Variable\", Arial, sans-serif"
+    },
+    {
+      "path": "/studio",
+      "view": "desktop",
+      "status": 200,
+      "heading": "The screening room.",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "engine": "gsap-lenis",
+      "font": "\"Syne Variable\", Arial, sans-serif"
+    },
+    {
+      "path": "/about",
+      "view": "desktop",
+      "status": 200,
+      "heading": "There\u2019s a person\nbehind every project.",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "engine": "gsap-lenis",
+      "font": "\"Syne Variable\", Arial, sans-serif"
+    },
+    {
+      "path": "/",
+      "view": "phone reduced motion",
+      "status": 200,
+      "heading": "Ananda\nPriyan",
+      "width": 390,
+      "scrollWidth": 390,
+      "engine": "static",
+      "font": "\"Syne Variable\", Arial, sans-serif"
+    },
+    {
+      "path": "/work",
+      "view": "phone reduced motion",
+      "status": 200,
+      "heading": "Selected work.",
+      "width": 390,
+      "scrollWidth": 390,
+      "engine": "static",
+      "font": "\"Syne Variable\", Arial, sans-serif"
+    },
+    {
+      "path": "/studio",
+      "view": "phone reduced motion",
+      "status": 200,
+      "heading": "The screening room.",
+      "width": 390,
+      "scrollWidth": 390,
+      "engine": "static",
+      "font": "\"Syne Variable\", Arial, sans-serif"
+    },
+    {
+      "path": "/about",
+      "view": "phone reduced motion",
+      "status": 200,
+      "heading": "There\u2019s a person\nbehind every project.",
+      "width": 390,
+      "scrollWidth": 390,
+      "engine": "static",
+      "font": "\"Syne Variable\", Arial, sans-serif"
+    }
+  ],
+  "checks": [
+    {
+      "name": "First-session exact AP loader",
+      "durationMs": 2396.7999999988824,
+      "seenKey": "seen",
+      "repeated": false
+    },
+    {
+      "name": "Confirmed swimming biography rendered without removed award or tracker"
+    },
+    {
+      "name": "Actual compiled glass arrow and native fallback",
+      "point": {
+        "x": 1187.110625,
+        "y": 754.984375
+      },
+      "crop": {
+        "x": 1159,
+        "y": 731,
+        "width": 140,
+        "height": 110
+      },
+      "cursorOnMedia": true,
+      "reducedNoOverlay": true,
+      "privacy": "Crop confined to CIRS building/landscape image; excludes header, name, email and people"
+    },
+    {
+      "name": "Card surface click, Enter/Space and actual vCard 1440",
+      "bytes": 126,
+      "stationaryNativeAfterFlip": true,
+      "turnLabelAbsent": true
+    },
+    {
+      "name": "Forward/reverse case progress with depth and unmoving copy",
+      "values": [
+        37,
+        87,
+        12
+      ],
+      "height": 3622,
+      "addedHeight": 0
+    },
+    {
+      "name": "Modified case link opens a native new tab and preserves Work"
+    },
+    {
+      "name": "Keyboard case entry heading focused after modal cleanup"
+    },
+    {
+      "name": "Two canonical players gated before Watch; accessible close",
+      "initialDriveRequests": 0,
+      "requests": [
+        "https://drive.google.com/file/d/1FXMI8GoosQllewx87S8_lJDXRULukrYA/preview",
+        "https://drive.google.com/file/d/1zxuYX1UAG8FwYlfYhWP-SAnP4jaRx5MN/preview"
+      ],
+      "fixture": true
+    },
+    {
+      "name": "Saved user Motion off survives case reload/cut, keeps sources flat and reading progress functional",
+      "savedPreference": "off",
+      "readerMotion": "off",
+      "progress": 33,
+      "quickStages": 3
+    },
+    {
+      "name": "Card surface click, Enter/Space and actual vCard 390",
+      "bytes": 126,
+      "stationaryNativeAfterFlip": false,
+      "turnLabelAbsent": true
+    },
+    {
+      "name": "Reduced phone case progress without depth/added height",
+      "values": [
+        35,
+        86,
+        11
+      ],
+      "height": 4465,
+      "addedHeight": 0
+    },
+    {
+      "name": "Phone menu Tab order and Escape focus restore"
+    }
+  ],
+  "errors": [],
+  "networkFailures": [],
+  "filmScope": "Canonical iframe mount/close verified with isolated document fixture only; no full-film decode",
+  "screenshots": [
+    "/workspace/cycle-two-release-review/compiled-loader-visible.png",
+    "/workspace/cycle-two-release-review/compiled-home-1440.png",
+    "/workspace/cycle-two-release-review/compiled-work-1440.png",
+    "/workspace/cycle-two-release-review/compiled-studio-1440.png",
+    "/workspace/cycle-two-release-review/compiled-about-1440.png",
+    "/workspace/cycle-two-release-review/compiled-cirs-glass-arrow-privacy-crop.png",
+    "/workspace/cycle-two-release-review/compiled-case-reader-desktop.png",
+    "/workspace/cycle-two-release-review/compiled-saved-user-motion-off-case.png",
+    "/workspace/cycle-two-release-review/compiled-home-390.png",
+    "/workspace/cycle-two-release-review/compiled-work-390.png",
+    "/workspace/cycle-two-release-review/compiled-studio-390.png",
+    "/workspace/cycle-two-release-review/compiled-about-390.png"
+  ],
+  "status": "passed"
+}

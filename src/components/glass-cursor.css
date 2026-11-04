@@ -1,0 +1,107 @@
+/* The native pointer is hidden only on a positioned, actively enhanced target. */
+.glass-cursor.glass-arrow-cursor {
+  position: fixed;
+  inset: 0 auto auto 0;
+  width: 28px;
+  height: 36px;
+  z-index: 1900;
+  pointer-events: none;
+  user-select: none;
+  opacity: 0;
+  contain: layout style;
+  transition: none;
+}
+.glass-cursor.glass-arrow-cursor[data-visible="true"] {
+  opacity: 1;
+}
+.glass-arrow-shape,
+.glass-arrow-shape svg,
+.glass-arrow-optic {
+  position: absolute;
+  inset: 0;
+  width: 28px;
+  height: 36px;
+}
+.glass-arrow-shape {
+  transform-origin: 1px 1px;
+  transition: transform 100ms ease-out;
+}
+.glass-arrow-optic {
+  clip-path: polygon(
+    3.571% 2.778%,
+    3.571% 83.333%,
+    28.571% 63.889%,
+    50% 94.444%,
+    71.429% 86.111%,
+    46.429% 58.333%,
+    92.857% 58.333%
+  );
+  background: linear-gradient(
+    130deg,
+    #fff8e73d,
+    #fff3cf08 43%,
+    #bfa66a12 63%,
+    #fff4d42b
+  );
+  -webkit-backdrop-filter: brightness(1.12) contrast(1.08) saturate(1.04)
+    blur(0.35px);
+  backdrop-filter: brightness(1.12) contrast(1.08) saturate(1.04) blur(0.35px);
+}
+.glass-arrow-contrast {
+  fill: none;
+  stroke: #171008c9;
+  stroke-width: 2.6;
+  stroke-linejoin: round;
+}
+.glass-arrow-edge {
+  fill: none;
+  stroke: #fff0cfd4;
+  stroke-width: 0.75;
+  stroke-linejoin: round;
+}
+.glass-arrow-bevel {
+  fill: none;
+  stroke: #fff7dec4;
+  stroke-width: 0.45;
+  stroke-linecap: round;
+}
+.glass-arrow-cursor[data-mode="view"] .glass-arrow-shape,
+.glass-arrow-cursor[data-mode="visit"] .glass-arrow-shape,
+.glass-arrow-cursor[data-mode="play"] .glass-arrow-shape {
+  transform: scale(1.08);
+}
+.glass-arrow-cursor[data-mode="view"] .glass-arrow-edge,
+.glass-arrow-cursor[data-mode="visit"] .glass-arrow-edge,
+.glass-arrow-cursor[data-mode="play"] .glass-arrow-edge {
+  stroke: #fff0cfe8;
+}
+.glass-arrow-cursor[data-pressed="true"] .glass-arrow-shape {
+  transform: scale(0.93);
+}
+:root[data-glass-pointer="visible"] .glass-pointer-target,
+:root[data-glass-pointer="visible"] .glass-pointer-target * {
+  cursor: none !important;
+}
+:root[data-glass-pointer="visible"]
+  .glass-pointer-target
+  :is(input, textarea, select, [contenteditable], video, iframe) {
+  cursor: revert !important;
+}
+@media (pointer: coarse),
+  (prefers-reduced-motion: reduce),
+  (forced-colors: active) {
+  .glass-cursor.glass-arrow-cursor {
+    display: none;
+  }
+  :root[data-glass-pointer="visible"] .glass-pointer-target,
+  :root[data-glass-pointer="visible"] .glass-pointer-target * {
+    cursor: revert !important;
+  }
+}
+:root[data-motion="off"] .glass-cursor.glass-arrow-cursor {
+  display: none;
+}
+:root[data-motion="off"][data-glass-pointer="visible"] .glass-pointer-target,
+:root[data-motion="off"][data-glass-pointer="visible"] .glass-pointer-target * {
+  cursor: revert !important;
+}

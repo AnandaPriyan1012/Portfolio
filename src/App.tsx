@@ -31,6 +31,7 @@ import HeroFilm from "./components/HeroFilm";
 import WorkPage from "./components/WorkPage";
 import HomeDirectory from "./components/HomeDirectory";
 import InteractiveSignature from "./components/InteractiveSignature";
+import GlassCursor from "./components/GlassCursor";
 import IdentityCard from "./components/IdentityCard";
 import DriveFilmPlayer, {
   isApprovedDriveEmbed,
@@ -608,7 +609,11 @@ export default function App() {
   useEffect(() => {
     if (!menuOpen) return;
     const close = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setMenuOpen(false);
+      if (event.key !== "Escape" || event.defaultPrevented) return;
+      setMenuOpen(false);
+      document
+        .querySelector<HTMLButtonElement>(".atelier-navigation .menu-button")
+        ?.focus();
     };
     window.addEventListener("keydown", close);
     return () => window.removeEventListener("keydown", close);
@@ -637,13 +642,7 @@ export default function App() {
   }
   function page(id: Project["id"]) {
     caseReturn.current = { path: route, top: scrollY };
-    storyMotion.beforeNavigate();
-    setModal(null);
-    setTourOpen(false);
-    setOsOpen(false);
-    history.pushState({}, "", `/projects/${id}`);
-    setRoute(`/projects/${id}`);
-    window.scrollTo(0, 0);
+    navigate(`/projects/${id}`);
   }
   function home() {
     navigate(caseReturn.current.path, caseReturn.current.top);
@@ -662,6 +661,7 @@ export default function App() {
     return (
       <CaseStudyPage
         project={currentProject}
+        motionEnabled={preferences.motion}
         onBack={home}
         onContact={() => {
           navigate("/about#contact");
@@ -684,6 +684,10 @@ export default function App() {
         onHome={() => navigate("/")}
       />
       <AtelierLoader enabled={preferences.motion} />
+      <GlassCursor
+        key={mainPage}
+        enabled={preferences.motion && !modal && !osOpen && !tourOpen}
+      />
       <main id="main" ref={mainRef} data-page={mainPage}>
         <GlassMaterial />
         {mainPage === "home" && (
@@ -763,6 +767,8 @@ export default function App() {
               aria-label="Next page: Studio"
               onClick={(event) => {
                 if (
+                  event.defaultPrevented ||
+                  event.button !== 0 ||
                   event.metaKey ||
                   event.ctrlKey ||
                   event.shiftKey ||
@@ -914,6 +920,15 @@ export default function App() {
             href="/"
             className="footer-wordmark"
             onClick={(event) => {
+              if (
+                event.defaultPrevented ||
+                event.button !== 0 ||
+                event.metaKey ||
+                event.ctrlKey ||
+                event.shiftKey ||
+                event.altKey
+              )
+                return;
               event.preventDefault();
               navigate("/");
             }}
@@ -935,6 +950,8 @@ export default function App() {
               aria-current={route === path ? "page" : undefined}
               onClick={(event) => {
                 if (
+                  event.defaultPrevented ||
+                  event.button !== 0 ||
                   event.metaKey ||
                   event.ctrlKey ||
                   event.shiftKey ||
@@ -979,6 +996,15 @@ export default function App() {
           <a
             href="#"
             onClick={(event) => {
+              if (
+                event.defaultPrevented ||
+                event.button !== 0 ||
+                event.metaKey ||
+                event.ctrlKey ||
+                event.shiftKey ||
+                event.altKey
+              )
+                return;
               event.preventDefault();
               storyMotion.scrollTo(0);
             }}
@@ -1088,6 +1114,15 @@ export default function App() {
                 className="case-page-link"
                 href={`/projects/${project.id}`}
                 onClick={(e) => {
+                  if (
+                    e.defaultPrevented ||
+                    e.button !== 0 ||
+                    e.metaKey ||
+                    e.ctrlKey ||
+                    e.shiftKey ||
+                    e.altKey
+                  )
+                    return;
                   e.preventDefault();
                   page(project.id);
                 }}

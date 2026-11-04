@@ -21,25 +21,49 @@ type WorkPageProps = {
 
 const projectBriefs = {
   cirs: [
-    ["Purpose", "Make school and Admissions information clear for prospective families."],
-    ["My part", "Web development and creative work, including the Admissions page."],
+    [
+      "Purpose",
+      "I proposed refreshing our school website so future students and parents could understand campus life and Admissions more clearly.",
+    ],
+    [
+      "My part",
+      "Page design and web development with the school’s team, including Admissions and phone layouts.",
+    ],
     ["The work", "The live school website and its practical Admissions Guide."],
   ],
   community: [
-    ["Purpose", "Support community service through digital storytelling and technology."],
+    [
+      "Purpose",
+      "After helping prepare and distribute meals, I asked how else I could help. The organisers wanted a stronger online presence.",
+    ],
     ["My part", "Voluntary Social Media & Technology Head, since 2023."],
-    ["Work shown", "The website’s About page in English and Tamil, from its public review preview."],
+    [
+      "Work shown",
+      "The website’s About page in English and Tamil, from its public review preview.",
+    ],
   ],
   accuflow: [
-    ["Purpose", "Connect a product story to a pressure-point information guide."],
-    ["Project scope", "A six-page product website and conversational guide prototype."],
-    ["Work shown", "The real Try interface and four website routes. No health outcomes are claimed."],
+    [
+      "Purpose",
+      "Connect a product story to a pressure-point information guide.",
+    ],
+    [
+      "Project scope",
+      "A six-page product website and conversational guide prototype.",
+    ],
+    [
+      "Work shown",
+      "The real Try interface and four routes from the running website prototype.",
+    ],
   ],
 } as const;
 
 function ProjectBrief({ project }: { project: keyof typeof projectBriefs }) {
   return (
-    <dl className="project-brief" aria-label={`${project === "community" ? "Vallalar" : project === "cirs" ? "CIRS" : "AccuFlow"} project introduction`}>
+    <dl
+      className="project-brief"
+      aria-label={`${project === "community" ? "Vallalar" : project === "cirs" ? "CIRS" : "AccuFlow"} project introduction`}
+    >
       {projectBriefs[project].map(([label, description]) => (
         <div key={label}>
           <dt>{label}</dt>
@@ -123,11 +147,7 @@ function CirsStory({
   onPage: () => void;
 }) {
   return (
-    <section
-      id="cirs"
-      className="cirs-details page-width"
-      data-editor-note="Add Ananda’s actual original challenge, design decision and reasoning when supplied. Do not invent an early version."
-    >
+    <section id="cirs" className="cirs-details page-width">
       <div className="chapter-reflection" aria-hidden="true" />
       <div className="cirs-detail-copy">
         <p className="section-label">01 — CIRS Website</p>
@@ -142,6 +162,15 @@ function CirsStory({
           <a
             href="/projects/cirs"
             onClick={(event) => {
+              if (
+                event.defaultPrevented ||
+                event.button !== 0 ||
+                event.metaKey ||
+                event.ctrlKey ||
+                event.shiftKey ||
+                event.altKey
+              )
+                return;
               event.preventDefault();
               onPage();
             }}
@@ -324,7 +353,9 @@ function Feature({
               )}
             </h2>
           </div>
-          <ProjectBrief project={project.id === "community" ? "community" : "accuflow"} />
+          <ProjectBrief
+            project={project.id === "community" ? "community" : "accuflow"}
+          />
         </div>
         {project.id === "community" ? (
           <div className="community-scroll-runway">
@@ -351,7 +382,9 @@ function Feature({
                 <div className="service-step" data-service-step="purpose">
                   <p className="section-label">{communityStory.purposeLabel}</p>
                   <h3>
-                    In service of<br />the community.
+                    In service of
+                    <br />
+                    the community.
                   </h3>
                   <p>{communityStory.purpose}</p>
                 </div>
@@ -421,6 +454,15 @@ function Feature({
             <a
               href={`/projects/${project.id}`}
               onClick={(e) => {
+                if (
+                  e.defaultPrevented ||
+                  e.button !== 0 ||
+                  e.metaKey ||
+                  e.ctrlKey ||
+                  e.shiftKey ||
+                  e.altKey
+                )
+                  return;
                 e.preventDefault();
                 onPage();
               }}
@@ -549,7 +591,9 @@ export default function WorkPage({
         >
           <summary className="page-width">
             <span>
-              <span className="section-label">CIRS / Portfolio interpretation</span>
+              <span className="section-label">
+                CIRS / Portfolio interpretation
+              </span>
               <strong>Reconstructed concept study</strong>
             </span>
             <span className="work-process-drawer-action">

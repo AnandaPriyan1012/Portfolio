@@ -1,4 +1,5 @@
 .case-page {
+  --story-progress: 0;
   --case-paper: #17130f;
   --case-ink: #e8daca;
   --case-muted: #b9aa96;
@@ -7,7 +8,7 @@
   background: var(--case-paper);
   color: var(--case-ink);
   min-height: 100vh;
-  font-family: "DM Sans Variable", "DM Sans", sans-serif;
+  font-family: var(--font-body, "Instrument Sans Variable", Arial, sans-serif);
   font-size: 16px;
 }
 .case-page[data-project] {
@@ -324,6 +325,7 @@
   margin: 30px 0 50px;
 }
 .case-sidebar nav > a {
+  position: relative;
   display: flex;
   align-items: baseline;
   gap: 14px;
@@ -408,6 +410,8 @@
   color: var(--case-muted);
 }
 .case-stage {
+  position: relative;
+  isolation: isolate;
   display: grid;
   grid-template-columns: 43px minmax(0, 1fr);
   gap: 26px;
@@ -939,6 +943,8 @@
   min-height: 21px;
 }
 .case-admissions {
+  position: relative;
+  isolation: isolate;
   padding: 47px 0;
   border-bottom: 1px solid var(--case-rule);
   scroll-margin-top: 108px;
@@ -992,4 +998,173 @@
   .case-check {
     min-height: 21px;
   }
+}
+
+/* The story has one reading line: the index, glass edges and progress agree. */
+.case-topbar-progress {
+  position: absolute;
+  inset: auto 0 -1px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--case-accent), rgb(var(--case-light)));
+  transform: scaleX(var(--story-progress));
+  transform-origin: left;
+  pointer-events: none;
+}
+.case-reading-progress {
+  margin-top: 24px;
+  max-width: 190px;
+}
+.case-reading-progress > span {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 12px;
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+  color: var(--case-muted);
+}
+.case-reading-progress > span > span {
+  color: var(--case-accent);
+  font-variant-numeric: tabular-nums;
+}
+.case-reading-progress progress {
+  display: block;
+  appearance: none;
+  width: 100%;
+  height: 2px;
+  margin-top: 12px;
+  border: 0;
+  border-radius: 0;
+  color: var(--case-accent);
+  background: var(--case-rule);
+}
+.case-reading-progress progress::-webkit-progress-bar {
+  background: var(--case-rule);
+}
+.case-reading-progress progress::-webkit-progress-value {
+  background: var(--case-accent);
+}
+.case-reading-progress progress::-moz-progress-bar {
+  background: var(--case-accent);
+}
+.case-sidebar nav > a::before {
+  content: "";
+  position: absolute;
+  inset: -6px -9px -6px -1px;
+  pointer-events: none;
+  background: linear-gradient(100deg, rgb(var(--case-light) / 0.1), transparent);
+  border-top: 1px solid rgb(var(--case-light) / 0.12);
+  opacity: 0;
+}
+.case-sidebar nav > a.active::before {
+  opacity: 1;
+}
+:is(.case-stage, .case-admissions) {
+  --chapter-progress: 0;
+}
+:is(.case-stage, .case-admissions, .case-body):focus-visible {
+  outline: 1px solid var(--case-accent);
+  outline-offset: 8px;
+}
+:is(.case-stage, .case-admissions)::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 12px -22px 12px -18px;
+  border: 1px solid rgb(var(--case-light) / 0.13);
+  background:
+    radial-gradient(ellipse at calc(18% + var(--chapter-progress) * 65%) 0%, rgb(var(--case-light) / 0.09), transparent 67%),
+    linear-gradient(115deg, rgb(var(--case-light) / 0.035), transparent 70%);
+  box-shadow: inset 0 1px 0 rgb(var(--case-light) / 0.08), 0 18px 50px #0000000d;
+  opacity: 0;
+  pointer-events: none;
+}
+:is(.case-stage, .case-admissions)[data-reading]::before {
+  opacity: 1;
+}
+:is(.case-stage, .case-admissions)::after {
+  content: "";
+  position: absolute;
+  top: 12px;
+  bottom: 12px;
+  left: -18px;
+  width: 2px;
+  background: linear-gradient(var(--case-accent), rgb(var(--case-light)));
+  transform: scaleY(var(--chapter-progress));
+  transform-origin: top;
+  pointer-events: none;
+}
+.case-image-surface {
+  border: 1px solid rgb(var(--case-light) / 0.28);
+  padding: 9px;
+  background: linear-gradient(130deg, rgb(var(--case-light) / 0.12), #ffffff02);
+  box-shadow: inset 0 1px 0 #ffffff1a, 0 25px 65px #0004;
+}
+[data-reader-media] {
+  --media-arrival: 1;
+  position: relative;
+}
+@media (min-width: 1000px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .case-page[data-reader-depth] [data-reader-media] {
+    transform:
+      perspective(1400px)
+      translateY(calc((1 - var(--media-arrival)) * 18px))
+      rotateX(calc((1 - var(--media-arrival)) * 2.2deg))
+      scale(calc(0.985 + var(--media-arrival) * 0.015));
+    transform-origin: center top;
+  }
+  .case-page[data-reader-depth] [data-reader-media]::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(120deg, transparent 16%, rgb(var(--case-light) / 0.1) 43%, transparent 68%);
+    opacity: calc((1 - var(--media-arrival)) * 0.65);
+  }
+  :is(.case-stage, .case-admissions)::before,
+  .case-sidebar nav > a::before {
+    transition: opacity 220ms ease-out;
+  }
+}
+@media (max-width: 700px) {
+  .case-reading-progress {
+    max-width: none;
+    margin-top: 20px;
+  }
+  :is(.case-stage, .case-admissions)::before {
+    inset: 10px -10px 10px -10px;
+  }
+  :is(.case-stage, .case-admissions)::after {
+    left: -10px;
+  }
+  .case-image-surface {
+    padding: 6px;
+  }
+}
+@media (forced-colors: active) {
+  :is(.case-stage, .case-admissions)[data-reading]::before {
+    border-color: Highlight;
+  }
+  .case-topbar-progress,
+  :is(.case-stage, .case-admissions)::after {
+    background: Highlight;
+    forced-color-adjust: none;
+  }
+}
+.case-page[data-reader-motion="off"] [data-reader-media],
+:root[data-motion="off"] .case-page [data-reader-media] {
+  transform: none;
+}
+.case-page[data-reader-motion="off"] [data-reader-media]::after,
+:root[data-motion="off"] .case-page [data-reader-media]::after {
+  display: none;
+}
+.case-page[data-reader-motion="off"] :is(.case-stage, .case-admissions)::before,
+:root[data-motion="off"] .case-page :is(.case-stage, .case-admissions)::before {
+  background: linear-gradient(115deg, rgb(var(--case-light) / 0.05), transparent 70%);
+  transition: none;
+}
+.case-page[data-reader-motion="off"] .case-sidebar nav > a::before,
+:root[data-motion="off"] .case-page .case-sidebar nav > a::before {
+  transition: none;
 }

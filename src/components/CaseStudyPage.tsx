@@ -1,4 +1,4 @@
-import { useEffect, useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import {
   ArrowDown,
   ArrowLeft,
@@ -20,6 +20,7 @@ import Signature from "./Signature";
 
 type Props = {
   project: Project;
+  motionEnabled?: boolean;
   onBack: () => void;
   onContact: () => void;
   onProject?: (id: Project["id"]) => void;
@@ -54,6 +55,7 @@ export function AccuFlowVisual() {
 
 export default function CaseStudyPage({
   project,
+  motionEnabled = false,
   onBack,
   onContact,
   onProject,
@@ -61,6 +63,9 @@ export default function CaseStudyPage({
   const [cut, setCut] = useState<"quick" | "director">("director");
   const [active, setActive] = useState("");
   const [mediaFailed, setMediaFailed] = useState(false);
+  const pageRef = useRef<HTMLDivElement>(null);
+  const progressRef = useRef<HTMLProgressElement>(null);
+  const progressLabelRef = useRef<HTMLSpanElement>(null);
   const isAccuFlow = project.id === "accuflow";
   const index = projects.findIndex((item) => item.id === project.id);
   const sequence = projects.filter((item) =>
@@ -75,23 +80,44 @@ export default function CaseStudyPage({
   const hasAdmissions = project.id === "cirs" && !!assets.admissionsUrl;
   const hasContact =
     !!siteContent.contact.email || siteContent.contact.socials.length > 0;
+  const chapterTitles =
+    project.id === "cirs"
+      ? {
+          context: "Helping families find the next step",
+          role: "Web development & creative work",
+          process: "From application access to enquiries",
+          outcome: "A live school website",
+        }
+      : project.id === "community"
+        ? {
+            context: "Digital support for community service",
+            role: "A voluntary role, since 2023",
+            process: "One commitment, several channels",
+            outcome: "Ongoing work, public preview",
+          }
+        : {
+            context: "The idea",
+            role: "My contribution",
+            process: "The work",
+            outcome: "Where it stands",
+          };
   const detailed = isAccuFlow
     ? accuflowStages
     : [
         {
           id: "challenge",
-          title: project.id === "cirs" ? "The context" : "The challenge",
+          title: chapterTitles.context,
           body: project.story.challenge,
         },
-        { id: "role", title: "My contribution", body: project.story.role },
+        { id: "role", title: chapterTitles.role, body: project.story.role },
         {
           id: "process",
-          title: project.id === "cirs" ? "In the interface" : "The work",
+          title: chapterTitles.process,
           body: project.story.process,
         },
         {
           id: "outcome",
-          title: "Where it stands",
+          title: chapterTitles.outcome,
           body: project.story.outcome,
         },
         { id: "lessons", title: "What I learned", body: project.story.lessons },
@@ -102,13 +128,13 @@ export default function CaseStudyPage({
       : [
           {
             id: "mission",
-            title: project.id === "cirs" ? "The context" : "The idea",
+            title: chapterTitles.context,
             body: project.story.challenge,
           },
-          { id: "role", title: "My contribution", body: project.story.role },
+          { id: "role", title: chapterTitles.role, body: project.story.role },
           {
             id: "outcome",
-            title: "Where it stands",
+            title: chapterTitles.outcome,
             body: project.story.outcome,
           },
         ]
@@ -126,29 +152,140 @@ export default function CaseStudyPage({
   }, [project.id, project.title]);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) setActive(entry.target.id);
-        });
-      },
-      { rootMargin: "-15% 0px -55% 0px", threshold: 0 },
+    const page = pageRef.current;
+    if (!page) return;
+
+    // One measured reading line drives the existing index, the glass edges and
+    // the native progress element. Scroll only schedules work; nothing ticks at rest.
+    const chapters = Array.from(
+      page.querySelectorAll<HTMLElement>("[data-reader-chapter]"),
     );
-    sections.forEach((section) => {
-      const element = document.getElementById(anchor(section.id));
-      if (element) observer.observe(element);
+    const media = Array.from(
+      page.querySelectorAll<HTMLElement>("[data-reader-media]"),
+    );
+    const depthPreference = window.matchMedia(
+      "(min-width: 1000px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)",
+    );
+    const device = navigator as Navigator & {
+      deviceMemory?: number;
+      connection?: { saveData?: boolean };
+    };
+    const constrained =
+      device.connection?.saveData ||
+      (device.deviceMemory !== undefined && device.deviceMemory <= 4) ||
+      (device.hardwareConcurrency > 0 && device.hardwareConcurrency <= 4);
+    let depthEnabled = motionEnabled && depthPreference.matches && !constrained;
+    let geometry: { element: HTMLElement; top: number; height: number }[] = [];
+    let mediaGeometry: typeof geometry = [];
+    let frame = 0;
+    let needsMeasure = true;
+    let disposed = false;
+    let previousActive = "";
+    let previousPercent = -1;
+    const clamp = (value: number) => Math.min(1, Math.max(0, value));
+    const measure = (elements: HTMLElement[]) =>
+      elements.map((element) => {
+        const rect = element.getBoundingClientRect();
+        return { element, top: rect.top + window.scrollY, height: rect.height };
+      });
+
+    const update = () => {
+      frame = 0;
+      if (disposed) return;
+      if (needsMeasure) {
+        geometry = measure(chapters);
+        mediaGeometry = measure(media);
+        needsMeasure = false;
+      }
+      const viewport = window.innerHeight;
+      const readingLine = window.scrollY + Math.max(120, viewport * 0.32);
+      const first = geometry[0];
+      const last = geometry.at(-1);
+      if (first && last) {
+        const progress = clamp(
+          (readingLine - first.top) / (last.top + last.height - first.top),
+        );
+        page.style.setProperty("--story-progress", String(progress));
+        const percent = Math.round(progress * 100);
+        if (percent !== previousPercent) {
+          if (progressRef.current) progressRef.current.value = percent;
+          if (progressLabelRef.current)
+            progressLabelRef.current.textContent = `${String(percent).padStart(2, "0")}%`;
+          previousPercent = percent;
+        }
+        let current = "";
+        geometry.forEach(({ element, top, height }) => {
+          const progress = clamp((readingLine - top) / height);
+          element.style.setProperty("--chapter-progress", String(progress));
+          if (readingLine >= top - 1) current = element.id;
+        });
+        if (current !== previousActive) {
+          chapters.forEach((chapter) => {
+            chapter.toggleAttribute("data-reading", chapter.id === current);
+          });
+          setActive(current);
+          previousActive = current;
+        }
+      }
+      if (depthEnabled) {
+        mediaGeometry.forEach(({ element, top, height }) => {
+          const arrival = clamp(
+            (window.scrollY + viewport * 0.87 - top) /
+              Math.min(height * 0.5, viewport * 0.65),
+          );
+          element.style.setProperty("--media-arrival", String(arrival));
+        });
+      }
+    };
+    const schedule = () => {
+      if (!frame && !disposed) frame = window.requestAnimationFrame(update);
+    };
+    const remeasure = () => {
+      needsMeasure = true;
+      schedule();
+    };
+    const setDepthPreference = () => {
+      depthEnabled = motionEnabled && depthPreference.matches && !constrained;
+      page.toggleAttribute("data-reader-depth", depthEnabled);
+      remeasure();
+    };
+    const resizeObserver = new ResizeObserver(remeasure);
+    const story = page.querySelector(".case-story-column");
+    if (story) resizeObserver.observe(story);
+    media.forEach((surface) => resizeObserver.observe(surface));
+    page.addEventListener("load", remeasure, true);
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", remeasure, { passive: true });
+    depthPreference.addEventListener("change", setDepthPreference);
+    document.fonts.ready.then(() => {
+      if (!disposed) remeasure();
     });
-    if (hasAdmissions) {
-      const admissions = document.getElementById("case-cirs-admissions");
-      if (admissions) observer.observe(admissions);
-    }
-    return () => observer.disconnect();
-  }, [project.id, cut, hasAdmissions]);
+    setDepthPreference();
+
+    return () => {
+      disposed = true;
+      window.cancelAnimationFrame(frame);
+      resizeObserver.disconnect();
+      page.removeEventListener("load", remeasure, true);
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", remeasure);
+      depthPreference.removeEventListener("change", setDepthPreference);
+      page.removeAttribute("data-reader-depth");
+      page.style.removeProperty("--story-progress");
+      chapters.forEach((chapter) => {
+        chapter.removeAttribute("data-reading");
+        chapter.style.removeProperty("--chapter-progress");
+      });
+      media.forEach((surface) => surface.style.removeProperty("--media-arrival"));
+    };
+  }, [project.id, cut, hasAdmissions, mediaFailed, motionEnabled]);
 
   return (
     <div
+      ref={pageRef}
       className={`case-page${isAccuFlow ? " case-accuflow" : ""}`}
       data-project={project.id}
+      data-reader-motion={motionEnabled ? "on" : "off"}
       style={{ "--case-accent": project.accent } as CSSProperties}
     >
       <a className="case-skip" href="#case-body">
@@ -156,6 +293,7 @@ export default function CaseStudyPage({
       </a>
       <div className="case-atmosphere" aria-hidden="true" />
       <header className="case-topbar">
+        <span className="case-topbar-progress" aria-hidden="true" />
         <button className="case-back" onClick={onBack}>
           <ArrowLeft size={15} />
           <span>Back to portfolio</span>
@@ -229,7 +367,7 @@ export default function CaseStudyPage({
         <section className="case-media" aria-label="Project media">
           {assets?.previewUrl && !mediaFailed ? (
             <figure>
-              <picture>
+              <picture data-reader-media>
                 {assets.mobilePreviewUrl && (
                   <source
                     media="(max-width: 767px)"
@@ -285,11 +423,22 @@ export default function CaseStudyPage({
             </div>
           )}
         </section>
-        <div id="case-body" className="case-body">
+        <div id="case-body" className="case-body" tabIndex={-1}>
           <aside className="case-sidebar">
             <span className="case-micro">
               <List size={12} /> In this story
             </span>
+            <div className="case-reading-progress">
+              <span>
+                Story progress <span ref={progressLabelRef}>00%</span>
+              </span>
+              <progress
+                ref={progressRef}
+                value={0}
+                max={100}
+                aria-label="Case study reading progress"
+              />
+            </div>
             <nav aria-label="Case study chapters">
               {sections.map((section, i) => (
                 <a
@@ -321,14 +470,14 @@ export default function CaseStudyPage({
             </nav>
             <span className="case-sidebar-bottom">
               Ananda Priyan
-              <br />A project in context.
+              <br />The work, in context.
             </span>
           </aside>
           <div className="case-story-column">
             <div className="case-cut-controls">
               <div>
-                <span className="case-micro">Choose your cut</span>
-                <p>A quick look, or the whole thread.</p>
+                <span className="case-micro">Reading length</span>
+                <p>Read the essentials, or follow each part.</p>
               </div>
               <div
                 className="case-cut-toggle"
@@ -363,21 +512,30 @@ export default function CaseStudyPage({
                   id={anchor(section.id)}
                   key={`${cut}-${section.id}`}
                   className="case-stage"
+                  data-reader-chapter
+                  aria-labelledby={`${anchor(section.id)}-title`}
+                  tabIndex={-1}
                 >
                   <span className="case-stage-number">
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <div>
-                    <h2>{section.title}</h2>
+                    <h2 id={`${anchor(section.id)}-title`}>{section.title}</h2>
                     <p>{section.body}</p>
                   </div>
                 </section>
               ))}
             </div>
             {hasAdmissions && (
-              <section id="case-cirs-admissions" className="case-admissions">
+              <section
+                id="case-cirs-admissions"
+                className="case-admissions"
+                data-reader-chapter
+                aria-labelledby="case-admissions-title"
+                tabIndex={-1}
+              >
                 <span className="case-micro">The Admissions page</span>
-                <h2>A closer look.</h2>
+                <h2 id="case-admissions-title">The route into Admissions.</h2>
                 <p>
                   The Admissions Guide groups three practical questions:
                   entry-class availability, access to the application portal,
@@ -387,11 +545,13 @@ export default function CaseStudyPage({
                   introduction.
                 </p>
                 <figure>
-                  <img
-                    src={assets.admissionsUrl!}
-                    alt="Admissions page — screenshot captured from the public CIRS website"
-                    loading="lazy"
-                  />
+                  <div className="case-image-surface" data-reader-media>
+                    <img
+                      src={assets.admissionsUrl!}
+                      alt="Admissions page — screenshot captured from the public CIRS website"
+                      loading="lazy"
+                    />
+                  </div>
                   <figcaption>
                     Screenshot captured from the public Admissions page at
                     cirschool.org.

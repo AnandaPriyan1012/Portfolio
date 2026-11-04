@@ -226,21 +226,65 @@ test('the brief nonblocking opening is skippable by keyboard and only runs once 
   await expect(page.getByRole('navigation', { name: 'Main navigation' })).toBeVisible()
   await skip.focus(); await page.keyboard.press('Enter')
   await expect(page.locator('.state-opening')).toHaveCount(0)
+  await expect(page.locator('.site-header .wordmark')).toBeFocused()
   await page.reload()
   await expect(page.locator('.state-opening')).toHaveCount(0)
   await expect(page.locator('h1')).toContainText('Ananda')
 })
 
-test('the title sequence has a bounded fallback and does not wait for media', async ({ page }) => {
+test('the original signature draws in stages and Escape skips without stealing page focus', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  await page.addInitScript(() => Object.defineProperty(navigator, 'hardwareConcurrency', { value: 8, configurable: true }))
+  await page.goto('/', { waitUntil: 'domcontentloaded' })
+  const drawing = page.locator('.state-signature-drawing')
+  await expect(drawing).toBeVisible()
+  await expect(drawing.locator('mask image')).toHaveAttribute('href', '/media/ap-signature.png')
+  const firstStroke = drawing.locator('.state-signature-ascender')
+  const initial = await firstStroke.evaluate(node => Number.parseFloat(getComputedStyle(node).strokeDashoffset))
+  expect(initial).toBeGreaterThan(0)
+  await expect.poll(() => firstStroke.evaluate(node => Number.parseFloat(getComputedStyle(node).strokeDashoffset))).toBeLessThan(initial)
+  const home = page.locator('.site-header .wordmark')
+  await home.focus()
+  await page.keyboard.press('Escape')
+  await expect(page.locator('.state-opening')).toHaveCount(0)
+  await expect(home).toBeFocused()
+  await expect(page.getByRole('navigation', { name: 'Main navigation' })).toBeVisible()
+})
+
+test('the title sequence has a bounded fallback when the signature fails', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' })
   await page.addInitScript(() => Object.defineProperty(navigator, 'hardwareConcurrency', { value: 8, configurable: true }))
   await page.route('**/media/ap-signature*.png', route => route.abort())
   await page.goto('/', { waitUntil: 'domcontentloaded' })
   await expect(page.getByRole('button', { name: 'Skip intro', exact: true })).toBeVisible()
+  await expect(page.locator('.state-signature-fallback')).toHaveText('Ananda Priyan')
   const start = Date.now()
-  await expect(page.locator('.state-opening')).toHaveCount(0, { timeout: 2300 })
-  expect(Date.now() - start).toBeLessThan(2300)
+  await expect(page.locator('.state-opening')).toHaveCount(0, { timeout: 2700 })
+  expect(Date.now() - start).toBeLessThan(2700)
   await expect(page.locator('h1')).toContainText('Ananda')
+})
+
+test('the signature opening never waits on an unresolved image request', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  await page.addInitScript(() => Object.defineProperty(navigator, 'hardwareConcurrency', { value: 8, configurable: true }))
+  let requested = false
+  await page.route('**/media/ap-signature.png', () => { requested = true })
+  await page.goto('/', { waitUntil: 'domcontentloaded' })
+  await expect(page.locator('.state-opening')).toBeVisible()
+  await expect.poll(() => requested).toBe(true)
+  await expect(page.locator('.state-opening')).toHaveCount(0, { timeout: 2700 })
+  await expect(page.locator('h1')).toContainText('Ananda')
+})
+
+test('Save Data bypasses the signature opening without a session or media wait', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, 'hardwareConcurrency', { value: 8, configurable: true })
+    Object.defineProperty(navigator, 'connection', { value: { saveData: true }, configurable: true })
+  })
+  await page.goto('/', { waitUntil: 'domcontentloaded' })
+  await expect(page.locator('h1')).toContainText('Ananda')
+  await expect(page.locator('.state-opening')).toHaveCount(0)
 })
 
 for (const path of ['/nothing-here', '/projects/not-a-project']) test(`branded 404 at ${path} returns Home without leaving scroll triggers`, async ({ page }) => {

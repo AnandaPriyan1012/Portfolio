@@ -1,0 +1,41 @@
+{
+  "checkedAtUtc": "2026-11-04T12:01:57.206636+00:00",
+  "scope": "Audit-cycle validation before publication; based on48ccd5d",
+  "productionBuild": "passed",
+  "chromiumFullSuite": {
+    "passed": 111,
+    "failed": 0,
+    "duration": "3.4 minutes",
+    "log": "/workspace/refinement-cycle-two-tests.log"
+  },
+  "subsequentTargetedChecks": {
+    "passed": 2,
+    "scope": "Glass-arrow eligibility/fallback and stationary pointer after full-surface card flip",
+    "log": "/workspace/cursor-regression/final-targeted.log"
+  },
+  "compiledEvidence": "docs/audit-cycle-two-compiled.json",
+  "signature": {
+    "sha256": "80ccec808c2b7a5323d7401d1fd235d5f37b64362247656e08b9c742f6bf34a4",
+    "unchanged": true,
+    "durationMs": 2400,
+    "sessionKey": "ap-atelier-loader-v4",
+    "source": "Exact original alpha; invisible guide paths reveal four strokes; no replacement letter shapes"
+  },
+  "card": "Full-surface native buttons; separate email target; inert hidden faces; keyboard focus; no visibleTurncardinstruction",
+  "pointer": "28x36px original glass arrow with transparent backdrop-filtered face, warmbevel andprecisehotspot; nativecursor hidden onlywhen positioned overactive eligible target; native restored afteractivation/exit/scroll/keyboard/unmount andunder fallback conditions",
+  "reader": "Measured reading progress, chapter edge tracing and project-tinted active glass; stationary text. Desktop depth requires the effective site motion setting as well as device eligibility; saved Motion off and OS reduction stay flat. No idle RAF.",
+  "navigation": "Native newtabs preserved; mobile Enter/Tab/Escape order/focus corrected; newcaseh1 focus and returnscroll preserved",
+  "copy": "CIRS/Vallalar/AirKart purpose andteamroles grounded in ownerprojectnotes; swimstart/strokes grounded in namedCV; no conflictingpagecounts, unrelatedprivateacademicnarrative orunsupportedtrackerattribution",
+  "remainingFollowup": "Existing lazy next-project thumbnail can shift case layout69px beforedecode; reserve its media footprint in next cycle",
+  "limits": [
+    "Cloud Chromium checks; physical devices andSafari untested",
+    "Drive publicpreview documentsverified;productionUI testsuseisolatediframe documents; nofullfilmpayloaddecoded"
+  ],
+  "subsequentReaderChecks": {
+    "passed": 6,
+    "scope": "Reading depth/progress/cuts/native anchors/resource guards and actual saved Motion off regression"
+  },
+  "finalRuntimeEntry": "index-Dvm4Rpdl.js",
+  "compiledRouteChecks": 8,
+  "compiledInteractionChecks": 12
+}

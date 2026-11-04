@@ -116,7 +116,8 @@ export const siteContent = {
         status: "Original film and exact contribution credits to be supplied.",
       },
     ],
-    mediaNote: "Two films available to watch. More original films and credits will follow.",
+    mediaNote:
+      "Two films available to watch. More original films and credits will follow.",
   },
   community: {
     eyebrow: "Volunteer work · since 2023",
@@ -283,10 +284,10 @@ export const projects: Project[] = [
       "Live public website captures · cirschool.org · 3 November 2026.",
     story: {
       challenge:
-        "The school website presents CIRS to prospective families and its wider community. Admissions is a practical part of that experience: it brings the application portal, process and key enquiries into one place.",
-      role: "Web development and creative work for the official CIRS website, including the Admissions page.",
+        "I proposed refreshing our school website to give future students and parents a clearer picture of campus life. The school assembled a team, and Admissions became one of the practical parts of that work: application access, the process and key enquiries needed to be easy to find.",
+      role: "Page design and web development with the school’s team, including the Admissions page, layouts and visual direction.",
       process:
-        "The Admissions page places the registered portal login beside a route to understand the process. It separates entry-class availability, application access, and dates or assessment enquiries, with current arrangements directed to the Admissions Office.",
+        "I focused on campus life and information for future students and parents, refining phone layouts and responding to feedback on images, navigation and text. The Admissions Guide places the registered portal login beside the process guide and directs current enquiries to the Admissions Office.",
       outcome:
         "The official website is live at cirschool.org, with a dedicated Admissions Guide at cirschool.org/admissions.html.",
       lessons: "",
@@ -306,10 +307,10 @@ export const projects: Project[] = [
     mediaStatus: "Actual About-page capture from the website review preview.",
     story: {
       challenge:
-        "Support community service at Vallalar Sathya Dharmasalai through digital storytelling, social media and the organization’s website.",
+        "After helping prepare and distribute meals, I asked the organisers how else I could contribute. They described limited online reach, which led to work on the website and social media.",
       role: "Social Media & Technology Head, serving voluntarily since 2023. My work includes digital storytelling, social media and work on the organisation’s website.",
       process:
-        "My contribution spans digital storytelling, social-media work and the organisation’s website. These are different ways of communicating the same community commitment.",
+        "The work grew from hands-on service into digital storytelling, social-media management and a website for the organisation. The English and Tamil About-page views shown here come from its public website review preview.",
       outcome:
         "Ongoing voluntary involvement since 2023. The organisation’s website work is available as a public review preview, alongside the digital-storytelling and social-media commitment.",
       lessons: "",
@@ -349,7 +350,8 @@ export const projects: Project[] = [
       "Trailers, films and editing work. A collection of six named pieces, including two films available through Google Drive.",
     tags: ["Storytelling", "Film & editing"],
     accent: "#b69d85",
-    mediaStatus: "CCK trailer and Farewell AA available to watch. More films, approved stills and exact credits pending.",
+    mediaStatus:
+      "CCK trailer and Farewell AA available to watch. More films, approved stills and exact credits pending.",
     story: {
       challenge:
         "Bring creative storytelling work into a collection that gives each project room to be understood. Individual project briefs are still to be supplied.",
@@ -369,14 +371,14 @@ export const projects: Project[] = [
     title: "AirKart",
     subtitle: "What if the journey could be smarter?",
     description:
-      "A smaller student project exploring the trade-off between dispatching now and waiting to share a journey.",
+      "Long waits for needed items at home led our team to explore faster delivery as a student competition concept. I worked on its website and 3D model; the central question was whether to dispatch immediately or wait to share a journey.",
     tags: ["Student project", "Concept"],
     accent: "#b6a189",
     mediaStatus: "Smaller student project · all demo figures are illustrative.",
     story: {
       challenge:
-        "Explore the conceptual trade-off between dispatching a delivery immediately and waiting to batch deliveries together.",
-      role: "A student project. Development stage, team and exact responsibilities are awaiting confirmation.",
+        "Waiting for needed items at home prompted our team’s student competition concept: could deliveries arrive sooner while keeping journeys affordable? That led to the trade-off between immediate dispatch and batching deliveries together.",
+      role: "Website and 3D model for the team’s student venture concept.",
       process:
         "The interactive comparison demonstrates two possible dispatch choices. It is an explanation of a concept, not a simulation using verified operational data.",
       outcome:
@@ -391,7 +393,7 @@ export const aboutLanes = [
   {
     id: "builder",
     label: "Builder",
-    title: "From “what if” to something you can use.",
+    title: "Websites for school and community.",
     description:
       "I’m a student developer. My work includes web development and creative work for the CIRS website, including Admissions, and work on the organisation’s website at Vallalar Sathya Dharmasalai, where I serve voluntarily as Social Media & Technology Head.",
     detail: "Websites, experiments and ideas taking shape.",
@@ -399,26 +401,26 @@ export const aboutLanes = [
   {
     id: "storyteller",
     label: "Storyteller",
-    title: "A different way to make an idea move.",
+    title: "Film, editing and digital storytelling.",
     description:
-      "I’m a creative storyteller with TED-Ed, TEDx and editing work to share. Digital storytelling is also part of my voluntary work for Vallalar Sathya Dharmasalai.",
-    detail: "Stories, frames and the connections between them.",
+      "My film collection includes the CCK trailer and Farewell video. Digital storytelling is also part of my voluntary work for Vallalar Sathya Dharmasalai.",
+    detail: "Explore the films in Studio.",
   },
   {
     id: "swimmer",
     label: "Swimmer",
-    title: "There’s a life beyond the screen.",
+    title: "Freestyle and breaststroke.",
     description:
-      "I’m a swimmer, too.",
-    detail: "A different lane. The same curiosity.",
+      "I’m a swimmer, too. I started at CIRS in Class 10, focusing on freestyle and breaststroke.",
+    detail: "A part of life beyond the screen.",
   },
   {
     id: "curious",
     label: "Curious Mind",
-    title: "Always another question worth asking.",
+    title: "Ideas to explore, interfaces to test.",
     description:
-      "I’m a student and an aspiring entrepreneur, curious about the connections between building, storytelling and service. My projects are places to keep asking questions and making something real.",
-    detail: "Learning, wondering and making room for what’s next.",
+      "I’m a student and an aspiring entrepreneur. AirKart explores delivery choices, while AccuFlow is a product website and interaction prototype.",
+    detail: "Student concepts and early-stage work.",
   },
 ];
 
@@ -466,7 +468,8 @@ export const creativeMedia: {
     title: "CCK trailer",
     type: "Trailer",
     videoUrl: null,
-    embedUrl: "https://drive.google.com/file/d/1FXMI8GoosQllewx87S8_lJDXRULukrYA/preview",
+    embedUrl:
+      "https://drive.google.com/file/d/1FXMI8GoosQllewx87S8_lJDXRULukrYA/preview",
     credits: null,
     posterUrl: null,
     caption: "Trailer · Public export, 2:22.",
@@ -476,7 +479,8 @@ export const creativeMedia: {
     title: "Farewell video",
     type: "Video",
     videoUrl: null,
-    embedUrl: "https://drive.google.com/file/d/1zxuYX1UAG8FwYlfYhWP-SAnP4jaRx5MN/preview",
+    embedUrl:
+      "https://drive.google.com/file/d/1zxuYX1UAG8FwYlfYhWP-SAnP4jaRx5MN/preview",
     credits: null,
     posterUrl: null,
     caption: "Farewell AA · Watch the film.",
@@ -731,8 +735,7 @@ export const discoveryContent = {
         x: 17,
         y: 65,
         title: "Another lane to explore.",
-        description:
-          "A swimmer, with a life beyond the screen.",
+        description: "A swimmer, with a life beyond the screen.",
         action: "Meet the swimmer",
         project: null,
       },

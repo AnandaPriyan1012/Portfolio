@@ -42,6 +42,7 @@ export default function AtelierNavigation({
         aria-current={currentPage === "home" ? "page" : undefined}
         onClick={(event) => {
           if (
+            event.defaultPrevented ||
             event.button !== 0 ||
             event.metaKey ||
             event.ctrlKey ||
@@ -60,6 +61,16 @@ export default function AtelierNavigation({
       <span className="navigation-caption" aria-hidden="true">
         Ananda Priyan<span>{pageCaptions[currentPage]}</span>
       </span>
+      <button
+        className="menu-button"
+        aria-label={menuOpen ? "Close menu" : "Open menu"}
+        aria-expanded={menuOpen}
+        aria-controls="site-nav"
+        onClick={onMenuToggle}
+      >
+        <span>{menuOpen ? "Close" : "Menu"}</span>
+        {menuOpen ? <X size={18} /> : <Menu size={18} />}
+      </button>
       <nav
         id="site-nav"
         className={menuOpen ? "main-nav is-open" : "main-nav"}
@@ -72,6 +83,7 @@ export default function AtelierNavigation({
             aria-current={activeSection === chapter.id ? "location" : undefined}
             onClick={(event) => {
               if (
+                event.defaultPrevented ||
                 event.button !== 0 ||
                 event.metaKey ||
                 event.ctrlKey ||
@@ -93,16 +105,6 @@ export default function AtelierNavigation({
           </a>
         ))}
       </nav>
-      <button
-        className="menu-button"
-        aria-label={menuOpen ? "Close menu" : "Open menu"}
-        aria-expanded={menuOpen}
-        aria-controls="site-nav"
-        onClick={onMenuToggle}
-      >
-        <span>{menuOpen ? "Close" : "Menu"}</span>
-        {menuOpen ? <X size={18} /> : <Menu size={18} />}
-      </button>
     </header>
   );
 }
