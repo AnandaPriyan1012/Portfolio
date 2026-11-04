@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import type { CSSProperties, ReactNode } from "react";
-import { X, Plus, Sun, Moon, Menu } from "lucide-react";
+import type { ReactNode } from "react";
+import { X, Plus, Sun, Moon } from "lucide-react";
 import {
   siteContent as copy,
   projects,
@@ -9,12 +9,12 @@ import {
   creativeMedia,
   aboutLanes,
   achievements,
+  experiments,
   experienceContent,
   interfaceCopy,
   directorsCut,
   editorialCopy,
   scrollStoryCopy,
-  communityStory,
 } from "./content";
 import type { Project } from "./content";
 import CaseStudyPage from "./components/CaseStudyPage";
@@ -23,10 +23,15 @@ import GlassCursor from "./components/GlassCursor";
 import GlassMaterial from "./components/GlassMaterial";
 import AtelierLoader from "./components/AtelierLoader";
 import NotFound from "./components/NotFound";
-import Signature from "./components/Signature";
 import useScrollStory from "./animation/useScrollStory";
 import useActiveSection from "./animation/useActiveSection";
 import { GuidedTour } from "./components/Discovery";
+import AtelierNavigation from "./components/AtelierNavigation";
+import ScreeningRoom from "./components/ScreeningRoom";
+import HeroFilm from "./components/HeroFilm";
+import WorkPage from "./components/WorkPage";
+import HomeDirectory from "./components/HomeDirectory";
+import InteractiveSignature from "./components/InteractiveSignature";
 
 type ModalState =
   | { type: "project"; id: Project["id"] }
@@ -35,7 +40,35 @@ type ModalState =
   | null;
 
 function normalizedPath() {
-  return window.location.pathname.replace(/\/+$/, "") || "/";
+  const path = window.location.pathname.replace(/\/+$/, "") || "/";
+  if (path === "/") {
+    const id = window.location.hash.slice(1);
+    const workIds = [
+      "work",
+      "cirs",
+      "community",
+      "accuflow",
+      "airkart",
+      "experiments",
+    ];
+    const aboutIds = ["about", "recognition", "contact"];
+    const destination = workIds.includes(id)
+      ? "/work"
+      : aboutIds.includes(id)
+        ? "/about"
+        : id === "studio"
+          ? "/studio"
+          : null;
+    if (destination) {
+      history.replaceState(
+        history.state,
+        "",
+        `${destination}${window.location.hash}`,
+      );
+      return destination;
+    }
+  }
+  return path;
 }
 
 function readStorage(key: string, fallback: string) {
@@ -120,86 +153,25 @@ function Dialog({
   );
 }
 
-function ProjectMedia({
-  project,
-  draft = false,
-  hero = false,
-}: {
-  project: Project;
-  draft?: boolean;
-  hero?: boolean;
-}) {
-  const asset = projectAssets[project.id];
-  const src = draft ? asset.draftUrl : asset.previewUrl;
-  const [failed, setFailed] = useState<string | null>(null);
-  if (src && failed !== src)
-    return (
-      <picture className="project-media-picture">
-        {!draft && asset.mobilePreviewUrl && (
-          <source media="(max-width:767px)" srcSet={asset.mobilePreviewUrl} />
-        )}
-        <img
-          onError={() => setFailed(src)}
-          src={src}
-          alt={`${project.title} — ${draft ? "original process material" : "actual project visual"}`}
-          loading={hero ? "eager" : "lazy"}
-          className="real-project-media"
-        />
-      </picture>
-    );
-  return (
-    <div
-      className={`media-reservation reservation-${project.id}${draft ? " reservation-draft" : ""}`}
-    >
-      <span className="reservation-top">
-        {draft ? "Behind the work" : project.title}
-      </span>
-      <div className="reservation-middle">
-        <span className="reservation-title">
-          {draft
-            ? "The process,\nin its own time."
-            : project.id === "cirs"
-              ? "A school’s\ndigital home."
-              : project.id === "community"
-                ? "Vallalar Sathya\nDharmasalai"
-                : "AccuFlow"}
-        </span>
-        <span>
-          {src
-            ? "The project image could not load."
-            : draft
-            ? "Genuine drafts and process material to be added."
-            : project.id === "community"
-              ? "Community photographs have not been supplied."
-              : "Project visuals have not been supplied."}
-        </span>
-      </div>
-      <span className="reservation-bottom">
-        {src
-          ? "Project details remain available."
-          : draft
-          ? "No process has been recreated or invented."
-          : "A labelled space for the real work."}
-      </span>
-    </div>
-  );
-}
-
 function ScrollOpening({
   onWork,
   onImageError,
   onDirector,
+  motionEnabled,
 }: {
   onWork: () => void;
   onImageError: () => void;
   onDirector: () => void;
+  motionEnabled: boolean;
 }) {
   const cirs = projects.find((project) => project.id === "cirs")!;
   const asset = projectAssets.cirs;
   const [failed, setFailed] = useState(false);
+  const [filmActive, setFilmActive] = useState(false);
   return (
     <section
       className="scroll-opening"
+      data-hero-film={filmActive ? "active" : undefined}
       aria-label="Introduction and CIRS project scene"
     >
       <div className="hero-room" aria-hidden="true">
@@ -221,8 +193,10 @@ function ScrollOpening({
         </picture>
         <span className="hero-material-light" />
       </div>
+      <HeroFilm enabled={motionEnabled} onAvailability={setFilmActive} />
+      <div className="hero-optical-pane" aria-hidden="true" />
       <div className="hero-story-copy">
-        <p className="hero-eyebrow">Student. Builder. Storyteller.</p>
+        <p className="hero-eyebrow">Ananda Priyan · Selected work</p>
         <h1 aria-label="Ananda Priyan">
           <span>Ananda</span> <span>Priyan</span>
         </h1>
@@ -240,13 +214,19 @@ function ScrollOpening({
           </button>
         )}
       </div>
+      <div className="opening-edition" aria-hidden="true">
+        <span>Web / Film / Community</span>
+        <span className="opening-scroll-cue">
+          Scroll to enter <i />
+        </span>
+      </div>
       <div className="cirs-scene-title">
         <span>CIRS Website</span>
         <a href="https://cirschool.org" target="_blank" rel="noreferrer">
           Visit the live website
         </a>
       </div>
-      <div className="cirs-visual-frame" data-cursor="view">
+      <div className="cirs-visual-frame">
         <div className="cirs-browser-bar">
           <span>cirschool.org</span>
           <span>Official school website</span>
@@ -256,6 +236,7 @@ function ScrollOpening({
           target="_blank"
           rel="noreferrer"
           className="cirs-browser-body"
+          data-cursor="view"
           aria-label="Visit the official CIRS website"
         >
           {asset.previewUrl && !failed ? (
@@ -296,249 +277,6 @@ function ScrollOpening({
         ))}
       </div>
     </section>
-  );
-}
-
-function CirsStory({
-  onQuick,
-  onPage,
-}: {
-  onQuick: () => void;
-  onPage: () => void;
-}) {
-  return (
-    <section
-      id="cirs"
-      className="cirs-details page-width"
-      data-editor-note="Add Ananda’s actual original challenge, design decision and reasoning when supplied. Do not invent an early version."
-    >
-      <div className="cirs-detail-copy">
-        <p className="section-label">01 — CIRS Website</p>
-        <h2>
-          CIRS
-          <br />
-          <em>Admissions.</em>
-        </h2>
-        <p>{scrollStoryCopy.cirsRole}</p>
-        <p>{scrollStoryCopy.cirsContext}</p>
-        <div className="story-links">
-          <button onClick={onQuick}>Quick view</button>
-          <a
-            href="/projects/cirs"
-            onClick={(event) => {
-              event.preventDefault();
-              onPage();
-            }}
-          >
-            Read the case study
-          </a>
-          <a
-            href="https://cirschool.org/admissions.html"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Explore Admissions
-          </a>
-        </div>
-      </div>
-      {projectAssets.cirs.admissionsUrl && (
-        <figure className="admissions-detail">
-          <img
-            src={projectAssets.cirs.admissionsUrl}
-            alt="The real CIRS Admissions page"
-            loading="lazy"
-          />
-          <figcaption>
-            The Admissions page · cirschool.org/admissions.html
-          </figcaption>
-        </figure>
-      )}
-    </section>
-  );
-}
-
-function ProcessMedia({
-  project,
-  messy,
-  onOpen,
-}: {
-  project: Project;
-  messy: boolean;
-  onOpen: () => void;
-}) {
-  const [held, setHeld] = useState(false);
-  const [pinned, setPinned] = useState(false);
-  const down = useRef(0);
-  const suppress = useRef(false);
-  const hasDraft = Boolean(projectAssets[project.id].draftUrl);
-  const showing = hasDraft && (held || pinned || messy);
-  return (
-    <div className="process-media">
-      <button
-        data-cursor="view"
-        className={`feature-media ${showing ? "is-process" : ""}`}
-        onClick={onOpen}
-        aria-label={`Open the ${project.title} case study`}
-      >
-        <ProjectMedia project={project} draft={showing} />
-        {project.id === "community" && (
-          <span className="transition-glass" aria-hidden="true" />
-        )}
-        {project.id === "accuflow" && (
-          <svg
-            className="flowing-outline"
-            viewBox="0 0 1000 500"
-            preserveAspectRatio="none"
-            aria-hidden="true"
-          >
-            <path
-              className="accuflow-path"
-              d="M0 250H70Q90 250 90 230V70Q90 50 110 50H890Q910 50 910 70V430Q910 450 890 450H110Q90 450 90 430V250"
-              fill="none"
-              pathLength="1"
-            />
-          </svg>
-        )}
-      </button>
-      {projectAssets[project.id].previewUrl && projectAssets[project.id].previewCaption && (
-        <p className="project-media-caption">{projectAssets[project.id].previewCaption}</p>
-      )}
-      {hasDraft && (
-        <div className="process-controls">
-          <span>{showing ? "Original process material" : "Project image"}</span>
-          <div>
-            <button
-              className="process-reveal"
-              aria-pressed={pinned || messy}
-              onPointerDown={(e) => {
-                if (e.button !== 0) return;
-                down.current = performance.now();
-                suppress.current = false;
-                setHeld(true);
-                e.currentTarget.setPointerCapture(e.pointerId);
-              }}
-              onPointerUp={() => {
-                suppress.current = performance.now() - down.current > 250;
-                setHeld(false);
-              }}
-              onPointerCancel={() => {
-                setHeld(false);
-                suppress.current = true;
-              }}
-              onClick={() => {
-                if (!suppress.current) setPinned(!pinned);
-                suppress.current = false;
-              }}
-            >
-              See the process
-            </button>
-            <small>Hold briefly, or click to keep open.</small>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function Feature({
-  project,
-  index,
-  messy,
-  onQuick,
-  onPage,
-}: {
-  project: Project;
-  index: number;
-  messy: boolean;
-  onQuick: () => void;
-  onPage: () => void;
-}) {
-  return (
-    <article
-      id={project.id}
-      className={`work-feature feature-${project.id}`}
-      data-reveal="true"
-      style={{ "--project-accent": project.accent } as CSSProperties}
-    >
-      <div className="feature-heading">
-        <span className="feature-number">0{index + 1}</span>
-        <div>
-          <p className="section-label">
-            {project.id === "cirs"
-              ? "Website & creative work"
-              : project.id === "community"
-                ? "Community & digital storytelling"
-                : "Featured project"}
-          </p>
-          <h3 className="material-title">{project.title}</h3>
-        </div>
-        <p className="feature-description">{project.description}</p>
-      </div>
-      {project.id === "community" ? (
-        <div
-          className="community-world"
-          data-editor-note={communityStory.editorNote}
-        >
-          <div className="community-purpose">
-            <div className="service-step" data-service-step="purpose">
-              <p className="section-label">{communityStory.purposeLabel}</p>
-              <h4>{communityStory.purpose}</h4>
-            </div>
-            <div className="service-step" data-service-step="contribution">
-              <p className="section-label">
-                {communityStory.contributionLabel}
-              </p>
-              <h4 className="community-role">{communityStory.role}</h4>
-              <p className="community-tenure">{communityStory.tenure}</p>
-              <ul>
-                {communityStory.contributions.map((contribution) => (
-                  <li key={contribution}>{contribution}</li>
-                ))}
-              </ul>
-            </div>
-          </div>
-          <div className="community-image-reservation">
-            <ProcessMedia project={project} messy={messy} onOpen={onQuick} />
-          </div>
-        </div>
-      ) : (
-        <ProcessMedia project={project} messy={messy} onOpen={onQuick} />
-      )}
-      {project.id === "accuflow" && (
-        <div className="accuflow-stage-info">
-          <p data-flow-stage>
-            <span>The idea</span>{project.story.challenge}
-          </p>
-          <p data-flow-stage>
-            <span>The interaction</span>{project.story.process}
-          </p>
-          <p data-flow-stage>
-            <span>Current stage</span>{project.story.outcome}
-          </p>
-        </div>
-      )}
-      <div className="feature-footer">
-        <span>
-          {project.id === "community"
-            ? "Social Media & Technology Head · voluntarily since 2023"
-            : projectStatus[project.id]}
-        </span>
-        <div>
-          <button onClick={onQuick}>Quick view</button>
-          <a
-            href={`/projects/${project.id}`}
-            onClick={(e) => {
-              e.preventDefault();
-              onPage();
-            }}
-          >
-            {project.id === "accuflow"
-              ? "Project notes"
-              : "Read the case study"}
-          </a>
-        </div>
-      </div>
-    </article>
   );
 }
 
@@ -683,9 +421,9 @@ function About({
       <div className="about-heading">
         <p className="section-label">The person behind the work</p>
         <h2>
-          More than
+          Between code,
           <br />
-          <em>one lane.</em>
+          <em>stories & swimming.</em>
         </h2>
         <p>{editorialCopy.about.description}</p>
       </div>
@@ -772,18 +510,34 @@ export default function App() {
   const [osOpen, setOsOpen] = useState(false);
   const [tourOpen, setTourOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const messy = false;
   const [lane, setLane] = useState("builder");
   const [cirsImageFailed, setCirsImageFailed] = useState(false);
   const [cut, setCut] = useState<"quick" | "director">("quick");
   const [question, setQuestion] = useState<string | null>(null);
   const [route, setRoute] = useState(normalizedPath());
-  const homeScroll = useRef(0);
+  const caseReturn = useRef({ path: "/work", top: 0 });
   const currentProject = projects.find(
     (project) => route === `/projects/${project.id}`,
   );
-  const isNotFound = route !== "/" && !currentProject;
-  const activeSection = useActiveSection(!currentProject && !isNotFound);
+  const mainRoutes = ["/", "/work", "/studio", "/about"];
+  const isNotFound = !mainRoutes.includes(route) && !currentProject;
+  const mainPage =
+    route === "/work"
+      ? "work"
+      : route === "/studio"
+        ? "studio"
+        : route === "/about"
+          ? "about"
+          : "home";
+  const section = useActiveSection(
+    mainPage === "about" && !currentProject && !isNotFound,
+  );
+  const activeSection =
+    mainPage === "about"
+      ? section === "contact"
+        ? "contact"
+        : "about"
+      : mainPage;
   const project =
     modal?.type === "project"
       ? projects.find((item) => item.id === modal.id)
@@ -804,20 +558,22 @@ export default function App() {
       !cirsImageFailed,
     route,
   });
-  const readyFilms = creativeMedia.filter(
-    (item) => item.videoUrl && item.posterUrl && item.credits,
-  );
   const contactReady = Boolean(
     copy.contact.email || copy.contact.socials.length,
   );
   useEffect(() => {
     const back = () => {
-      setRoute(normalizedPath());
+      const next = normalizedPath();
+      if (next !== route) storyMotion.beforeNavigate();
+      setRoute(next);
       setModal(null);
+      setMenuOpen(false);
+      setOsOpen(false);
+      setTourOpen(false);
     };
     window.addEventListener("popstate", back);
     return () => window.removeEventListener("popstate", back);
-  }, []);
+  }, [route, storyMotion.beforeNavigate]);
   useEffect(() => {
     setCut("quick");
     setQuestion(null);
@@ -826,7 +582,9 @@ export default function App() {
     if (isNotFound) return;
     document.title = currentProject
       ? `${currentProject.title} — Ananda Priyan`
-      : copy.title;
+      : mainPage === "home"
+        ? copy.title
+        : `${mainPage === "work" ? "Selected work" : mainPage === "studio" ? "The screening room" : "About & contact"} — Ananda Priyan`;
     if (currentProject) return;
     const observer = new IntersectionObserver(
       (entries) => {
@@ -843,7 +601,7 @@ export default function App() {
       .querySelectorAll("[data-reveal]")
       .forEach((element) => observer.observe(element));
     return () => observer.disconnect();
-  }, [currentProject, isNotFound]);
+  }, [currentProject, isNotFound, mainPage]);
   useEffect(() => {
     if (!menuOpen) return;
     const close = (event: KeyboardEvent) => {
@@ -852,12 +610,31 @@ export default function App() {
     window.addEventListener("keydown", close);
     return () => window.removeEventListener("keydown", close);
   }, [menuOpen]);
-  function scrollTo(id: string) {
+  function navigate(destination: string, restoreTop = 0) {
+    const next = destination.split("#")[0].replace(/\/+$/, "") || "/";
+    if (next !== route) storyMotion.beforeNavigate();
     setMenuOpen(false);
-    storyMotion.scrollTo(`#${id}`);
+    setModal(null);
+    setTourOpen(false);
+    setOsOpen(false);
+    history.pushState({}, "", destination);
+    setRoute(normalizedPath());
+    requestAnimationFrame(() => {
+      if (window.location.hash) storyMotion.scrollTo(window.location.hash);
+      else window.scrollTo({ top: restoreTop, behavior: "instant" });
+      const heading = document.querySelector<HTMLElement>("main h1");
+      if (heading) {
+        heading.tabIndex = -1;
+        heading.focus({ preventScroll: true });
+      }
+    });
+  }
+  function navigateSection(id: string) {
+    navigate(id === "contact" ? "/about#contact" : `/${id}`);
   }
   function page(id: Project["id"]) {
-    homeScroll.current = scrollY;
+    caseReturn.current = { path: route, top: scrollY };
+    storyMotion.beforeNavigate();
     setModal(null);
     setTourOpen(false);
     setOsOpen(false);
@@ -866,9 +643,7 @@ export default function App() {
     window.scrollTo(0, 0);
   }
   function home() {
-    history.pushState({}, "", "/");
-    setRoute("/");
-    requestAnimationFrame(() => window.scrollTo(0, homeScroll.current));
+    navigate(caseReturn.current.path, caseReturn.current.top);
   }
   function quick(id: Project["id"]) {
     setOsOpen(false);
@@ -877,18 +652,18 @@ export default function App() {
   function swim() {
     setOsOpen(false);
     setLane("swimmer");
-    scrollTo("about");
+    navigate("/about#about");
   }
-  if (isNotFound) return <NotFound onHome={home} />;
+  if (isNotFound) return <NotFound onHome={() => navigate("/")} />;
   if (currentProject)
     return (
       <CaseStudyPage
         project={currentProject}
         onBack={home}
         onContact={() => {
-          home();
-          setModal({ type: "contact" });
+          navigate("/about#contact");
         }}
+        onProject={(id) => navigate(`/projects/${id}`)}
       />
     );
 
@@ -897,232 +672,273 @@ export default function App() {
       <a className="skip-link" href="#main">
         Skip to content
       </a>
-      <header className="site-header">
-        <a
-          className="wordmark"
-          href="#"
-          aria-label="Ananda Priyan, back to top"
-        >
-          <Signature />
-        </a>
-        <nav
-          id="site-nav"
-          className={menuOpen ? "main-nav is-open" : "main-nav"}
-          aria-label="Main navigation"
-        >
-          {[
-            { id: "work", label: "Work" },
-            { id: "studio", label: "Studio" },
-            { id: "about", label: "About" },
-            { id: "contact", label: "Contact" },
-          ].map((item) => (
-            <a
-              key={item.id}
-              href={`#${item.id}`}
-              aria-current={activeSection === item.id ? "location" : undefined}
-              onClick={(event) => {
-                event.preventDefault();
-                scrollTo(item.id);
-              }}
-            >
-              <span className="film-nav-node" aria-hidden="true" />
-              {item.label}
-            </a>
-          ))}
-        </nav>
-        <button
-          className="menu-button"
-          aria-label={menuOpen ? "Close menu" : "Open menu"}
-          aria-expanded={menuOpen}
-          aria-controls="site-nav"
-          onClick={() => setMenuOpen(!menuOpen)}
-        >
-          <span>{menuOpen ? "Close" : "Menu"}</span>
-          {menuOpen ? <X size={20} /> : <Menu size={20} />}
-        </button>
-      </header>
+      <AtelierNavigation
+        currentPage={mainPage}
+        activeSection={activeSection}
+        menuOpen={menuOpen}
+        onMenuToggle={() => setMenuOpen(!menuOpen)}
+        onNavigate={navigateSection}
+        onHome={() => navigate("/")}
+      />
       <AtelierLoader enabled={preferences.motion} />
       <GlassCursor enabled={preferences.motion && !modal && !osOpen} />
-      <main id="main" ref={mainRef}>
+      <main id="main" ref={mainRef} data-page={mainPage}>
         <GlassMaterial />
-        <ScrollOpening
-          onWork={() => scrollTo("cirs")}
-          onImageError={() => setCirsImageFailed(true)}
-          onDirector={() => setModal({ type: "media", id: "directors-cut" })}
-        />
-        <div id="work">
-          <CirsStory
-            onQuick={() => quick("cirs")}
-            onPage={() => page("cirs")}
-          />
-        </div>
-        <section
-          className="story-projects page-width"
-          aria-label="Community and featured project stories"
-        >
-          {(["community", "accuflow"] as const).map((id, index) => (
-            <Feature
-              key={id}
-              project={projects.find((p) => p.id === id)!}
-              index={index + 1}
-              messy={messy}
-              onQuick={() => quick(id)}
-              onPage={() => page(id)}
+        {mainPage === "home" && (
+          <>
+            <ScrollOpening
+              motionEnabled={preferences.motion}
+              onWork={() => navigate("/work")}
+              onImageError={() => setCirsImageFailed(true)}
+              onDirector={() =>
+                setModal({ type: "media", id: "directors-cut" })
+              }
             />
-          ))}
-        </section>
-        {true && (
-          <section id="studio" className="studio-section">
+            <HomeDirectory
+              onNavigate={navigate}
+              motionEnabled={preferences.motion}
+            />
+          </>
+        )}
+        {mainPage === "work" && (
+          <>
+            <WorkPage
+              onQuick={quick}
+              onPage={page}
+              motionEnabled={preferences.motion}
+            />
+            <section
+              id="experiments"
+              className="experiments-section page-width"
+            >
+              <header className="archive-heading">
+                <p className="section-label">The working notebook</p>
+                <h2>
+                  Smaller ideas. <em>Room to grow.</em>
+                </h2>
+              </header>
+              <details className="archive-experiment" id="airkart">
+                <summary>
+                  <span className="archive-number">01</span>
+                  <span>
+                    <strong>AirKart</strong>
+                    <small>
+                      A student exploration of drone delivery and shared
+                      journeys.
+                    </small>
+                  </span>
+                  <span className="archive-status">
+                    Explore the experiment <Plus size={18} />
+                  </span>
+                </summary>
+                <div className="airkart-layout">
+                  <div>
+                    <span className="section-label">
+                      Concept study · Illustrative model
+                    </span>
+                    <p>{airkart.description}</p>
+                    <button
+                      className="underlined-button"
+                      onClick={() => quick("airkart")}
+                    >
+                      Read the project notes
+                    </button>
+                  </div>
+                  <DecisionRoom />
+                </div>
+              </details>
+              {experiments.map((item, index) => (
+                <div className="archive-notebook-entry" key={item.id}>
+                  <span className="archive-number">0{index + 2}</span>
+                  <h3>{item.title}</h3>
+                  <span>{item.status}</span>
+                </div>
+              ))}
+            </section>
+            <a
+              className="next-room page-width"
+              href="/studio"
+              aria-label="Next page: Studio"
+              onClick={(event) => {
+                if (
+                  event.metaKey ||
+                  event.ctrlKey ||
+                  event.shiftKey ||
+                  event.altKey
+                )
+                  return;
+                event.preventDefault();
+                navigate("/studio");
+              }}
+            >
+              <div>
+                <span className="section-label">
+                  Next room / Creative Studio
+                </span>
+                <h2>
+                  From websites
+                  <br />
+                  <em>to the screen.</em>
+                </h2>
+                <span className="next-room-action">
+                  Enter Studio <Plus size={17} aria-hidden="true" />
+                </span>
+              </div>
+              <ol aria-hidden="true">
+                {creativeMedia.map((film, index) => (
+                  <li key={film.id}>
+                    <span>0{index + 1}</span>
+                    {film.title}
+                  </li>
+                ))}
+              </ol>
+            </a>
+          </>
+        )}
+        {mainPage === "studio" && (
+          <ScreeningRoom
+            films={creativeMedia}
+            motionEnabled={preferences.motion}
+            asPage
+            onContact={() => navigate("/about#contact")}
+            onPlay={(id) => setModal({ type: "media", id })}
+          />
+        )}
+        {mainPage === "about" && (
+          <>
+            <header className="about-page-intro page-width">
+              <div className="about-page-intro-copy">
+                <p className="section-label">About / Ananda Priyan</p>
+                <h1>
+                  There’s a person
+                  <br />
+                  <em>behind every project.</em>
+                </h1>
+                <p>
+                  A student developer, storyteller and swimmer, with a voluntary
+                  commitment to community work.
+                </p>
+              </div>
+              <InteractiveSignature enabled={preferences.motion} />
+            </header>
             <div className="page-width">
-              <header className="section-heading">
+              <About selected={lane} onSelect={setLane} />
+              <section className="recognition-section" id="recognition">
                 <div>
-                  <p className="section-label">Creative Studio</p>
+                  <p className="section-label">Learning & competition</p>
                   <h2>
-                    Stories,
+                    Academic
                     <br />
-                    <em>frame by frame.</em>
+                    <em>distinctions.</em>
                   </h2>
                 </div>
-              </header>
-              {readyFilms.length === 0 ? (
-                <div className="studio-collection-index">
-                  <p className="studio-draft-note">
-                    A selection of trailers, films and event work.
-                    The films will open here when the originals and credits are ready.
-                  </p>
-                  <ol>
-                    {creativeMedia.map((film, index) => (
-                      <li key={film.id}>
-                        <span className="studio-index-number">
-                          0{index + 1}
+                <div className="achievement-list">
+                  {achievements.map((item) => (
+                    <details className="achievement" key={item.id}>
+                      <summary>
+                        <span>
+                          <h3>{item.title}</h3>
+                          <span>{item.distinction}</span>
                         </span>
-                        <span>{film.title}</span>
-                        <small>{film.type}</small>
-                      </li>
-                    ))}
-                  </ol>
+                        <Plus size={20} />
+                      </summary>
+                      <div className="achievement-detail">
+                        <p>{item.description}</p>
+                        {item.certificate ? (
+                          <a
+                            href={item.certificate}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            View certificate
+                          </a>
+                        ) : (
+                          <span className="certificate-placeholder">
+                            Certificate to be supplied
+                          </span>
+                        )}
+                      </div>
+                    </details>
+                  ))}
                 </div>
-              ) : (
-                <div className="studio-reel-window">
-                  <div className="studio-reel">
-                    {readyFilms.map((item) => (
-                      <button
-                        className="reel-frame"
-                        data-cursor="play"
-                        key={item.id}
-                        onClick={() => setModal({ type: "media", id: item.id })}
-                        aria-label={`Play ${item.title}`}
-                      >
-                        <img
-                          src={item.posterUrl!}
-                          alt={`${item.title} — original film still`}
-                          loading="lazy"
-                        />
-                        <span>{item.title}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
+              </section>
             </div>
-          </section>
+            <section id="contact" className="contact-section">
+              <div className="page-width">
+                <p className="section-label">Contact</p>
+                <h2>
+                  Your next project.
+                  <br />
+                  <em>Let’s talk.</em>
+                </h2>
+                <p className="contact-invitation">
+                  Websites, stories, or an idea worth exploring.
+                </p>
+                {contactReady ? (
+                  copy.contact.email ? (
+                    <a
+                      className="contact-action"
+                      href={`mailto:${copy.contact.email}`}
+                    >
+                      {copy.contact.email}
+                    </a>
+                  ) : (
+                    <button
+                      className="contact-action"
+                      onClick={() => setModal({ type: "contact" })}
+                    >
+                      Let’s connect
+                    </button>
+                  )
+                ) : (
+                  <p>Contact details have not been supplied yet.</p>
+                )}
+              </div>
+            </section>
+          </>
         )}
-        <section id="experiments" className="experiments-section page-width">
-          <header className="section-heading">
-            <div>
-              <p className="section-label">Projects & experiments</p>
-              <h2>
-                Room for
-                <br />
-                <em>“what if?”</em>
-              </h2>
-            </div>
-            <p>{interfaceCopy.secondary.description}</p>
-          </header>
-          <div className="airkart-layout" id="airkart">
-            <div>
-              <span className="section-label">A smaller student project</span>
-              <h3>AirKart</h3>
-              <p>{airkart.description}</p>
-              <button
-                className="underlined-button"
-                onClick={() => quick("airkart")}
-              >
-                Read the project notes
-              </button>
-            </div>
-            <DecisionRoom />
-          </div>
-        </section>
-        <div className="page-width">
-          <About selected={lane} onSelect={setLane} />
-          <section className="recognition-section" id="recognition">
-            <div>
-              <p className="section-label">A few recognitions</p>
-              <h2>
-                Small milestones.
-                <br />
-                <em>Still moving.</em>
-              </h2>
-            </div>
-            <div className="achievement-list">
-              {achievements.map((item) => (
-                <details className="achievement" key={item.id}>
-                  <summary>
-                    <span>
-                      <h3>{item.title}</h3>
-                      <span>{item.distinction}</span>
-                    </span>
-                    <Plus size={20} />
-                  </summary>
-                  <div className="achievement-detail">
-                    <p>{item.description}</p>
-                    {item.certificate ? (
-                      <a
-                        href={item.certificate}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        View certificate
-                      </a>
-                    ) : (
-                      <span className="certificate-placeholder">
-                        Certificate to be supplied
-                      </span>
-                    )}
-                  </div>
-                </details>
-              ))}
-            </div>
-          </section>
-        </div>
-        <section id="contact" className="contact-section">
-          <div className="page-width">
-            <p className="section-label">Contact</p>
-            <h2>Let’s talk.</h2>
-            {contactReady ? (
-              copy.contact.email ? (
-                <a className="contact-action" href={`mailto:${copy.contact.email}`}>
-                  {copy.contact.email}
-                </a>
-              ) : (
-                <button className="contact-action" onClick={() => setModal({ type: "contact" })}>
-                  Let’s connect
-                </button>
-              )
-            ) : (
-              <p>Contact details have not been supplied yet.</p>
-            )}
-          </div>
-        </section>
       </main>
       <footer className="site-footer page-width">
         <div>
-          <a href="#" className="footer-wordmark">
+          <a
+            href="/"
+            className="footer-wordmark"
+            onClick={(event) => {
+              event.preventDefault();
+              navigate("/");
+            }}
+          >
             Ananda Priyan
           </a>
           <p>{copy.footerCredit}</p>
         </div>
+        <nav className="footer-page-links" aria-label="Portfolio pages">
+          {[
+            ["/", "Home"],
+            ["/work", "Work"],
+            ["/studio", "Studio"],
+            ["/about", "About & contact"],
+          ].map(([path, label]) => (
+            <a
+              key={path}
+              href={path}
+              aria-current={route === path ? "page" : undefined}
+              onClick={(event) => {
+                if (
+                  event.metaKey ||
+                  event.ctrlKey ||
+                  event.shiftKey ||
+                  event.altKey
+                )
+                  return;
+                event.preventDefault();
+                navigate(path);
+              }}
+            >
+              {label}
+            </a>
+          ))}
+        </nav>
         <div className="footer-settings">
           <button onClick={() => setTourOpen(true)}>
             Take the 60-second tour
@@ -1150,7 +966,15 @@ export default function App() {
           >
             Motion {preferences.motion ? "on" : "off"}
           </button>
-          <a href="#">Back to top</a>
+          <a
+            href="#"
+            onClick={(event) => {
+              event.preventDefault();
+              storyMotion.scrollTo(0);
+            }}
+          >
+            Back to top
+          </a>
         </div>
       </footer>
       {osOpen && (
@@ -1199,8 +1023,9 @@ export default function App() {
                 {Object.entries(project.story)
                   .filter(
                     ([key, value]) =>
-                      Boolean(value) && (cut === "director" ||
-                      ["challenge", "role", "outcome"].includes(key)),
+                      Boolean(value) &&
+                      (cut === "director" ||
+                        ["challenge", "role", "outcome"].includes(key)),
                   )
                   .map(([key, value]) => (
                     <section key={key}>
@@ -1230,17 +1055,19 @@ export default function App() {
                   Ask the work
                   <Plus size={16} />
                 </summary>
-                {interfaceCopy.askWork.filter((item) => project.story[item.key]).map((item) => (
-                  <button
-                    key={item.key}
-                    aria-expanded={question === item.key}
-                    onClick={() =>
-                      setQuestion(question === item.key ? null : item.key)
-                    }
-                  >
-                    {item.label}
-                  </button>
-                ))}
+                {interfaceCopy.askWork
+                  .filter((item) => project.story[item.key])
+                  .map((item) => (
+                    <button
+                      key={item.key}
+                      aria-expanded={question === item.key}
+                      onClick={() =>
+                        setQuestion(question === item.key ? null : item.key)
+                      }
+                    >
+                      {item.label}
+                    </button>
+                  ))}
                 {question && (
                   <p aria-live="polite">
                     {project.story[question as keyof typeof project.story]}

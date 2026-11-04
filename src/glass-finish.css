@@ -1,0 +1,602 @@
+/* Optical finish: the same dark room, seen through different glass surfaces. */
+:root {
+  --bg: #0b0e0f;
+  --surface: #151b1c;
+  --raised: #1c2425;
+  --text: #eee9de;
+  --muted: #b7bfba;
+  --subtle: #9fa9a3;
+  --line: #e3e9df26;
+  --accent: #c4ad88;
+  --blue: #c4ad88;
+  --blue-strong: #d6c3a2;
+  --glass-border: #e6ecdf35;
+  --glass-fill: #1821228a;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+::selection {
+  background: #d2c2a5;
+  color: #111716;
+}
+
+.section-label {
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  line-height: 1.7;
+}
+
+button:focus-visible,
+a:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible {
+  outline-color: #e8d3ae;
+  outline-width: 2px;
+  outline-offset: 6px;
+}
+
+/* Leave the scroll scene geometry to its timeline; only its material changes. */
+.scroll-opening,
+main[data-scroll-engine="static"] .scroll-opening,
+.hero-room {
+  background-color: #0b0e0f;
+}
+
+.hero-room img {
+  filter: saturate(0.72) contrast(1.05);
+}
+
+.hero-room::after {
+  background: linear-gradient(
+    180deg,
+    #070b0c2e 0%,
+    transparent 30%,
+    transparent 67%,
+    #0b0e0fbd 100%
+  );
+}
+
+.hero-story-copy > h1 {
+  color: #f1e8d9;
+  font-weight: 300;
+  letter-spacing: -0.055em;
+  text-shadow:
+    0 1px 0 #ffffff26,
+    0 5px 32px #0008;
+}
+
+.hero-eyebrow {
+  color: #e0d2bb;
+  font-size: 10px;
+  letter-spacing: 0.23em;
+}
+
+.hero-factual-intro {
+  color: #e2ded1;
+  font-weight: 350;
+  line-height: 1.85;
+  max-width: 565px;
+}
+
+.hero-story-copy > .view-work-button {
+  min-height: 50px;
+  color: #f2ebdc;
+  border: 1px solid #dfcba65c;
+  border-radius: 2px;
+  background: linear-gradient(125deg, #e6d7b917, #e6d7b903 55%), #1118177a;
+  box-shadow:
+    inset 0 1px 0 #fff2cd29,
+    inset 0 -1px 0 #0004,
+    0 12px 28px #0003;
+  backdrop-filter: blur(9px);
+}
+
+.hero-story-copy > .view-work-button:hover {
+  color: #fff8e9;
+  border-color: #e8d5b1b3;
+  background: #313a329c;
+}
+
+.cirs-visual-frame {
+  border: 1px solid #ede4cd66;
+  border-radius: 4px;
+  background: #152021d9;
+  box-shadow:
+    inset 0 1px 0 #fffbe34a,
+    inset 1px 0 0 #ffffff1f,
+    0 25px 70px #0007;
+}
+
+.cirs-browser-bar {
+  background: linear-gradient(90deg, #313c3bcc, #1b2424e6);
+  color: #e3e5d8;
+  border-color: #e3e9dd24;
+}
+
+.cirs-browser-bar > span:last-child {
+  color: #c4c9bc;
+}
+
+.cirs-browser-image {
+  filter: saturate(0.9);
+}
+
+.cirs-scene-title {
+  color: #f0ebdf;
+}
+
+.cirs-scene-title > a {
+  color: #d5d8c8;
+  border-color: #ddd9bd66;
+}
+
+.cirs-scene-captions > p {
+  color: #e2e2d7;
+}
+
+.cirs-scene-captions > p > span {
+  color: #bec8bd;
+}
+
+/* The personal chapter is a broad pane, rather than another flat section. */
+.about-section {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: clamp(30px, 5.3vw, 72px);
+  margin-top: 40px;
+  gap: clamp(36px, 6vw, 90px);
+  border: 1px solid var(--glass-border);
+  border-radius: 3px;
+  background: linear-gradient(135deg, #e4e8d510, transparent 48%), #11191ada;
+  box-shadow:
+    inset 0 1px 0 #f2ecda30,
+    inset -1px 0 0 #f2ecda0d,
+    0 30px 90px #0003;
+}
+
+.about-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background: url("/media/atelier-room-wide.webp") 78% 35% / cover no-repeat;
+  opacity: 0.17;
+  filter: saturate(0.2);
+  pointer-events: none;
+}
+
+.about-section::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(100deg, #0b1213d9, #0b1213a8 55%, #0b121345);
+  pointer-events: none;
+}
+
+.about-section .about-heading > h2 {
+  color: var(--text);
+  font-size: clamp(40px, 4.5vw, 67px);
+  line-height: 1.07;
+  letter-spacing: -0.045em;
+}
+
+.about-heading > p:last-child {
+  max-width: 330px;
+  color: var(--muted);
+  line-height: 1.9;
+}
+
+.lane-tabs {
+  gap: 14px;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  border-color: var(--line);
+}
+
+.lane-tabs > button {
+  min-height: 44px;
+  padding: 7px 0 16px;
+  color: #acb8b1;
+  font-size: 11px;
+}
+
+.lane-tabs > button[aria-selected="true"] {
+  color: #f4ebd9;
+}
+
+.lane-tabs > button[aria-selected="true"]::after {
+  background: #d5c09d;
+  box-shadow: 0 0 12px #d5c09d33;
+}
+
+.lane-panel {
+  min-height: 240px;
+  padding-top: 32px;
+}
+
+.lane-panel > h3 {
+  color: var(--text);
+  font-size: clamp(26px, 2.4vw, 33px);
+  line-height: 1.3;
+}
+
+.lane-panel > p,
+.all-lanes p {
+  color: var(--muted);
+  line-height: 1.9;
+}
+
+.lane-panel > span {
+  color: #bdc4b8;
+}
+
+.all-lanes {
+  border-color: var(--line);
+}
+
+.all-lanes > summary {
+  min-height: 44px;
+  color: #d5d8cb;
+}
+
+.recognition-section {
+  padding: 80px 0 110px;
+  gap: clamp(38px, 7vw, 100px);
+}
+
+.recognition-section h2 {
+  color: var(--text);
+  font-size: clamp(36px, 3.7vw, 54px);
+  letter-spacing: -0.035em;
+}
+
+.achievement {
+  border-color: var(--line);
+  background: linear-gradient(90deg, #dbe5d604, transparent 65%);
+}
+
+.achievement > summary {
+  min-height: 94px;
+  padding: 24px 20px;
+}
+
+.achievement h3 {
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.achievement summary > span > span {
+  color: #c3b594;
+  font-size: 12px;
+}
+
+.achievement-detail {
+  padding: 0 20px 28px;
+}
+
+/* The final invitation lives in the same room as the opening sculpture. */
+.contact-section {
+  position: relative;
+  isolation: isolate;
+  padding: clamp(80px, 10vw, 155px) 0;
+  overflow: hidden;
+  border-color: #e2e6d930;
+  background:
+    linear-gradient(90deg, #0a1113ed, #0c1515c9 55%, #1319148f),
+    url("/media/atelier-room-wide.webp") center 60% / cover no-repeat;
+  color: #eee9de;
+  box-shadow:
+    inset 0 1px 0 #e8e1ca17,
+    inset 0 -1px 0 #e8e1ca0d;
+}
+
+.contact-section::before {
+  content: "";
+  position: absolute;
+  width: 25%;
+  top: -30%;
+  bottom: -30%;
+  right: 13%;
+  z-index: -1;
+  transform: skewX(-22deg);
+  border-inline: 1px solid #f2e6c41f;
+  background: linear-gradient(100deg, transparent, #e4e5c80c 48%, #e4e5c803);
+  pointer-events: none;
+}
+
+.contact-section .section-label {
+  color: #cbb99a;
+}
+
+.contact-section h2 {
+  color: #eee9de;
+  font-size: clamp(54px, 8vw, 116px);
+  letter-spacing: -0.055em;
+  font-weight: 300;
+  line-height: 1.06;
+  max-width: 900px;
+}
+
+.contact-section .contact-action {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  margin-top: 36px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #cbb99a91;
+  color: #eee9de;
+  font-size: clamp(16px, 2.1vw, 28px);
+  font-weight: 350;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+  transition:
+    color 0.2s,
+    border-color 0.2s;
+}
+
+.contact-section .contact-action:hover {
+  color: #e4cfa7;
+  border-color: #e4cfa7;
+}
+
+.site-footer {
+  padding-top: 36px;
+  padding-bottom: 36px;
+  gap: 28px;
+}
+
+.site-footer .footer-wordmark {
+  width: auto;
+  height: auto;
+  color: var(--text);
+  font: 350 26px/1.4 var(--font-display);
+  letter-spacing: -0.035em;
+}
+
+.site-footer .footer-settings {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px 24px;
+}
+
+.footer-settings > button,
+.footer-settings > a {
+  min-height: 44px;
+  color: var(--muted);
+}
+
+/* Small views retain the same material, without a heavy blur over body text. */
+.atelier-dialog {
+  border-color: #dfe7d546;
+  border-radius: 4px;
+  background: linear-gradient(145deg, #ffffff06, transparent 45%), #111a1bf5;
+  color: #eee9de;
+  box-shadow:
+    inset 0 1px 0 #f5edcf2e,
+    0 40px 130px #000b;
+}
+
+.atelier-dialog::backdrop {
+  background: #050a0bd6;
+  backdrop-filter: blur(12px);
+}
+
+.atelier-dialog .dialog-close {
+  color: #eee9de;
+  border: 1px solid #dce5d326;
+  background: #1b2627;
+  border-radius: 50%;
+  min-height: 40px;
+  min-width: 40px;
+}
+
+.atelier-dialog .dialog-title {
+  color: #eee9de;
+  font-weight: 350;
+}
+
+.atelier-dialog .dialog-introduction,
+.atelier-dialog .case-study p {
+  color: #bcc7bd;
+}
+
+.atelier-dialog .section-label,
+.atelier-dialog .cut-switch > button[aria-pressed="true"] {
+  color: #d8c29c;
+}
+
+.case-page {
+  --case-paper: #0b1011;
+  --case-ink: #eee9de;
+  --case-muted: #b8c2ba;
+  --case-rule: #e5ecdf26;
+  --case-accent: #c4ad88;
+  background:
+    linear-gradient(150deg, #e8ecd805, transparent 35%), var(--case-paper);
+}
+
+.case-page .case-passport-strip {
+  padding: 28px 24px;
+  border: 1px solid var(--case-rule);
+  background: linear-gradient(130deg, #f1ebce09, transparent 55%), #19212273;
+  box-shadow: inset 0 1px 0 #ffffff12;
+}
+
+.case-page .case-media > figure > img,
+.case-page .case-admissions img {
+  border: 1px solid #d8e1d43b;
+  border-radius: 3px;
+  padding: 8px;
+  background: #172023;
+  box-shadow:
+    0 28px 70px #0005,
+    inset 0 1px 0 #ffffff1a;
+}
+
+.case-page .case-media-pending {
+  background: linear-gradient(120deg, #d7dfce09, transparent 55%), #141e20;
+  border-color: #e1e6d838;
+}
+
+.case-page .case-closing {
+  border-color: var(--case-rule);
+  background: linear-gradient(120deg, #d8e3cc09, transparent 65%);
+}
+
+:root[data-theme="light"] {
+  --bg: #e5e9e3;
+  --surface: #d8dfd8;
+  --raised: #cbd5cc;
+  --text: #152421;
+  --muted: #45594e;
+  --subtle: #516352;
+  --line: #1c332f30;
+  --accent: #74603c;
+  --blue: #74603c;
+  --blue-strong: #5d4e33;
+  --glass-border: #26443738;
+}
+
+:root[data-theme="light"] .about-section {
+  background: linear-gradient(135deg, #ffffff70, #e4ece3d6);
+  box-shadow:
+    inset 0 1px 0 #ffffffb3,
+    0 24px 70px #172b2212;
+}
+
+:root[data-theme="light"] .about-section::before {
+  opacity: 0.045;
+}
+
+:root[data-theme="light"] .about-section::after {
+  background: linear-gradient(100deg, #e6eee89c, #eef3e961);
+}
+
+:root[data-theme="light"] .lane-tabs > button,
+:root[data-theme="light"] .all-lanes > summary,
+:root[data-theme="light"] .lane-panel > span {
+  color: #4a5d4d;
+}
+
+:root[data-theme="light"] .lane-tabs > button[aria-selected="true"] {
+  color: #172d25;
+}
+
+:root[data-theme="light"] .lane-tabs > button[aria-selected="true"]::after {
+  background: #796945;
+}
+
+:root[data-theme="light"] .achievement summary > span > span {
+  color: #685735;
+}
+
+@media (max-width: 1023px) {
+  .about-section {
+    gap: 35px;
+    padding: 36px 28px;
+  }
+
+  .lane-tabs {
+    gap: 12px 18px;
+  }
+}
+
+@media (max-width: 767px) {
+  .hero-room img {
+    filter: saturate(0.78) contrast(1.04);
+  }
+
+  .hero-story-copy > h1 {
+    letter-spacing: -0.05em;
+  }
+
+  .hero-factual-intro {
+    max-width: 330px;
+    font-size: 13px;
+  }
+
+  .about-section {
+    grid-template-columns: 1fr;
+    margin-top: 22px;
+    padding: 32px 22px;
+    gap: 34px;
+  }
+
+  .about-section .about-heading > h2 {
+    font-size: clamp(35px, 10vw, 46px);
+  }
+
+  .lane-tabs {
+    justify-content: flex-start;
+    gap: 9px 18px;
+  }
+
+  .lane-panel {
+    min-height: 240px;
+  }
+
+  .recognition-section {
+    grid-template-columns: 1fr;
+    padding: 60px 0 75px;
+    gap: 30px;
+  }
+
+  .achievement > summary {
+    padding-inline: 10px;
+  }
+
+  .contact-section {
+    padding-block: 76px;
+    background-position: 70% 50%;
+  }
+
+  .contact-section::before {
+    width: 32%;
+    right: 4%;
+  }
+
+  .contact-section .contact-action {
+    font-size: clamp(14px, 4.4vw, 20px);
+    margin-top: 28px;
+  }
+
+  .site-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .site-footer .footer-settings {
+    justify-content: flex-start;
+    gap: 5px 20px;
+  }
+
+  .case-page .case-passport-strip {
+    padding: 22px 17px;
+  }
+
+  .case-page .case-media > figure > img,
+  .case-page .case-admissions img {
+    padding: 4px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-story-copy > .view-work-button,
+  .atelier-dialog::backdrop {
+    backdrop-filter: none;
+  }
+
+  .contact-section .contact-action {
+    transition: none;
+  }
+}

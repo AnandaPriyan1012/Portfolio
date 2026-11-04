@@ -1,0 +1,116 @@
+{
+  "evaluatedAt": "2026-11-04",
+  "decision": "integrated",
+  "purpose": "Conceptual ambient room behind the Studio film collection, never a portfolio film, documentary location, or production credit.",
+  "visualEvaluation": {
+    "inspected": [
+      "supplied poster",
+      "decoded frames at approximately 0, 3, and 7 seconds",
+      "actual /studio composition at 1440 × 1000",
+      "actual scrolling through the film programme",
+      "first and last decoded frames (0 and 7.95 seconds) match visually for the native loop"
+    ],
+    "result": "Warm side lighting and dark empty projection screen add room depth behind the existing glass interface. The title, real collection index, and keyboard controls remain primary.",
+    "knownElements": [
+      "Visible Veo attribution at lower right preserved",
+      "Small generic EXIT sign retained"
+    ],
+    "frameTreatment": "Unchanged source bytes; full-frame object-fit:contain; no video filter, blur, crop, mask, or transform.",
+    "geometry": {
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "frame": {
+        "width": 1440,
+        "height": 810
+      },
+      "studioHeightBefore": 1740.625,
+      "studioHeightAfter": 1740.625
+    },
+    "screenshotsInternalOnly": [
+      "/tmp/studio-atmosphere-integrated.png",
+      "/tmp/studio-atmosphere-scroll.png"
+    ]
+  },
+  "assets": [
+    {
+      "libraryFileId": "libfile_b5e7238d94cc8191830921006e059aef",
+      "fileId": "file_00000000321881f592bccb4405c4ef8f",
+      "version": 0,
+      "originalFilename": "screening-room-loop.mp4",
+      "mimeType": "video/mp4",
+      "bytes": 1091746,
+      "sourcePath": "/workspace/studio-atmosphere-review/screening-room-loop.mp4",
+      "publicPath": "public/media/studio-atmosphere-loop.mp4",
+      "sha256": "6ae9dcfa26672bdee9aace4cd44399fdd8e7c0fad093db15a4867abe1cb33a3a",
+      "sourceAndPublicBytesIdentical": true,
+      "libraryIdentityVerifiedOnOriginal": true,
+      "durationSeconds": 8,
+      "width": 1280,
+      "height": 720,
+      "codec": "H.264",
+      "frameRate": 24,
+      "audioStreams": 0
+    },
+    {
+      "libraryFileId": "libfile_9cc93d93f43c8191be3febfb752b3422",
+      "fileId": "file_00000000947081f59823dca75bd7e972",
+      "version": 0,
+      "originalFilename": "screening-room-poster.png",
+      "mimeType": "image/png",
+      "bytes": 678322,
+      "sourcePath": "/workspace/studio-atmosphere-review/screening-room-poster.png",
+      "publicPath": "public/media/studio-atmosphere-poster.png",
+      "sha256": "f454af6007c75840c09e318b92e4d961bc55cc4f3df38af43d1ee3316f1fb3d9",
+      "sourceAndPublicBytesIdentical": true,
+      "libraryIdentityVerifiedOnOriginal": true,
+      "width": 1280,
+      "height": 720
+    }
+  ],
+  "delivery": {
+    "component": "src/components/StudioAtmosphere.tsx",
+    "stylesheet": "src/components/studio-atmosphere.css",
+    "props": {
+      "enabled": "boolean"
+    },
+    "mountedByRoot": "First child of #studio / ScreeningRoom with enabled={motionEnabled}",
+    "layout": "Absolute background and sticky contained frame; no new section height or scroll spacer.",
+    "controls": "Visible Pause/Play room atmosphere button, keyboard focus indicator, manual pause state persists across document visibility changes.",
+    "eligibility": "Enabled, at least 1100px wide and 760px high, fine pointer and hover, no reduced motion, no forced colors, no Save Data, hardwareConcurrency greater than 2 where reported, deviceMemory greater than 2GB where reported.",
+    "fallback": "No media element or media requests on ineligible devices. Original CSS room stays in place. A failed media source removes atmosphere and controls.",
+    "semantics": "Decorative video is aria-hidden and removed from tab order. Visible Conceptual room caption separates atmosphere from collection entries."
+  },
+  "validation": {
+    "typecheck": "npx tsc -b passed",
+    "browser": "Chromium / Playwright, real Vite /studio route",
+    "passed": [
+      "silent native playback, metadata readyState 4",
+      "native loop wrapped from 7.7 seconds to less than 2 seconds",
+      "manual pause freezes currentTime and resume advances",
+      "synthetic hidden/visible document events pause and resume",
+      "manual pause persists after hidden/visible events",
+      "actual offscreen scrolling pauses; onscreen scrolling resumes",
+      "no clip or poster requests on mobile, short desktop, coarse pointer, reduced motion, Save Data, low CPU, low memory, or motion off",
+      "viewport resize and forced colors remove/restore component",
+      "failed media source preserves the six-title keyboard programme",
+      "ArrowDown selects next real programme radio",
+      "actual route navigation unmount and revisit restore component without errors",
+      "pause control pointer hit test reaches button",
+      "full-frame attribution corner remains unobstructed",
+      "Studio section height unchanged",
+      "no browser page errors"
+    ],
+    "internalEvidence": [
+      "/tmp/studio-atmosphere-audit.json",
+      "/tmp/studio-atmosphere-integrated-audit.json"
+    ],
+    "scopeLimit": "Device resource capability flags and document visibility were simulated for targeted browser checks; native playback, actual scrolling, dimensions, keyboard navigation, and route changes were exercised directly."
+  },
+  "publication": {
+    "status": "local only",
+    "published": false,
+    "blockers": []
+  }
+}

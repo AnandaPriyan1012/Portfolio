@@ -1,0 +1,24 @@
+{
+  "description": "User-authorized reconstructed concept composition for the CIRS portfolio presentation. It is illustrative and is not an original CIRS sketch or evidence of the historical design process.",
+  "classification": "reconstructed-portfolio-concept",
+  "libraryFileId": "libfile_779354544a108191a9fd34a8b49e520b",
+  "fileId": "file_00000000d25c81f5add35c56c37b62d2",
+  "libraryVersion": 0,
+  "originalFileName": "conceptual-interface-blueprint.png",
+  "materializedOriginal": "/workspace/cirs-concept-review/conceptual-interface-blueprint.png",
+  "runtimeAsset": "/media/cirs-reconstructed-concept.png",
+  "mimeType": "image/png",
+  "width": 1672,
+  "height": 941,
+  "sizeBytes": 1973859,
+  "sha256": "d01b141fd768b0a51ff4e3095619107551536837517b65327f8e0250ea254651",
+  "treatment": "Exact byte copy of the supplied PNG. Full image contained in its frame. No compositing or image editing.",
+  "visibleCaption": "Reconstructed concept · Created for this portfolio",
+  "visibleDescription": "An illustrative interface study, not an original project sketch or evidence of the historical design process.",
+  "genuineInterfaceCaptures": [
+    { "asset": "/media/cirs-home-desktop.webp", "source": "https://cirschool.org/" },
+    { "asset": "/media/cirs-admissions.webp", "source": "https://cirschool.org/admissions.html" }
+  ],
+  "historicalDraftFields": "Not used. content.ts draftUrl and beforeUrl remain unchanged.",
+  "publication": "Local working tree only; not deployed."
+}

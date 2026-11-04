@@ -1,0 +1,104 @@
+{
+  "date": "2026-11-04",
+  "scope": "Local working tree only; no commit, push or deployment",
+  "productionBuild": "passed; TypeScript, Vite and static route generation",
+  "chromiumTests": {
+    "passed": 80,
+    "failed": 0,
+    "lastRunStatus": "test-results/.last-run.json: passed with no failed tests"
+  },
+  "mainRoutes": [
+    "/",
+    "/work",
+    "/studio",
+    "/about"
+  ],
+  "preservedCaseRoutes": 5,
+  "responsiveWidths": [
+    320,
+    375,
+    390,
+    768,
+    1024,
+    1440
+  ],
+  "compiledPreviewEvidence": "docs/compiled-preview-checks.json",
+  "observations": [
+    "Compiled desktop (1440px) and reduced-motion phone (390px) visits return 200 for all four main pages with no browser errors or horizontal overflow",
+    "Compiled Work to CIRS case to Work navigation passes",
+    "Direct entries, reload, modified links, legacy hashes, repeated visits and browser Back/Forward are exercised",
+    "Forward/reverse wheel scrolling exercises Home depth, Vallalar staging, AccuFlow assembly and Studio selection",
+    "Corridor metadata-aware video seeks decode at forward and reverse scroll targets without added section height",
+    "Architecture and cinema loops pause offscreen, when hidden and under manual control",
+    "Reduced motion, native touch, Save Data, resource constraints and media failure retain usable content",
+    "Keyboard tabs, bilingual study, reconstructed-concept range control, Studio radios and compact AirKart disclosure pass",
+    "20 dated genuine website captures expand the case studies; manifests identify source and derivation",
+    "CIRS reconstructed concept is persistently labeled and is not claimed as historical process evidence",
+    "Isolated synthetic fixtures verify original-film gating and muted explicit playback; no personal film was visually verified",
+    "Final eight compiled screenshots independently reviewed with no critical legibility, clipping or overlap issues"
+  ],
+  "removedContent": "Gaurav award removed from runtime portfolio content; swimming remains a personal interest",
+  "signature": {
+    "asset": "public/media/ap-signature.png",
+    "sha256": "80ccec808c2b7a5323d7401d1fd235d5f37b64362247656e08b9c742f6bf34a4",
+    "originalAssetUnchanged": true,
+    "intro": "Exact PNG alpha mask, coded ink reveal and light sweep; skippable; maximum 1450ms; once per session",
+    "interaction": "At most 760 alpha-sampled points; bounded Canvas2D response; static original PNG fallback; no continuous frames at rest/offscreen"
+  },
+  "atmosphere": [
+    {
+      "path": "public/media/amber-architecture-loop.mp4",
+      "sha256": "fa661257e1b018713e856dd52868138d7334e437336cd65b05039a8bd7fc9c02",
+      "sourceBytesUnchanged": true,
+      "purpose": "Hero conceptual atmosphere"
+    },
+    {
+      "path": "public/media/scroll-corridor.mp4",
+      "sha256": "4681f82d406a98932268ebe9a4acb4dadd563790887b006c7af557bf6b34d204",
+      "sourceBytesUnchanged": true,
+      "purpose": "Home directory scroll-driven conceptual atmosphere",
+      "evidence": "docs/corridor-evaluation.json"
+    },
+    {
+      "path": "public/media/studio-atmosphere-loop.mp4",
+      "sha256": "6ae9dcfa26672bdee9aace4cd44399fdd8e7c0fad093db15a4867abe1cb33a3a",
+      "sourceBytesUnchanged": true,
+      "purpose": "Studio conceptual atmosphere, not personal film or venue evidence",
+      "evidence": "docs/studio-atmosphere-evaluation.json"
+    }
+  ],
+  "uiOverlapPreview": {
+    "path": "docs/hero-ui-comparison.html",
+    "purpose": "User-requested local Original/Contact-control comparison",
+    "builtIntoPortfolio": false,
+    "originalMediaUnchanged": true,
+    "defaultPortfolio": "Original attribution corners remain clear"
+  },
+  "sourceManifests": [
+    "docs/interface-atlas-sources.json",
+    "docs/vallalar-language-sources.json",
+    "docs/cirs-concept-source.json"
+  ],
+  "pending": [
+    "CCK Drive candidate remains private and visually unverified; not embedded and no permissions changed",
+    "Verified original films, approved stills and confirmed contribution credits are required for personal film playback",
+    "Documentary Vallalar images and specific social-media work remain unavailable; website previews are clearly labeled",
+    "Personal project decisions/reflections and supporting certificates require confirmation before adding claims"
+  ],
+  "limits": [
+    "Cloud Chromium verification; final version not verified on physical devices, Firefox, WebKit or Safari",
+    "Capability flags and visibility events are simulated in targeted tests; actual wheel input, native video decode/playback and route changes are exercised",
+    "No stable frame-rate guarantee inferred from cloud browser testing",
+    "Static hosting configuration was built locally; no deployment performed"
+  ],
+  "captures": [
+    "docs/portfolio-home-1440.png",
+    "docs/portfolio-home-390.png",
+    "docs/portfolio-work-1440.png",
+    "docs/portfolio-work-390.png",
+    "docs/portfolio-studio-1440.png",
+    "docs/portfolio-studio-390.png",
+    "docs/portfolio-about-1440.png",
+    "docs/portfolio-about-390.png"
+  ]
+}

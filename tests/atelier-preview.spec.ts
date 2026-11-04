@@ -11,12 +11,14 @@ const test = base.extend<{ consoleGuard: void }>({
   }, { auto: true }],
 })
 
-async function ready(page: Page) {
-  await page.goto('/')
+async function ready(page: Page, path = '/') {
+  await page.goto(path)
   await page.evaluate(() => document.fonts.ready)
-  await page.locator('.hero-room img').evaluate(node => (node as HTMLImageElement).decode())
   await page.locator('header .ap-signature').evaluate(node => (node as HTMLImageElement).decode())
-  await page.locator('.cirs-browser-image').evaluate(node => (node as HTMLImageElement).decode())
+  if (path === '/') {
+    await page.locator('.hero-room img').evaluate(node => (node as HTMLImageElement).decode())
+    await page.locator('.cirs-browser-image').evaluate(node => (node as HTMLImageElement).decode())
+  }
   await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))))
 }
 
@@ -69,8 +71,12 @@ for (const width of [320, 375, 390, 768, 1024, 1440]) {
       await expect(nav).toBeHidden()
     }
     await cta.click()
-    const clearance = await page.locator('.site-header').evaluate(node => node.getBoundingClientRect().height + 20)
-    await expect.poll(async () => Math.abs((await page.locator('#cirs').boundingBox())!.y - clearance)).toBeLessThan(5)
+    await expect(page).toHaveURL(/\/work$/)
+    await expect(page.locator('h1')).toHaveText(/Selected\s*work\./)
+    await page.getByRole('navigation', { name: 'Explore selected projects' }).locator('a[href="#cirs"]').click()
+    const headerHeight = await page.locator('.site-header').evaluate(node => node.getBoundingClientRect().height)
+    await expect.poll(async () => (await page.locator('#cirs').boundingBox())!.y - headerHeight).toBeGreaterThanOrEqual(16)
+    await expect.poll(async () => (await page.locator('#cirs').boundingBox())!.y - headerHeight).toBeLessThanOrEqual(40)
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width)
   })
 }
@@ -91,18 +97,28 @@ test('signature is a real transparent warm asset and the studio index has no inv
   expect(pixels.red).toBeGreaterThan(pixels.green)
   expect(pixels.green).toBeGreaterThan(pixels.blue)
   await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Studio', exact: true }).click()
+  await expect(page).toHaveURL(/\/studio$/)
   await expect(page.locator('.studio-collection-index li')).toHaveCount(6)
   for (const title of ['CCK trailer', 'Farewell video', 'Masquerade trailer', 'Vantara', 'TED-Ed 2026', 'CIRSMUN 2026']) await expect(page.locator('#studio')).toContainText(title)
-  await expect(page.locator('#studio button, #studio video')).toHaveCount(0)
+  await page.getByRole('radio', { name: 'CCK trailer', exact: true }).focus()
+  await page.keyboard.press('ArrowDown')
+  await expect(page.getByRole('radio', { name: 'Farewell video', exact: true })).toBeChecked()
+  await expect(page.locator('.screening-title-card h3')).toHaveText('Farewell video')
+  await page.getByRole('radio', { name: 'Masquerade trailer', exact: true }).check()
+  await expect(page.locator('.screening-title-card h3')).toHaveText('Masquerade trailer')
+  await expect(page.locator('#studio .screening-still')).toHaveCount(0)
+  await expect(page.locator('#studio button:not(.studio-atmosphere-toggle), #studio video:not(.studio-atmosphere-film)')).toHaveCount(0)
   await expect(page.locator('body')).not.toContainText('Crossroads')
   await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Contact', exact: true }).click()
+  await expect(page).toHaveURL(/\/about#contact$/)
   await expect(page.locator('#contact')).toBeInViewport({ ratio: .95 })
   await expect(page.locator('#contact form')).toHaveCount(0)
 })
 
 test('secondary phone controls also keep 44px touch targets', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 })
-  await ready(page)
+  await ready(page, '/work')
+  await page.locator('#airkart > summary').click()
   await page.locator('.perspectives > summary').click()
   await page.locator('.lab > summary').click()
   const controls = [
@@ -142,7 +158,9 @@ test('one shared pane changes real geometry through each desktop material world 
   await expect.poll(() => page.evaluate(() => scrollY)).toBeLessThan(2)
   await expect.poll(async () => Math.abs((await page.locator('.cirs-visual-frame').boundingBox())!.width - initial.width)).toBeLessThan(2)
   const paths = [cirsPath]
+  await ready(page, '/work')
   for (const world of ['community', 'accuflow', 'studio']) {
+    if (world === 'studio') await ready(page, '/studio')
     const visual = world === 'studio' ? '#studio .studio-collection-index' : `#${world} .feature-media`
     await wheelTo(page, visual, 280)
     await expect(page.locator('main')).toHaveAttribute('data-material-world', world)
@@ -151,6 +169,7 @@ test('one shared pane changes real geometry through each desktop material world 
     expect(paths).not.toContain(path); paths.push(path)
     await page.screenshot({ path: `docs/refinement-desktop-${world}.png` })
   }
+  await ready(page, '/about')
   await wheelTo(page, '#contact', 180)
   await page.screenshot({ path: 'docs/refinement-desktop-end.png' })
   await testInfo.attach('shared-pane-path-count', { body: JSON.stringify({ uniquePaths: new Set(paths).size, initialWidth: initial.width }), contentType: 'application/json' })
@@ -166,8 +185,10 @@ test('portrait phones keep native scroll, full glass, and a lightweight changing
   await expect(page.locator('.hero-room')).toBeVisible()
   await page.locator('.state-opening').waitFor({ state: 'detached' })
   await page.screenshot({ path: 'docs/refinement-mobile-start.png' })
+  await ready(page, '/work')
   await wheelTo(page, '#community', 100)
   await page.screenshot({ path: 'docs/refinement-mobile-middle.png' })
+  await ready(page, '/about')
   await wheelTo(page, '#contact', 170)
   await page.screenshot({ path: 'docs/refinement-mobile-end.png' })
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(390)

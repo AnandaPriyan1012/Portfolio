@@ -10,9 +10,47 @@
   font-family: "DM Sans Variable", "DM Sans", sans-serif;
   font-size: 16px;
 }
+.case-page[data-project] {
+  --case-paper: #0b1011;
+  --case-ink: #eee9de;
+  --case-muted: #bbc2bc;
+  --case-rule: #e5ecdf26;
+  --case-light: 190 202 185;
+  position: relative;
+  isolation: isolate;
+  background:
+    radial-gradient(ellipse at 78% 7%, rgb(var(--case-light) / 0.1), transparent 36rem),
+    linear-gradient(125deg, rgb(var(--case-light) / 0.035), transparent 55%),
+    var(--case-paper);
+}
+.case-page[data-project="community"] {
+  --case-paper: #10120f;
+  --case-light: 211 179 126;
+}
+.case-page[data-project="accuflow"] {
+  --case-paper: #0b1216;
+  --case-light: 136 183 203;
+  --case-muted: #b7c3c8;
+}
+.case-atmosphere {
+  position: absolute;
+  z-index: -1;
+  inset: 0 0 auto;
+  height: 1350px;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, var(--case-paper), transparent 65%),
+    url("/media/atelier-room-wide.webp") center top / cover;
+  opacity: 0.2;
+  mask-image: linear-gradient(#000, #000 42%, transparent);
+}
 .case-page button {
   font: inherit;
   cursor: pointer;
+}
+.case-page a,
+.case-page button {
+  scroll-margin-block: 80px 24px;
 }
 .case-page a:focus-visible,
 .case-page button:focus-visible {
@@ -33,11 +71,16 @@
   transform: none;
 }
 .case-topbar {
-  height: 96px;
+  position: sticky;
+  z-index: 20;
+  top: 0;
+  height: 80px;
   margin: auto;
-  max-width: 1600px;
   padding: 0 6%;
   border-bottom: 1px solid var(--case-rule);
+  background: rgb(11 16 17 / 0.78);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 1px 0 #ffffff05;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -69,10 +112,13 @@
 .case-topbar-caption > span {
   margin-left: 8px;
 }
+.case-page #case-top {
+  scroll-margin-top: 80px;
+}
 .case-hero {
   max-width: 1440px;
   margin: auto;
-  padding: 82px 7% 0;
+  padding: 68px 7% 0;
 }
 .case-eyebrow {
   display: flex;
@@ -165,6 +211,15 @@
 .case-passport-strip a:hover {
   color: var(--case-accent);
 }
+.case-page[data-project] .case-passport-strip {
+  padding: 28px 30px;
+  border: 1px solid var(--case-rule);
+  background:
+    linear-gradient(115deg, rgb(var(--case-light) / 0.09), transparent 55%),
+    rgb(24 30 29 / 0.44);
+  box-shadow: inset 0 1px 0 #ffffff0f, 0 18px 50px #00000012;
+  backdrop-filter: blur(12px);
+}
 .case-media {
   max-width: 1440px;
   margin: 22px auto 0;
@@ -173,6 +228,18 @@
 .case-media > figure {
   margin: 0;
 }
+.case-media picture {
+  display: block;
+  padding: 12px;
+  border: 1px solid rgb(var(--case-light) / 0.28);
+  background: linear-gradient(130deg, rgb(var(--case-light) / 0.12), #ffffff02);
+  box-shadow: inset 0 1px 0 #ffffff1a, 0 30px 75px #0005;
+}
+.case-media picture > img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
 .case-media > figure > img {
   width: 100%;
   max-height: 750px;
@@ -180,8 +247,9 @@
   background: #24201a;
 }
 .case-media figcaption {
-  margin-top: 13px;
+  margin-top: 16px;
   font-size: 14px;
+  line-height: 1.7;
   color: var(--case-muted);
 }
 .case-media-pending {
@@ -232,13 +300,13 @@
   padding: 85px 7% 0;
   display: grid;
   grid-template-columns: 220px minmax(0, 1fr);
-  gap: 80px;
+  gap: 64px;
   align-items: start;
-  scroll-margin-top: 30px;
+  scroll-margin-top: 108px;
 }
 .case-sidebar {
   position: sticky;
-  top: 40px;
+  top: 116px;
   padding-top: 8px;
 }
 .case-micro {
@@ -262,6 +330,8 @@
   color: var(--case-muted);
   font-size: 14px;
   line-height: 1.5;
+  padding-left: 13px;
+  border-left: 1px solid transparent;
 }
 .case-sidebar nav > a > span {
   flex-shrink: 0;
@@ -272,6 +342,9 @@
 .case-sidebar nav > a:hover,
 .case-sidebar nav > a.active {
   color: var(--case-accent);
+}
+.case-sidebar nav > a.active {
+  border-left-color: var(--case-accent);
 }
 .case-sidebar-bottom {
   font-size: 14px;
@@ -294,8 +367,12 @@
 }
 .case-cut-toggle {
   display: flex;
-  gap: 20px;
+  gap: 4px;
   flex-shrink: 0;
+  padding: 4px;
+  border: 1px solid var(--case-rule);
+  background: #ffffff03;
+  box-shadow: inset 0 1px 0 #ffffff0a;
 }
 .case-cut-toggle > button {
   display: flex;
@@ -303,13 +380,14 @@
   gap: 8px;
   font-size: 14px;
   color: var(--case-muted);
-  padding: 12px 0;
-  border-bottom: 1px solid transparent;
+  padding: 10px 12px;
+  border: 1px solid transparent;
   white-space: nowrap;
 }
 .case-cut-toggle > button[aria-pressed="true"] {
   color: var(--case-ink);
-  border-color: var(--case-accent);
+  border-color: rgb(var(--case-light) / 0.25);
+  background: linear-gradient(130deg, rgb(var(--case-light) / 0.1), #ffffff02);
 }
 .case-truth-note {
   margin-top: 30px;
@@ -335,7 +413,7 @@
   gap: 26px;
   padding: 48px 0 52px;
   border-bottom: 1px solid var(--case-rule);
-  scroll-margin-top: 35px;
+  scroll-margin-top: 108px;
 }
 .case-stage-number {
   font: 400 24px/1.5 var(--font-display, "Fraunces", Georgia, serif);
@@ -347,7 +425,7 @@
   margin-bottom: 22px;
 }
 .case-stage p {
-  max-width: 690px;
+  max-width: 62ch;
   font-size: 16px;
   line-height: 1.95;
   color: var(--case-muted);
@@ -433,6 +511,12 @@
   padding: 80px 7% 85px;
   border-top: 1px solid var(--case-rule);
   text-align: center;
+}
+.case-page[data-project] .case-closing {
+  background:
+    radial-gradient(ellipse at 50% 100%, rgb(var(--case-light) / 0.1), transparent 65%),
+    linear-gradient(130deg, #ffffff03, transparent 55%);
+  box-shadow: inset 0 1px 0 #ffffff08;
 }
 .case-closing > .case-micro {
   justify-content: center;
@@ -575,7 +659,7 @@
 }
 @media (max-width: 700px) {
   .case-topbar {
-    height: 80px;
+    height: 72px;
     padding: 0 6%;
     gap: 15px;
   }
@@ -633,6 +717,9 @@
   .case-passport-strip strong {
     font-size: 14px;
   }
+  .case-page[data-project] .case-passport-strip {
+    padding: 24px 18px;
+  }
   .case-media {
     padding: 0 6%;
     margin-top: 7px;
@@ -684,8 +771,9 @@
     padding-bottom: 25px;
   }
   .case-cut-toggle {
-    gap: 28px;
-    width: 100%;
+    gap: 4px;
+    width: fit-content;
+    max-width: 100%;
   }
   .case-cut-toggle > button {
     font-size: 14px;
@@ -715,6 +803,12 @@
   .case-stage p {
     font-size: 15px;
     line-height: 1.9;
+  }
+  .case-media picture {
+    padding: 7px;
+  }
+  .case-sidebar nav > a {
+    padding-left: 9px;
   }
   .case-evidence {
     margin-top: 35px;
@@ -847,7 +941,7 @@
 .case-admissions {
   padding: 47px 0;
   border-bottom: 1px solid var(--case-rule);
-  scroll-margin-top: 35px;
+  scroll-margin-top: 108px;
 }
 .case-admissions h2 {
   font: 400 36px/1.2 var(--font-display, "Fraunces", Georgia, serif);
@@ -856,6 +950,13 @@
 }
 .case-admissions figure {
   margin: 0;
+}
+.case-admissions > p {
+  max-width: 62ch;
+  margin-bottom: 30px;
+  color: var(--case-muted);
+  font-size: 16px;
+  line-height: 1.95;
 }
 .case-admissions img {
   width: 100%;

@@ -409,7 +409,7 @@ export const aboutLanes = [
     label: "Swimmer",
     title: "There’s a life beyond the screen.",
     description:
-      "I’m a swimmer, too. The Chinmaya Gaurav Award for Excellence in Swimming is one part of that story.",
+      "I’m a swimmer, too.",
     detail: "A different lane. The same curiosity.",
   },
   {
@@ -437,14 +437,6 @@ export const achievements = [
     distinction: "Gold Honour · Top 2%",
     description:
       "Award and placement supplied by Ananda Priyan. Certificate and further competition context are awaiting upload.",
-    certificate: null,
-  },
-  {
-    id: "swimming",
-    title: "Chinmaya Gaurav Award",
-    distinction: "Excellence in Swimming",
-    description:
-      "Recognition for Excellence in Swimming. Certificate, award date and supporting context are awaiting upload.",
     certificate: null,
   },
 ];
@@ -530,7 +522,7 @@ export const assetChecklist = [
   "Original films or approved embed URLs for CCK trailer, Farewell video, Masquerade trailer, Vantara, TED-Ed 2026 and CIRSMUN 2026; approved thumbnails, dates and exact contribution credits.",
   "Approved Vallalar Sathya Dharmasalai photographs, digital-storytelling and social-media samples, website screenshots and its verified URL when ready; specific process notes and any verified outcomes you wish to publish.",
   "AccuFlow’s verified description, intended audience, contribution, current stage, genuine visuals and personal reflections; Dhvanyartha’s verified description, status and images.",
-  "Certificates and context for all three recognitions, including the organizer details for ICSC and award dates.",
+  "Certificates and context for both academic recognitions, including the organizer details for ICSC and award dates.",
   "A verified contact email, social profile URLs and an optional approved portrait.",
   "Any personal process notes and lessons you want to add to the project stories.",
   "Genuine project drafts, sketches and before-and-after images for the messy-version view and comparison slider.",
@@ -737,7 +729,7 @@ export const discoveryContent = {
         y: 65,
         title: "Another lane to explore.",
         description:
-          "A swimmer and recipient of the Chinmaya Gaurav Award for Excellence in Swimming. The certificate and additional award context are to be supplied.",
+          "A swimmer, with a life beyond the screen.",
         action: "Meet the swimmer",
         project: null,
       },

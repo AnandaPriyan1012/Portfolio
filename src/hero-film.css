@@ -1,0 +1,124 @@
+/* The full source frame is preserved: the Veo mark has its own clear corner. */
+.hero-film-stage {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: #0b0907;
+}
+.hero-ambient-film {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  filter: none;
+  transform: none;
+}
+.hero-optical-pane {
+  display: none;
+}
+.scroll-opening[data-hero-film="active"] .hero-room > picture,
+.scroll-opening[data-hero-film="active"] .hero-room .hero-material-light {
+  visibility: hidden;
+}
+.scroll-opening[data-hero-film="active"] .hero-optical-pane {
+  display: block;
+  position: absolute;
+  left: 6%;
+  top: 27%;
+  width: 75%;
+  height: 44%;
+  z-index: 2;
+  pointer-events: none;
+  border: 1px solid #f6e3be55;
+  border-radius: 5px;
+  background: linear-gradient(
+    112deg,
+    #fff2d51b,
+    #bdc3b207 32%,
+    #f7e2bd04 72%,
+    #ffefcd15
+  );
+  box-shadow:
+    inset 0 1px 0 #fff7e266,
+    inset 1px 0 0 #fff7e22e,
+    inset 0 -1px 0 #121b16a8,
+    0 28px 70px #0006,
+    8px 8px 0 -1px #1b211c73,
+    8px 8px 0 #f3dfb826;
+  backdrop-filter: blur(7px) saturate(0.85);
+  -webkit-backdrop-filter: blur(7px) saturate(0.85);
+  transform: perspective(1600px) rotateY(-3deg) rotateX(1deg);
+  transform-origin: center;
+}
+.hero-optical-pane::before {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border: 1px solid #f2ecd511;
+  border-radius: 2px;
+  background: linear-gradient(
+    116deg,
+    transparent 30%,
+    #fff9de10 30.3%,
+    #fff9de02 50%,
+    transparent 50.3%
+  );
+}
+.scroll-opening[data-hero-film="active"] .hero-story-copy {
+  left: 10%;
+  width: 71%;
+  top: 34%;
+  text-align: left;
+}
+.scroll-opening[data-hero-film="active"] .hero-factual-intro {
+  margin-left: 0;
+  margin-right: 0;
+  max-width: 545px;
+  text-wrap: pretty;
+}
+.scroll-opening[data-hero-film="active"] .hero-story-copy > h1 {
+  justify-content: flex-start;
+}
+.scroll-opening[data-hero-film="active"] .hero-eyebrow {
+  color: #e1cba8;
+}
+.hero-film-toggle {
+  position: absolute;
+  z-index: 6;
+  top: calc(var(--header-height) + 20px);
+  left: 6%;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 8px 13px;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: #d3cbb9;
+  border: 1px solid #e5d7bd30;
+  border-radius: 2px;
+  background: #151a1794;
+}
+.hero-film-toggle:hover {
+  border-color: #e5d7bd70;
+  color: #fff3de;
+}
+.hero-film-state {
+  font-size: 10px;
+  min-width: 10px;
+}
+.scroll-opening[data-hero-film="active"] .cirs-scene-title {
+  padding-left: 190px;
+}
+@media (max-width: 1099px),
+  (max-height: 759px),
+  (pointer: coarse),
+  (prefers-reduced-motion: reduce) {
+  .hero-film-stage,
+  .hero-film-toggle,
+  .hero-optical-pane {
+    display: none !important;
+  }
+}

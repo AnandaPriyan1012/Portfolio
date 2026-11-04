@@ -1,0 +1,231 @@
+.cirs-concept-study {
+  --study-amber: #d4b58b;
+  --study-ink: #eee9de;
+  --study-muted: #bdbbb1;
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: clamp(48px, 6vw, 86px) 6%;
+  color: var(--study-ink);
+  border-top: 1px solid #d4b58b33;
+  background: radial-gradient(ellipse at 30% 44%, #ac70300d, transparent 65%);
+}
+.cirs-concept-header {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  align-items: end;
+  gap: 42px;
+  margin-bottom: 32px;
+}
+.cirs-concept-kicker {
+  color: var(--study-amber);
+  font-size: 11px;
+  line-height: 1.8;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+.cirs-concept-header h3 {
+  max-width: 17ch;
+  margin-top: 17px;
+  font: 400 clamp(31px, 3.3vw, 48px) / 1.12 var(--font-display, "Fraunces", Georgia, serif);
+  letter-spacing: -0.035em;
+}
+.cirs-concept-header > p {
+  max-width: 47ch;
+  margin: 0;
+  color: var(--study-muted);
+  font-size: 13px;
+  line-height: 1.9;
+}
+.cirs-concept-viewbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 65px;
+  gap: 20px;
+  padding: 10px 16px;
+  border: 1px solid #d4b58b3b;
+  border-bottom: 0;
+  background: linear-gradient(115deg, #f8dba10c, #ffffff03);
+}
+.cirs-concept-viewbar > span {
+  color: var(--study-muted);
+  font-size: 11px;
+  letter-spacing: 0.07em;
+}
+.cirs-concept-viewbar > div { display: flex; gap: 5px; }
+.cirs-concept-viewbar button {
+  min-height: 44px;
+  padding: 9px 16px;
+  border: 1px solid transparent;
+  color: var(--study-muted);
+  background: transparent;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.cirs-concept-viewbar button[aria-pressed="true"] {
+  color: var(--study-ink);
+  border-color: #d4b58b40;
+  background: #d4b58b0e;
+  box-shadow: inset 0 1px 0 #ffffff0c;
+}
+.cirs-concept-stage {
+  position: relative;
+  isolation: isolate;
+  aspect-ratio: 1672 / 941;
+  overflow: hidden;
+  border: 1px solid #d4b58b54;
+  background: #0b0e0f;
+  box-shadow: 0 35px 90px #0005, inset 0 1px 0 #ffffff20;
+}
+.cirs-concept-stage figure {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  background: #0b0e0f;
+}
+.cirs-concept-stage img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.cirs-concept-stage figcaption {
+  display: none;
+}
+.cirs-concept-actual {
+  clip-path: inset(0 calc(100% - var(--concept-reveal)) 0 0);
+}
+.cirs-concept-seam {
+  position: absolute;
+  inset: 0 auto 0 var(--concept-reveal);
+  width: 1px;
+  background: #f6d7a7c4;
+  box-shadow: 0 0 22px #ffe1b344;
+  pointer-events: none;
+}
+.cirs-concept-seam > svg {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  box-sizing: content-box;
+  padding: 11px;
+  color: #f6e0bd;
+  border: 1px solid #d4b58b91;
+  border-radius: 50%;
+  background: #171714ed;
+  transform: translate(-50%, -50%);
+}
+.cirs-concept-legend {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 17px 0;
+}
+.cirs-concept-legend p {
+  margin: 0;
+  color: var(--study-muted);
+  font-size: 11px;
+  line-height: 1.8;
+}
+.cirs-concept-legend p > span {
+  padding-right: 11px;
+  color: var(--study-amber);
+}
+.cirs-concept-controls {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 18px 0;
+  border-top: 1px solid #d4b58b2e;
+}
+.cirs-concept-slider {
+  display: grid;
+  grid-template-columns: auto minmax(90px, 170px) 4ch;
+  align-items: center;
+  gap: 17px;
+  flex: 1;
+  font-size: 12px;
+}
+.cirs-concept-slider input {
+  width: 100%;
+  min-height: 44px;
+  margin: 0;
+  accent-color: var(--study-amber);
+  cursor: ew-resize;
+}
+.cirs-concept-slider output {
+  color: var(--study-amber);
+  font-variant-numeric: tabular-nums;
+}
+.cirs-concept-follow {
+  padding: 10px 0;
+  min-height: 44px;
+  color: var(--study-ink);
+  border: 0;
+  border-bottom: 1px solid #d4b58b55;
+  background: transparent;
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+.cirs-concept-follow:disabled {
+  color: var(--study-muted);
+  border-bottom-color: transparent;
+  cursor: default;
+}
+.cirs-concept-controls > a {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 44px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.cirs-concept-footnote {
+  max-width: 82ch;
+  margin: 6px 0 0;
+  color: var(--study-muted);
+  font-size: 11px;
+  line-height: 1.9;
+}
+.cirs-concept-study :is(a, button, input):focus-visible {
+  outline: 2px solid var(--study-amber);
+  outline-offset: 5px;
+}
+.cirs-concept-study :is(a, button, input) { scroll-margin-block: 125px 40px; }
+@media (min-width: 900px) and (max-width: 1100px) {
+  .cirs-concept-controls { gap: 18px; flex-wrap: wrap; }
+  .cirs-concept-slider { flex-basis: 100%; grid-template-columns: auto 1fr 4ch; }
+}
+@media (max-width: 899px), (prefers-reduced-motion: reduce) {
+  .cirs-concept-header { display: block; }
+  .cirs-concept-header > p { margin-top: 20px; }
+  .cirs-concept-stage { aspect-ratio: auto; overflow: visible; box-shadow: none; }
+  .cirs-concept-stage figure { position: relative; inset: auto; }
+  .cirs-concept-stage img { width: 100%; height: auto; }
+  .cirs-concept-stage figcaption {
+    display: block;
+    padding: 15px;
+    color: var(--study-ink);
+    background: #171a19;
+    font-size: 11px;
+    line-height: 1.9;
+  }
+  .cirs-concept-actual { clip-path: none; border-top: 1px solid #d4b58b54; }
+  .cirs-concept-seam, .cirs-concept-legend, .cirs-concept-slider, .cirs-concept-follow { display: none; }
+  .cirs-concept-controls { justify-content: flex-end; border-top: 0; }
+}
+.cirs-concept-study[data-motion="off"] .cirs-concept-stage { aspect-ratio: auto; overflow: visible; box-shadow: none; }
+.cirs-concept-study[data-motion="off"] .cirs-concept-stage figure { position: relative; inset: auto; }
+.cirs-concept-study[data-motion="off"] .cirs-concept-stage img { width: 100%; height: auto; }
+.cirs-concept-study[data-motion="off"] .cirs-concept-stage figcaption { display: block; padding: 15px; font-size: 11px; line-height: 1.9; }
+.cirs-concept-study[data-motion="off"] .cirs-concept-actual { clip-path: none; border-top: 1px solid #d4b58b54; }
+.cirs-concept-study[data-motion="off"] :is(.cirs-concept-seam, .cirs-concept-legend, .cirs-concept-slider, .cirs-concept-follow) { display: none; }
+@media (max-width: 480px) {
+  .cirs-concept-viewbar { display: block; padding: 14px 10px 8px; }
+  .cirs-concept-viewbar > span { display: block; padding: 0 6px 12px; }
+  .cirs-concept-viewbar > div { display: grid; grid-template-columns: 1fr 1fr; }
+  .cirs-concept-stage figcaption { padding: 13px; }
+}

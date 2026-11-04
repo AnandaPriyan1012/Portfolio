@@ -32,51 +32,12 @@ function headerClearance() {
   return Math.ceil(height) + 20;
 }
 
-// Every state uses eight cubic curves so GSAP can interpolate the actual pane
-// geometry without a morph plugin, image swaps, a canvas or an extra RAF loop.
+// A quiet edge follows the real media frame. Keeping the geometry rectangular
+// lets its reflected light connect chapters without introducing outline sculptures.
 function roundedPane(box: MaterialBox, radius = 12) {
   const { x, y, width: w, height: h } = box;
   const r = Math.max(2, Math.min(radius, w / 8, h / 8));
   return `M ${x + r} ${y} C ${x + w * 0.3} ${y} ${x + w * 0.7} ${y} ${x + w - r} ${y} C ${x + w} ${y} ${x + w} ${y} ${x + w} ${y + r} C ${x + w} ${y + h * 0.3} ${x + w} ${y + h * 0.7} ${x + w} ${y + h - r} C ${x + w} ${y + h} ${x + w} ${y + h} ${x + w - r} ${y + h} C ${x + w * 0.7} ${y + h} ${x + w * 0.3} ${y + h} ${x + r} ${y + h} C ${x} ${y + h} ${x} ${y + h} ${x} ${y + h - r} C ${x} ${y + h * 0.7} ${x} ${y + h * 0.3} ${x} ${y + r} C ${x} ${y} ${x} ${y} ${x + r} ${y} Z`;
-}
-
-function sculptedPane(box: MaterialBox, warmth = false) {
-  const curves = warmth
-    ? [
-        [170, 85],
-        [350, 20, 620, 145, 820, 70],
-        [930, 25, 970, 120, 920, 210],
-        [875, 410, 990, 680, 870, 810],
-        [840, 880, 800, 925, 770, 890],
-        [540, 835, 390, 950, 180, 870],
-        [90, 820, 20, 865, 60, 740],
-        [145, 480, 65, 225, 140, 155],
-        [150, 120, 145, 105, 170, 85],
-      ]
-    : [
-        [170, 160],
-        [350, 70, 640, 300, 800, 240],
-        [915, 210, 960, 280, 920, 330],
-        [875, 420, 990, 640, 870, 730],
-        [840, 800, 800, 835, 770, 800],
-        [540, 735, 390, 830, 200, 710],
-        [110, 660, 30, 710, 90, 650],
-        [170, 480, 70, 290, 140, 230],
-        [150, 200, 145, 175, 170, 160],
-      ];
-  return (
-    curves
-      .map(
-        (points, index) =>
-          `${index ? "C" : "M"} ${points.map((v, i) => (i % 2 ? box.y + (v / 1000) * box.height : box.x + (v / 1000) * box.width)).join(" ")}`,
-      )
-      .join(" ") + " Z"
-  );
-}
-
-function filmPane(box: MaterialBox) {
-  const { x, y, width: w, height: h } = box;
-  return `M ${x + 10} ${y + h * 0.1} C ${x + w * 0.3} ${y - h * 0.1} ${x + w * 0.7} ${y + h * 0.2} ${x + w - 10} ${y} C ${x + w} ${y} ${x + w} ${y} ${x + w} ${y + 12} C ${x + w} ${y + h * 0.3} ${x + w} ${y + h * 0.7} ${x + w} ${y + h - 12} C ${x + w} ${y + h} ${x + w} ${y + h} ${x + w - 10} ${y + h} C ${x + w * 0.7} ${y + h * 1.2} ${x + w * 0.3} ${y + h * 0.9} ${x + 10} ${y + h * 1.1} C ${x} ${y + h * 1.1} ${x} ${y + h * 1.1} ${x} ${y + h - 12} C ${x} ${y + h * 0.7} ${x} ${y + h * 0.3} ${x} ${y + h * 0.1 + 12} C ${x} ${y + h * 0.1} ${x} ${y + h * 0.1} ${x + 10} ${y + h * 0.1} Z`;
 }
 
 function coordinateMaterial(element: HTMLElement, desktop: boolean) {
@@ -144,22 +105,22 @@ function coordinateMaterial(element: HTMLElement, desktop: boolean) {
     let d = "",
       opacity = 0,
       world = "none",
-      light = "#d9d5bf",
-      perforated = false;
+      light = "#d9d5bf";
+    let activeBox: MaterialBox | null = null;
     if (scene && openingFrame && scene.top < innerHeight && scene.bottom > 0) {
       const progress =
         ScrollTrigger.getById("atelier-cirs-opening")?.progress ??
         clamp(-scene.top / Math.max(scene.height * 0.55, 1));
       world = progress < 0.08 ? "hero" : "cirs";
       const frame = viewportBox(openingFrame.getBoundingClientRect());
-      const sculpture = sculptedPane({ x: 25, y: 65, width: 950, height: 850 });
-      d = desktop
-        ? gsap.utils.interpolate(
-            sculpture,
-            roundedPane(frame),
-            clamp(progress / 0.58),
-          )
-        : roundedPane(frame, 7);
+      const inset = desktop ? Math.max(0, 1 - progress / 0.58) * 3 : 0;
+      activeBox = {
+        x: frame.x - inset,
+        y: frame.y - inset,
+        width: frame.width + inset * 2,
+        height: frame.height + inset * 2,
+      };
+      d = roundedPane(activeBox, desktop ? 9 : 6);
       opacity = desktop
         ? clamp((progress - 0.025) / 0.14) * 0.72
         : clamp(progress * 3) * 0.3;
@@ -167,8 +128,21 @@ function coordinateMaterial(element: HTMLElement, desktop: boolean) {
       const visible = chapters
         .map((chapter) => {
           const rect = chapter.node ? cached.get(chapter.node) : undefined;
-          const top = rect ? rect.top - window.scrollY : 0;
-          return { ...chapter, rect: rect ? { ...rect, top } : undefined };
+          // Sticky media and its perspective settle no longer share a fixed
+          // document offset. Read those two frames so the edge follows the work.
+          const live =
+            desktop && chapter.name !== "studio"
+              ? chapter.node?.getBoundingClientRect()
+              : undefined;
+          const top = live?.top ?? (rect ? rect.top - window.scrollY : 0);
+          return {
+            ...chapter,
+            rect: live
+              ? { left: live.left, top, width: live.width, height: live.height }
+              : rect
+                ? { ...rect, top }
+                : undefined,
+          };
         })
         .filter(
           (chapter) =>
@@ -186,47 +160,35 @@ function coordinateMaterial(element: HTMLElement, desktop: boolean) {
         world = chapter.name;
         light = chapter.light;
         const box = viewportBox(chapter.rect);
-        const progress = clamp(
-          (innerHeight * 0.94 - chapter.rect.top) /
-            Math.max(innerHeight * 0.9, 1),
-        );
         const transit = clamp(
           (innerHeight - chapter.rect.top) /
             (innerHeight + chapter.rect.height),
         );
-        opacity = Math.sin(transit * Math.PI) * (desktop ? 0.72 : 0.28);
-        if (world === "community") {
-          const peeled = {
-            ...box,
-            x: box.x + box.width * progress * 0.25,
-            width: box.width * (1 - progress * 0.15),
-          };
-          d = gsap.utils.interpolate(
-            roundedPane(box),
-            sculptedPane(peeled, true),
-            desktop ? progress : progress * 0.15,
-          );
-        } else if (world === "accuflow") {
-          d = gsap.utils.interpolate(
-            sculptedPane(box, true),
-            roundedPane(box, 9),
-            desktop ? progress : 1,
-          );
-        } else {
-          d = desktop
-            ? gsap.utils.interpolate(roundedPane(box), filmPane(box), progress)
-            : roundedPane(box, 6);
-          perforated = desktop;
-        }
+        opacity = Math.sin(transit * Math.PI) * (desktop ? 0.52 : 0.18);
+        activeBox = box;
+        d = roundedPane(box, desktop ? 9 : 6);
       }
     }
     if (d) {
       pane.setAttribute("d", d);
-      inner?.setAttribute("d", d);
-      film?.setAttribute("d", d);
+      if (activeBox) {
+        const inset = desktop ? 3 : 1;
+        inner?.setAttribute(
+          "d",
+          roundedPane(
+            {
+              x: activeBox.x + inset,
+              y: activeBox.y + inset,
+              width: Math.max(2, activeBox.width - inset * 2),
+              height: Math.max(2, activeBox.height - inset * 2),
+            },
+            6,
+          ),
+        );
+      }
     }
     surface.style.setProperty("--material-light", light);
-    if (film) film.style.opacity = perforated ? ".32" : "0";
+    if (film) film.style.opacity = "0";
     alpha(opacity);
     if (element.dataset.materialWorld !== world)
       element.dataset.materialWorld = world;
@@ -259,6 +221,259 @@ function coordinateMaterial(element: HTMLElement, desktop: boolean) {
   };
 }
 
+/** Desktop scenes use the work itself as the scroll subject. Text stays readable. */
+function coordinateChapterScenes(element: HTMLElement) {
+  const find = <T extends HTMLElement = HTMLElement>(selector: string) =>
+    element.querySelector<T>(selector);
+  const cleanups: (() => void)[] = [];
+  const directory = find(".home-directory");
+  const directoryRail = find(".home-directory-rail");
+  if (directory && directoryRail)
+    gsap.fromTo(
+      directoryRail,
+      { xPercent: 3 },
+      {
+        xPercent: -17,
+        ease: "none",
+        scrollTrigger: {
+          id: "atelier-home-type",
+          trigger: directory,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: true,
+          invalidateOnRefresh: true,
+        },
+      },
+    );
+  const workPortal = find(".home-directory-work");
+  const previewScreens = workPortal?.querySelectorAll<HTMLElement>(
+    ".home-directory-screen",
+  );
+  if (workPortal && previewScreens?.length)
+    gsap.fromTo(
+      previewScreens,
+      {
+        z: -150,
+        x: (index) => (index - 1) * 34,
+        y: (index) => 58 + index * 20,
+        scale: 0.94,
+      },
+      {
+        z: 0,
+        x: 0,
+        y: 0,
+        scale: 1,
+        stagger: 0.12,
+        ease: "none",
+        scrollTrigger: {
+          id: "atelier-home-preview-arrival",
+          trigger: workPortal,
+          start: "top 95%",
+          end: "top 25%",
+          scrub: true,
+          invalidateOnRefresh: true,
+        },
+      },
+    );
+  const runway = find(".community-scroll-runway");
+  const communityMedia = find(".community-image-reservation");
+  const communityMeter = find(".community-scroll-meter");
+  const purpose = find('[data-service-step="purpose"]');
+  const contribution = find('[data-service-step="contribution"]');
+  if (runway && communityMedia) {
+    const scene = gsap.timeline({
+      defaults: { ease: "none" },
+      scrollTrigger: {
+        id: "atelier-community-narrative",
+        trigger: runway,
+        start: "top 35%",
+        end: "bottom 70%",
+        scrub: true,
+        invalidateOnRefresh: true,
+        onUpdate: (trigger) => {
+          runway.dataset.sceneProgress = trigger.progress.toFixed(3);
+          runway.dataset.sceneStep =
+            trigger.progress < 0.48 ? "purpose" : "contribution";
+        },
+      },
+    });
+    scene.fromTo(
+      communityMedia,
+      {
+        scale: 0.9,
+        rotationY: -5,
+        rotationX: 2,
+        transformOrigin: "left center",
+      },
+      { scale: 1, rotationY: 0, rotationX: 0, duration: 0.58 },
+      0,
+    );
+    if (communityMeter)
+      scene.fromTo(
+        communityMeter,
+        { scaleX: 0 },
+        { scaleX: 1, duration: 1 },
+        0,
+      );
+    if (purpose)
+      scene.fromTo(
+        purpose,
+        { "--service-focus": 0.8 },
+        { "--service-focus": 0.18, duration: 0.4 },
+        0.35,
+      );
+    if (contribution)
+      scene.fromTo(
+        contribution,
+        { "--service-focus": 0.12 },
+        { "--service-focus": 1, duration: 0.46 },
+        0.48,
+      );
+    // Fix the normalized timeline even when a decorative hook is unavailable.
+    scene.to({}, { duration: 1 }, 0);
+    cleanups.push(() => {
+      delete runway.dataset.sceneProgress;
+      delete runway.dataset.sceneStep;
+    });
+  }
+
+  const assembly = find(".accuflow-assembly");
+  const flowMedia = assembly?.querySelector<HTMLElement>(".feature-media");
+  const route = assembly?.querySelectorAll<HTMLElement>(
+    ".flow-interface-map li",
+  );
+  const flowMeter = find(".accuflow-scroll-meter");
+  if (assembly && flowMedia) {
+    const scene = gsap.timeline({
+      defaults: { ease: "none" },
+      scrollTrigger: {
+        id: "atelier-accuflow-assembly",
+        trigger: assembly,
+        start: "top 85%",
+        end: "top 16%",
+        scrub: true,
+        invalidateOnRefresh: true,
+        onUpdate: (trigger) => {
+          assembly.dataset.sceneProgress = trigger.progress.toFixed(3);
+        },
+      },
+    });
+    if (route?.length) {
+      // Set every route tile together so later stagger entries do not jump
+      // backwards to their starting positions as their segment begins.
+      gsap.set(route, {
+        x: (index) => (index - 2.5) * 7,
+        y: (index) => (index % 2 ? 18 : -18),
+        rotationX: -18,
+        scale: 0.94,
+        opacity: 0.72,
+      });
+      scene.to(
+        route,
+        {
+          x: 0,
+          y: 0,
+          rotationX: 0,
+          scale: 1,
+          opacity: 1,
+          duration: 0.33,
+          stagger: 0.07,
+        },
+        0,
+      );
+    }
+    scene.fromTo(
+      flowMedia,
+      { scale: 0.9, rotationX: 7, rotationY: -2, "--flow-exposure": 0.15 },
+      {
+        scale: 1,
+        rotationX: 0,
+        rotationY: 0,
+        "--flow-exposure": 1,
+        duration: 0.85,
+      },
+      0.15,
+    );
+    if (flowMeter)
+      scene.fromTo(flowMeter, { scaleX: 0 }, { scaleX: 1, duration: 1 }, 0);
+    scene.to({}, { duration: 1 }, 0);
+    cleanups.push(() => delete assembly.dataset.sceneProgress);
+  }
+
+  const flowStageInfo = find(".accuflow-stage-info");
+  const stages =
+    flowStageInfo?.querySelectorAll<HTMLElement>("[data-flow-stage]");
+  if (flowStageInfo && stages?.length) {
+    const scene = gsap.timeline({
+      scrollTrigger: {
+        id: "atelier-accuflow-reading",
+        trigger: flowStageInfo,
+        start: "top 86%",
+        end: "bottom 66%",
+        scrub: true,
+        invalidateOnRefresh: true,
+      },
+    });
+    scene.fromTo(
+      stages,
+      { "--flow-stage-focus": 0.08 },
+      {
+        "--flow-stage-focus": 1,
+        duration: 0.4,
+        stagger: 0.26,
+        ease: "none",
+      },
+    );
+  }
+
+  const about = find("#about");
+  if (about)
+    gsap.fromTo(
+      about,
+      { scale: 0.965, rotationY: 1.6, y: 22, "--about-exposure": 0.1 },
+      {
+        scale: 1,
+        rotationY: 0,
+        y: 0,
+        "--about-exposure": 0.32,
+        ease: "none",
+        scrollTrigger: {
+          id: "atelier-about-pane",
+          trigger: about,
+          start: "top 92%",
+          end: "top 28%",
+          scrub: true,
+          invalidateOnRefresh: true,
+        },
+      },
+    );
+
+  const contact = find("#contact");
+  const invitation = contact?.querySelector<HTMLElement>("h2");
+  if (contact) {
+    const scene = gsap.timeline({
+      defaults: { ease: "none" },
+      scrollTrigger: {
+        id: "atelier-contact-exposure",
+        trigger: contact,
+        start: "top 92%",
+        end: "clamp(bottom bottom)",
+        scrub: true,
+        invalidateOnRefresh: true,
+      },
+    });
+    scene.fromTo(
+      contact,
+      { "--contact-exposure": 0.08 },
+      { "--contact-exposure": 1, duration: 1 },
+      0,
+    );
+    if (invitation)
+      scene.fromTo(invitation, { y: 28 }, { y: 0, duration: 0.8 }, 0);
+  }
+  return () => cleanups.forEach((cleanup) => cleanup());
+}
+
 /**
  * One scroll coordinator for the homepage. ScrollTrigger owns the scene progress;
  * GSAP's ticker is also the sole RAF source for desktop Lenis (autoRaf is false).
@@ -267,6 +482,7 @@ function coordinateMaterial(element: HTMLElement, desktop: boolean) {
 export default function useScrollStory({ root, enabled, route }: Options) {
   const lenisRef = useRef<Lenis | null>(null);
   const reduceRef = useRef(false);
+  const cleanupRef = useRef<(() => void) | null>(null);
 
   useLayoutEffect(() => {
     const element = root.current;
@@ -410,9 +626,9 @@ export default function useScrollStory({ root, enabled, route }: Options) {
           };
           const lowPower = Boolean(
             device.connection?.saveData ||
-            (navigator.hardwareConcurrency > 0 &&
-              navigator.hardwareConcurrency <= 2) ||
-            (device.deviceMemory && device.deviceMemory <= 2),
+              (navigator.hardwareConcurrency > 0 &&
+                navigator.hardwareConcurrency <= 2) ||
+              (device.deviceMemory && device.deviceMemory <= 2),
           );
           reduceRef.current = reduced || lowPower;
           element.dataset.motionFallback = lowPower
@@ -438,6 +654,7 @@ export default function useScrollStory({ root, enabled, route }: Options) {
           ];
           let lenis: Lenis | null = null;
           let ticker: ((time: number) => void) | null = null;
+          let clearChapterScenes = () => {};
           let resumeAfterVisibility = false;
           const previousScrollBehavior =
             document.documentElement.style.scrollBehavior;
@@ -520,6 +737,8 @@ export default function useScrollStory({ root, enabled, route }: Options) {
             const heroName = select(".hero-story-copy > h1");
             const heroSupportingCopy = selectAll(".hero-story-copy > :not(h1)");
             const room = select(".hero-room");
+            const heroFilm = select(".hero-film-stage");
+            const opticalPane = select(".hero-optical-pane");
             const title = select(".cirs-scene-title");
             const captions = select(".cirs-scene-captions");
             if (scene && frame) {
@@ -604,6 +823,30 @@ export default function useScrollStory({ root, enabled, route }: Options) {
                   },
                   0.18,
                 );
+              if (opticalPane) {
+                opening.fromTo(
+                  opticalPane,
+                  { rotationY: -14, rotationX: 2, scale: 1, autoAlpha: 0.82 },
+                  {
+                    rotationY: 0,
+                    rotationX: 0,
+                    scale: 1.04,
+                    autoAlpha: 1,
+                    duration: 0.34,
+                  },
+                  0,
+                );
+                opening.to(opticalPane, { autoAlpha: 0, duration: 0.25 }, 0.4);
+              }
+              // Keep the entire source frame, including its watermark, intact.
+              // Only the sibling film layer's opacity changes during the handoff.
+              if (heroFilm)
+                opening.fromTo(
+                  heroFilm,
+                  { opacity: 1 },
+                  { opacity: 0, duration: 0.62 },
+                  0.18,
+                );
               opening.fromTo(
                 frame,
                 {
@@ -636,100 +879,56 @@ export default function useScrollStory({ root, enabled, route }: Options) {
                 opening.scrollTrigger?.progress.toFixed(3) ?? "0.000";
             }
 
-            const community = select<HTMLElement>("#community");
-            const glass = select<HTMLElement>("#community .transition-glass");
-            if (community && glass) {
-              gsap.fromTo(
-                glass,
-                { xPercent: -3, rotationY: -3, opacity: 0.8 },
-                {
-                  xPercent: 112,
-                  rotationY: 8,
-                  opacity: 0,
-                  ease: "none",
-                  scrollTrigger: {
-                    id: "atelier-community-glass",
-                    onUpdate: (trigger) => {
-                      community.dataset.storyStep =
-                        trigger.progress < 0.45 ? "purpose" : "contribution";
-                    },
-                    trigger: community,
-                    start: "top 80%",
-                    end: "top 15%",
-                    scrub: true,
-                    invalidateOnRefresh: true,
-                  },
-                },
+            // Material moves behind the work; the writing stays still. These
+            // short, reversible scroll treatments do not add pins or delay reading.
+            selectAll(".work-feature, .feature").forEach((chapter) => {
+              const reflection = chapter.querySelector<HTMLElement>(
+                ".chapter-reflection",
               );
-            }
-
-            const flow = select<HTMLElement>("#accuflow");
-            const flowStageInfo = select<HTMLElement>(
-              "#accuflow .accuflow-stage-info",
-            );
-            const flowStages = selectAll("#accuflow [data-flow-stage]");
-            const flowPath = select<SVGPathElement>("#accuflow .accuflow-path");
-            const flowMedia = select<HTMLElement>("#accuflow .feature-media");
-            const flowVisual = flowMedia?.querySelector<HTMLElement>(
-              ".real-project-media, .media-reservation",
-            );
-            if (flow && flowPath) {
-              gsap.fromTo(
-                flowPath,
-                { strokeDasharray: 1, strokeDashoffset: 1 },
-                {
-                  strokeDashoffset: 0,
-                  ease: "none",
-                  scrollTrigger: {
-                    id: "atelier-accuflow-outline",
-                    trigger: flowMedia ?? flow,
-                    start: "top 85%",
-                    end: "top 30%",
-                    scrub: true,
-                    invalidateOnRefresh: true,
-                  },
-                },
+              const depth = chapter.querySelector<HTMLElement>(
+                ".chapter-glass-depth",
               );
-              if (flowVisual)
+              const chapterId = chapter.id || "project";
+              if (reflection)
                 gsap.fromTo(
-                  flowVisual,
-                  { y: 16, scale: 0.985 },
+                  reflection,
+                  { xPercent: -8, yPercent: 2, opacity: 0.22 },
                   {
-                    y: 0,
-                    scale: 1,
+                    xPercent: 8,
+                    yPercent: -2,
+                    opacity: 0.48,
                     ease: "none",
                     scrollTrigger: {
-                      id: "atelier-accuflow-frame",
-                      trigger: flowMedia ?? flow,
-                      start: "top 90%",
-                      end: "top 35%",
+                      id: `atelier-${chapterId}-reflection`,
+                      trigger: chapter,
+                      start: "top bottom",
+                      end: "bottom top",
                       scrub: true,
                       invalidateOnRefresh: true,
                     },
                   },
                 );
-            }
-            if (flowStageInfo && flowStages.length) {
-              gsap.fromTo(
-                flowStages,
-                { y: 18, autoAlpha: 0 },
-                {
-                  y: 0,
-                  autoAlpha: 1,
-                  duration: 0.35,
-                  stagger: 0.2,
-                  ease: "none",
-                  scrollTrigger: {
-                    id: "atelier-accuflow-stages",
-                    trigger: flowStageInfo,
-                    start: "top 90%",
-                    end: "top 55%",
-                    scrub: true,
-                    invalidateOnRefresh: true,
+              if (depth)
+                gsap.fromTo(
+                  depth,
+                  { yPercent: 4, scale: 1.035 },
+                  {
+                    yPercent: -4,
+                    scale: 1,
+                    ease: "none",
+                    scrollTrigger: {
+                      id: `atelier-${chapterId}-depth`,
+                      trigger: chapter,
+                      start: "top bottom",
+                      end: "bottom top",
+                      scrub: true,
+                      invalidateOnRefresh: true,
+                    },
                   },
-                },
-              );
-            }
+                );
+            });
+
+            clearChapterScenes = coordinateChapterScenes(element);
 
             const studio = select<HTMLElement>("#studio");
             const reelWindow = select<HTMLElement>(
@@ -755,31 +954,9 @@ export default function useScrollStory({ root, enabled, route }: Options) {
                 },
               );
             }
-          } else {
-            // Phones/tablets retain native vertical scroll: no pin, smoothing or
-            // forced horizontal sequence. Essential text remains fully visible.
-            const community = select<HTMLElement>("#community");
-            const glass = select<HTMLElement>("#community .transition-glass");
-            if (community && glass) {
-              gsap.fromTo(
-                glass,
-                { x: 0, opacity: 0.3 },
-                {
-                  x: 12,
-                  opacity: 0,
-                  ease: "none",
-                  scrollTrigger: {
-                    id: "atelier-mobile-glass",
-                    trigger: community,
-                    start: "top 85%",
-                    end: "top 45%",
-                    scrub: true,
-                    invalidateOnRefresh: true,
-                  },
-                },
-              );
-            }
           }
+          // Phones/tablets retain native vertical scroll and their static glass
+          // surfaces. Reflections, media settle and large transitions are desktop-only.
 
           const clearMaterial = coordinateMaterial(element, desktop);
           refresh();
@@ -787,6 +964,7 @@ export default function useScrollStory({ root, enabled, route }: Options) {
             ambientObserver?.disconnect();
             ambient?.kill();
             clearMaterial();
+            clearChapterScenes();
             document.removeEventListener("visibilitychange", visibility);
             if (ticker) gsap.ticker.remove(ticker);
             if (lenis) {
@@ -804,7 +982,8 @@ export default function useScrollStory({ root, enabled, route }: Options) {
       );
     }, element);
 
-    return () => {
+    const cleanup = () => {
+      if (!alive) return;
       alive = false;
       cancelAnimationFrame(refreshFrame);
       cancelAnimationFrame(anchorFrame);
@@ -823,6 +1002,11 @@ export default function useScrollStory({ root, enabled, route }: Options) {
       context.revert();
       element.dataset.scrollEngine = "static";
       delete element.dataset.motionFallback;
+    };
+    cleanupRef.current = cleanup;
+    return () => {
+      cleanup();
+      if (cleanupRef.current === cleanup) cleanupRef.current = null;
     };
   }, [root, enabled, route]);
 
@@ -889,5 +1073,6 @@ export default function useScrollStory({ root, enabled, route }: Options) {
     [enabled],
   );
 
-  return { scrollTo };
+  const beforeNavigate = useCallback(() => cleanupRef.current?.(), []);
+  return { scrollTo, beforeNavigate };
 }

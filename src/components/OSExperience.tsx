@@ -456,15 +456,6 @@ export default function OSExperience({
                       </span>
                       <p>{swimmer.detail}</p>
                     </div>
-                    <div>
-                      <span>
-                        <Check size={12} /> Recognition
-                      </span>
-                      <p>
-                        Chinmaya Gaurav Award for Excellence in Swimming.
-                        Certificate and award context to be supplied.
-                      </p>
-                    </div>
                   </div>
                 )}
                 <button

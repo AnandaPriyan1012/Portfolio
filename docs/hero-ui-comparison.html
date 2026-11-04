@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Hero comparison — Ananda Priyan</title>
+    <style>
+      * { box-sizing: border-box; }
+      body { margin: 0; background: #0b0e0f; color: #eee9de; font: 12px/1.5 system-ui, sans-serif; }
+      .review-bar { height: 64px; padding: 8px 26px; display: flex; align-items: center; justify-content: space-between; gap: 20px; border-bottom: 1px solid #e8dcc62b; }
+      .review-bar p { margin: 0; color: #c6bcab; font-size: 11px; letter-spacing: .04em; }
+      .review-bar strong { color: #eee9de; font-weight: 500; }
+      .choices { display: flex; gap: 4px; border: 1px solid #e8dcc62b; border-radius: 3px; padding: 3px; }
+      .choices button { min-height: 38px; padding: 8px 17px; border: 1px solid transparent; color: #b7b8ad; background: transparent; font: inherit; cursor: pointer; }
+      .choices button[aria-pressed="true"] { border-color: #cbbb984a; background: #cbbb9814; color: #f4e8ce; }
+      button:focus-visible { outline: 2px solid #e8d3ae; outline-offset: 3px; }
+      iframe { display: block; width: 100%; height: calc(100svh - 64px); border: 0; }
+      @media(max-width: 600px) { .review-bar { padding: 6px 12px; gap: 10px; } .review-bar p { font-size: 9px; max-width: 120px; } .choices button { font-size: 10px; padding-inline: 10px; } }
+    </style>
+  </head>
+  <body>
+    <header class="review-bar">
+      <p><strong>Hero / Contact control</strong><br />Local visual comparison</p>
+      <div class="choices" role="group" aria-label="Compare hero treatments">
+        <button id="original" type="button" aria-pressed="true">Original</button>
+        <button id="dock" type="button" aria-pressed="false">Contact control</button>
+      </div>
+    </header>
+    <iframe id="portfolio" src="/" title="Interactive portfolio hero comparison"></iframe>
+    <script>
+      const frame = document.getElementById('portfolio');
+      let enabled = false;
+      let previewLink = null;
+      let previousFilm = null;
+
+      function fitControl() {
+        const doc = frame.contentDocument;
+        const film = doc?.querySelector('.hero-ambient-film');
+        const scene = doc?.querySelector('.scroll-opening');
+        if (!film || !scene || !film.videoWidth || !enabled) {
+          if (previewLink) { previewLink.hidden = true; previewLink.style.display = 'none'; }
+          return;
+        }
+        if (!previewLink || !doc.contains(previewLink)) {
+          previewLink = doc.createElement('a');
+          previewLink.href = '/about#contact';
+          previewLink.textContent = 'Contact';
+          const arrow = doc.createElementNS('http://www.w3.org/2000/svg', 'svg');
+          arrow.setAttribute('viewBox', '0 0 24 24'); arrow.setAttribute('width', '12'); arrow.setAttribute('height', '12'); arrow.setAttribute('fill', 'none'); arrow.setAttribute('stroke', 'currentColor'); arrow.setAttribute('stroke-width', '1.5'); arrow.setAttribute('aria-hidden', 'true');
+          const line = doc.createElementNS('http://www.w3.org/2000/svg', 'path'); line.setAttribute('d', 'M7 17 17 7M7 7h10v10'); arrow.append(line); previewLink.append(arrow);
+          previewLink.setAttribute('aria-label', 'Go to Contact');
+          previewLink.id = 'preview-contact-control';
+          Object.assign(previewLink.style, {
+            position: 'absolute', zIndex: '7', width: '90px', height: '48px',
+            display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+            color: '#eee4cf', font: '400 10px/1.2 var(--font-body, sans-serif)',
+            letterSpacing: '.05em', textDecoration: 'none', borderRadius: '3px',
+            background: '#151b18', border: '1px solid #d9c5a16b',
+            boxShadow: 'inset 0 1px 0 #fff5df29, 0 8px 22px #0005',
+          });
+          previewLink.addEventListener('click', event => {
+            event.preventDefault();
+            const contact = doc.getElementById('contact');
+            if (contact) frame.contentWindow.scrollTo({ top: contact.getBoundingClientRect().top + frame.contentWindow.scrollY - 96, behavior: 'instant' });
+            else frame.contentWindow.location.assign('/about#contact');
+          });
+          scene.append(previewLink);
+        }
+        const box = film.getBoundingClientRect();
+        const root = scene.getBoundingClientRect();
+        const scale = Math.min(box.width / film.videoWidth, box.height / film.videoHeight);
+        const fullWidth = film.videoWidth * scale, fullHeight = film.videoHeight * scale;
+        const frameRight = box.left + (box.width + fullWidth) / 2;
+        const frameBottom = box.top + (box.height + fullHeight) / 2;
+        previewLink.style.left = `${frameRight - root.left - 98}px`;
+        previewLink.style.top = `${frameBottom - root.top - 56}px`;
+        previewLink.hidden = false;
+        previewLink.style.display = 'inline-flex';
+      }
+
+      function select(value) {
+        enabled = value;
+        document.getElementById('original').setAttribute('aria-pressed', String(!value));
+        document.getElementById('dock').setAttribute('aria-pressed', String(value));
+        if (previewLink) { previewLink.hidden = !enabled; previewLink.style.display = enabled ? 'inline-flex' : 'none'; }
+        fitControl();
+      }
+      document.getElementById('original').addEventListener('click', () => select(false));
+      document.getElementById('dock').addEventListener('click', () => select(true));
+      frame.addEventListener('load', () => {
+        previousFilm = null;
+        frame.contentWindow.addEventListener('resize', fitControl);
+        frame.contentWindow.addEventListener('scroll', fitControl, { passive: true });
+        const observer = new MutationObserver(fitControl);
+        observer.observe(frame.contentDocument.body, { childList: true, subtree: true });
+      });
+      setInterval(() => {
+        const film = frame.contentDocument?.querySelector('.hero-ambient-film');
+        if (film && film !== previousFilm) { previousFilm = film; film.addEventListener('loadeddata', fitControl, { once: true }); fitControl(); }
+      }, 300);
+    </script>
+  </body>
+</html>

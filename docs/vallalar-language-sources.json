@@ -1,0 +1,134 @@
+{
+  "schemaVersion": 1,
+  "captureDate": "2026-11-04",
+  "purpose": "Document the existing English and Tamil About-page openings for a compact bilingual website-preview study. This is not evidence of translation ownership, measured impact, photography authorship, or final official publication.",
+  "method": {
+    "browser": "System Chromium via Playwright",
+    "transport": "TLS-verified Playwright APIRequestContext configured with environment HTTPS proxy; browser requests fulfilled from verified public responses. Certificate verification remained enabled.",
+    "authentication": "None. Public source pages only. No form submitted.",
+    "viewport": "1440x1000 desktop; 390x1000 phone; deviceScaleFactor1; reduced-motion reduce.",
+    "framing": "Opening-only screenshot clips within each browser viewport, excluding the lower commemorative mosaic and reference material. Exact clip dimensions are recorded per capture. No source DOM/CSS was changed.",
+    "selectedLanguage": "Source route loaded directly; source language controls were not altered or simulated. Phone source Menu remained closed."
+  },
+  "observations": [
+    "Both matching About routes returned HTTP200.",
+    "Desktop headers link between English and Tamil versions of the About page.",
+    "The responsive phone header uses a Menu control.",
+    "The opening brand, navigation and About text change with the selected source language."
+  ],
+  "roleAttributionScope": "Existing portfolio evidence identifies volunteer Social Media & Technology Head work since2023, including digital storytelling, social media and work on the organisation’s website. No claim of personally translating the content is made.",
+  "captures": [
+    {
+      "language": "en",
+      "url": "https://vallalar-sathya-dharmasalai.vercel.app/en/about/",
+      "resolvedUrl": "https://vallalar-sathya-dharmasalai.vercel.app/en/about/",
+      "httpStatus": 200,
+      "documentTitle": "About the Dharmasalai | Vallalar Sathya Dharmasalai",
+      "htmlLang": "en",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "deviceScaleFactor": 1
+      },
+      "clip": {
+        "x": 0,
+        "y": 0,
+        "width": 1440,
+        "height": 500
+      },
+      "capturedAt": "2026-11-04T10:25:12.692Z",
+      "file": "public/media/vallalar-language-en-desktop.webp",
+      "scope": "About page opening and visible header only. The lower Vallalar reference artwork and all lower-page material are excluded. No UI, text, image or CSS was changed for capture.",
+      "referenceArtworkTop": 517.75,
+      "visibleLanguageControls": "Tamil and English links in the desktop header.",
+      "actions": [],
+      "sha256": "730389c8e28a79bedd76682c04ed31b194e7074ff0cca958895b69499a841d36",
+      "originalPngSha256": "8765f540f2bb031b6f7b09760fd9bf5a7ecf2868f29877bb342b6891771010c2",
+      "encoding": "WebP quality92; original opening screenshot content unchanged."
+    },
+    {
+      "language": "ta",
+      "url": "https://vallalar-sathya-dharmasalai.vercel.app/ta/about/",
+      "resolvedUrl": "https://vallalar-sathya-dharmasalai.vercel.app/ta/about/",
+      "httpStatus": 200,
+      "documentTitle": "தருமசாலை பற்றி | வள்ளலார் சத்திய தருமசாலை",
+      "htmlLang": "ta",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "deviceScaleFactor": 1
+      },
+      "clip": {
+        "x": 0,
+        "y": 0,
+        "width": 1440,
+        "height": 400
+      },
+      "capturedAt": "2026-11-04T10:25:14.087Z",
+      "file": "public/media/vallalar-language-ta-desktop.webp",
+      "scope": "About page opening and visible header only. The lower Vallalar reference artwork and all lower-page material are excluded. No UI, text, image or CSS was changed for capture.",
+      "referenceArtworkTop": 424.625,
+      "visibleLanguageControls": "Tamil and English links in the desktop header.",
+      "actions": [],
+      "sha256": "467968c67f9c594cc37535c9ae0b0e82722624f15035a2d36fc8f2fe6c228058",
+      "originalPngSha256": "4c9117b65d437d647135422c01ae5e1fd366ce244d02b47819125d322c5ddbbf",
+      "encoding": "WebP quality92; original opening screenshot content unchanged."
+    },
+    {
+      "language": "en",
+      "url": "https://vallalar-sathya-dharmasalai.vercel.app/en/about/",
+      "resolvedUrl": "https://vallalar-sathya-dharmasalai.vercel.app/en/about/",
+      "httpStatus": 200,
+      "documentTitle": "About the Dharmasalai | Vallalar Sathya Dharmasalai",
+      "htmlLang": "en",
+      "viewport": {
+        "width": 390,
+        "height": 1000,
+        "deviceScaleFactor": 1
+      },
+      "clip": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 420
+      },
+      "capturedAt": "2026-11-04T10:25:15.337Z",
+      "file": "public/media/vallalar-language-en-mobile.webp",
+      "scope": "About page opening and visible header only. The lower Vallalar reference artwork and all lower-page material are excluded. No UI, text, image or CSS was changed for capture.",
+      "referenceArtworkTop": 633.6875,
+      "visibleLanguageControls": "Responsive header Menu button; language menu not opened.",
+      "actions": [],
+      "sha256": "f6fea85244332f276bcb821df410f0d297bb1d51599c5732dd7de23548172ecf",
+      "originalPngSha256": "70fd6ef829262447667d52790d0fe6321fad570cd69bfd27019f628d9466d373",
+      "encoding": "WebP quality92; original opening screenshot content unchanged."
+    },
+    {
+      "language": "ta",
+      "url": "https://vallalar-sathya-dharmasalai.vercel.app/ta/about/",
+      "resolvedUrl": "https://vallalar-sathya-dharmasalai.vercel.app/ta/about/",
+      "httpStatus": 200,
+      "documentTitle": "தருமசாலை பற்றி | வள்ளலார் சத்திய தருமசாலை",
+      "htmlLang": "ta",
+      "viewport": {
+        "width": 390,
+        "height": 1000,
+        "deviceScaleFactor": 1
+      },
+      "clip": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 360
+      },
+      "capturedAt": "2026-11-04T10:25:16.625Z",
+      "file": "public/media/vallalar-language-ta-mobile.webp",
+      "scope": "About page opening and visible header only. The lower Vallalar reference artwork and all lower-page material are excluded. No UI, text, image or CSS was changed for capture.",
+      "referenceArtworkTop": 613.6875,
+      "visibleLanguageControls": "Responsive header Menu button; language menu not opened.",
+      "actions": [],
+      "sha256": "e08196389d126d79dc8564f6d1d28ff7c0b52545d271298e502e1e44909942cc",
+      "originalPngSha256": "85b9ee8fde506cc05ac44b865f3af51450ded0a002e2114b21b1943e5cdcaaca",
+      "encoding": "WebP quality92; original opening screenshot content unchanged."
+    }
+  ]
+}

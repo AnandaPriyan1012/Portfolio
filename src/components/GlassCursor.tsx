@@ -26,11 +26,13 @@ export default function GlassCursor({ enabled }: { enabled: boolean }) {
       x = event.clientX;
       y = event.clientY;
       const target = event.target instanceof Element ? event.target : null;
-      const mode =
-        target?.closest<HTMLElement>("[data-cursor]")?.dataset.cursor ?? "";
+      const surface = target?.closest<HTMLElement>("[data-cursor]");
+      const mode = surface?.dataset.cursor ?? "";
+      const interactive = surface?.matches("a[href], button, [role='button']");
       lens.dataset.mode = mode;
       lens.dataset.visible = String(
-        !target?.closest("input, textarea, video, .os-window-titlebar"),
+        Boolean(interactive) &&
+          !target?.closest("input, textarea, video, .os-window-titlebar"),
       );
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
@@ -58,10 +60,7 @@ export default function GlassCursor({ enabled }: { enabled: boolean }) {
       aria-hidden="true"
       data-visible="false"
     >
-      <span className="glass-cursor-ring">
-        <span className="cursor-view">View</span>
-        <span className="cursor-play">▶</span>
-      </span>
+      <span className="glass-cursor-ring" />
     </div>
   );
 }

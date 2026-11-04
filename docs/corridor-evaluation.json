@@ -1,0 +1,203 @@
+{
+  "decision": "Integrated as a decorative scroll-driven backdrop behind the existing three Home directory route cards.",
+  "publication": "Local implementation only; no deploy or publish performed.",
+  "source": {
+    "video": {
+      "library_file_id": "libfile_b2527268e6d48191b86d1648a4f67f2e",
+      "file_id": "file_00000000c8c881f58d832ae674d29f41",
+      "version": 0,
+      "filename": "glass-transition-scrub.mp4",
+      "materialized_path": "/workspace/corridor-review/glass-transition-scrub.mp4",
+      "runtime_path": "public/media/scroll-corridor.mp4",
+      "bytes": 2042040,
+      "sha256": "4681f82d406a98932268ebe9a4acb4dadd563790887b006c7af557bf6b34d204",
+      "source_bytes_unchanged": true,
+      "width": 1280,
+      "height": 720,
+      "duration_seconds": 7.916667,
+      "frame_rate": 24,
+      "frames": 190,
+      "keyframe_interval_seconds": 0.25,
+      "audio_tracks": 0
+    },
+    "poster": {
+      "library_file_id": "libfile_7356b51a6e588191b01606f8af0cdec2",
+      "file_id": "file_000000003ec081f58964066e07eaa3aa",
+      "version": 0,
+      "filename": "glass-transition-0.png",
+      "source_sha256": "f2e4b05e8f520a28fc346630d49f09302a082a596b97932ef82048f4ce318a4b",
+      "runtime_path": "public/media/scroll-corridor-poster.webp",
+      "runtime_bytes": 31628,
+      "runtime_sha256": "b99c83b4a35b1e40dfaefc3fedb18e9e01c3147dc79b5a232b1beaf55b89effe",
+      "derivation": "WebP still derived from the supplied poster using ffmpeg quality86; no cropping."
+    }
+  },
+  "art_direction": {
+    "assessment": "Warm bronze and glass frames create a coherent movement from the amber hero into the three real destinations. The source ends in darkness.",
+    "attribution": "Conceptual generated atmosphere, not a documented personal project or screening-room photograph.",
+    "original_mark": "Veo mark remains visible in the original full frame; runtime uses object-fit:contain with no scaling transform or cropping.",
+    "legibility": "A broad upper tonal gradient protects the directory intro text; its final82percent stop is transparent, leaving the lower source corner clear.",
+    "local_screenshot": "/tmp/corridor-desktop.png"
+  },
+  "implementation": {
+    "component": "src/components/ScrollCorridor.tsx",
+    "stylesheet": "src/components/scroll-corridor.css",
+    "prop": "enabled:boolean",
+    "height": "Absolute background with a sticky100svh child; no additional section, pin, or scroll spacer.",
+    "progress": "Own ScrollTrigger on the existing .home-directory: top top to bottom bottom, quantized to source24fps, final target7.875seconds.",
+    "seeks": "One decode in flight; new scroll input replaces the pending target. A completed seek/compositor callback releases the trailing target. Event-driven requestAnimationFrame only; no independent animation clock or autoplay.",
+    "lazy_loading": "No MP4/poster source until eligible directory is within300px of viewport.",
+    "eligibility": "Motionenabled, minimum1100x760, fine pointer and hover, no reducedmotion or SaveData, hardwareConcurrency greater than2 if supplied, deviceMemory greater than2GB if supplied.",
+    "cleanup": "Kills own ScrollTrigger, cancels scheduled frame/compositor callback/timer, removes events, pauses source on unmount.",
+    "semantics": "Decorative aria-hidden layer; existing route cards stay semantic links and retain normal navigation."
+  },
+  "verification": {
+    "browser": "Chromium at /usr/bin/chromium, Playwright with real mouse.wheel inputs.",
+    "typescript": "tsc --noEmit -p tsconfig.json passed.",
+    "checks": {
+      "desktop": {
+        "initialSourceRequests": [],
+        "samples": [
+          {
+            "y": 2167,
+            "progress": 0.0482,
+            "target": 0.375,
+            "current": 0.375,
+            "seeks": 33,
+            "paused": true,
+            "metadata": 4,
+            "duration": 7.916667,
+            "overflow": 0
+          },
+          {
+            "y": 2448,
+            "progress": 0.2504,
+            "target": 1.958,
+            "current": 1.958333,
+            "seeks": 66,
+            "paused": true,
+            "metadata": 4,
+            "duration": 7.916667,
+            "overflow": 0
+          },
+          {
+            "y": 2799,
+            "progress": 0.5029,
+            "target": 3.958,
+            "current": 3.958333,
+            "seeks": 100,
+            "paused": true,
+            "metadata": 4,
+            "duration": 7.916667,
+            "overflow": 0
+          },
+          {
+            "y": 3215,
+            "progress": 0.8022,
+            "target": 6.333,
+            "current": 6.333333,
+            "seeks": 131,
+            "paused": true,
+            "metadata": 4,
+            "duration": 7.916667,
+            "overflow": 0
+          },
+          {
+            "y": 2871,
+            "progress": 0.5547,
+            "target": 4.375,
+            "current": 4.375,
+            "seeks": 158,
+            "paused": true,
+            "metadata": 4,
+            "duration": 7.916667,
+            "overflow": 0
+          },
+          {
+            "y": 2375,
+            "progress": 0.1978,
+            "target": 1.542,
+            "current": 1.541666,
+            "seeks": 203,
+            "paused": true,
+            "metadata": 4,
+            "duration": 7.916667,
+            "overflow": 0
+          }
+        ],
+        "fitting": {
+          "objectFit": "contain",
+          "opacity": "0.85",
+          "videoWidth": 1280,
+          "videoHeight": 720,
+          "frame": {
+            "left": 0,
+            "top": 95,
+            "right": 1440,
+            "bottom": 905
+          },
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "autoPlay": false,
+          "loop": false,
+          "muted": true,
+          "controls": false
+        },
+        "noExtraHeight": {
+          "before": 2389.75,
+          "after": 2389.75,
+          "delta": 0
+        },
+        "requests": [
+          "scroll-corridor-poster.webp",
+          "scroll-corridor.mp4"
+        ],
+        "errors": [],
+        "backReturned": 1
+      },
+      "fallbacks": [
+        {
+          "name": "phone",
+          "roots": 0,
+          "requests": [],
+          "errors": [],
+          "routeLinks": 3
+        },
+        {
+          "name": "reduced",
+          "roots": 0,
+          "requests": [],
+          "errors": [],
+          "routeLinks": 3
+        },
+        {
+          "name": "savedata",
+          "roots": 0,
+          "requests": [],
+          "errors": [],
+          "routeLinks": 3
+        },
+        {
+          "name": "lowpower",
+          "roots": 0,
+          "requests": [],
+          "errors": [],
+          "routeLinks": 3
+        },
+        {
+          "name": "short",
+          "roots": 0,
+          "requests": [],
+          "errors": [],
+          "routeLinks": 3
+        }
+      ]
+    }
+  },
+  "remaining_limits": [
+    "Real-device mobile performance and Firefox/WebKit decoding were not evaluated by this task.",
+    "No deployment performed; root owns full project regression testing."
+  ]
+}

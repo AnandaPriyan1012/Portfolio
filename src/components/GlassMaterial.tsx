@@ -1,7 +1,7 @@
 import { useId } from "react";
 import "./glass-material.css";
 
-/** A single decorative material carried between the semantic project scenes. */
+/** Thin optical edges follow the actual project glass, never a separate shape. */
 export default function GlassMaterial() {
   const id = useId().replaceAll(":", "");
   return (
@@ -17,29 +17,29 @@ export default function GlassMaterial() {
           <stop
             offset="0"
             stopColor="var(--material-light, #e2d4bd)"
-            stopOpacity=".76"
+            stopOpacity=".34"
           />
           <stop
             offset=".31"
             stopColor="var(--material-light, #e2d4bd)"
-            stopOpacity=".12"
+            stopOpacity=".035"
           />
           <stop
             offset=".72"
             stopColor="var(--material-light, #e2d4bd)"
-            stopOpacity=".5"
+            stopOpacity=".18"
           />
           <stop
             offset="1"
             stopColor="var(--material-light, #e2d4bd)"
-            stopOpacity=".08"
+            stopOpacity=".025"
           />
         </linearGradient>
         <linearGradient id={`${id}-smoke`} x1="0" y1="0" x2="0" y2="1">
           <stop
             offset="0"
             stopColor="var(--material-light, #e2d4bd)"
-            stopOpacity=".022"
+            stopOpacity=".009"
           />
           <stop
             offset=".42"
@@ -49,7 +49,7 @@ export default function GlassMaterial() {
           <stop
             offset="1"
             stopColor="var(--material-light, #e2d4bd)"
-            stopOpacity=".035"
+            stopOpacity=".015"
           />
         </linearGradient>
       </defs>

@@ -11,12 +11,14 @@ const test = base.extend<{ consoleGuard: void }>({
   }, { auto: true }],
 })
 
-async function ready(page: Page) {
-  await page.goto('/')
+async function ready(page: Page, path = '/') {
+  await page.goto(path)
   await page.evaluate(() => document.fonts.ready)
-  await page.locator('.hero-room img').evaluate(node => (node as HTMLImageElement).decode())
-  await page.locator('.cirs-browser-image').evaluate(node => (node as HTMLImageElement).decode())
-  expect(await page.locator('.cirs-browser-image').evaluate(node => (node as HTMLImageElement).naturalWidth)).toBeGreaterThan(0)
+  if (path === '/') {
+    await page.locator('.hero-room img').evaluate(node => (node as HTMLImageElement).decode())
+    await page.locator('.cirs-browser-image').evaluate(node => (node as HTMLImageElement).decode())
+    expect(await page.locator('.cirs-browser-image').evaluate(node => (node as HTMLImageElement).naturalWidth)).toBeGreaterThan(0)
+  }
 }
 
 async function wheelTo(page: Page, selector: string, offset = 110) {
@@ -62,6 +64,9 @@ for (const width of [320, 375, 390, 768, 1024, 1440]) test(`scroll story fits ${
     await expect(page.getByRole('navigation', { name: 'Main navigation' })).toBeVisible()
   }
   await cta.click()
+  await expect(page).toHaveURL(/\/work$/)
+  await expect(page.locator('h1')).toHaveText(/Selected\s*work\./)
+  await page.getByRole('navigation', { name: 'Explore selected projects' }).locator('a[href="#cirs"]').click()
   await expect.poll(async () => (await page.locator('#cirs').boundingBox())!.y).toBeLessThan(160)
   expect((await page.locator('#cirs').boundingBox())!.y).toBeGreaterThanOrEqual(0)
   await page.locator('#accuflow').getByRole('button', { name: 'Quick view', exact: true }).click()
@@ -102,6 +107,7 @@ test('desktop wheel scrolling expands and reverses the real CIRS scene and captu
   await page.mouse.wheel(0, -850)
   await expect.poll(async () => page.evaluate(() => scrollY)).toBeLessThan(2)
   await expect.poll(async () => Math.abs((await page.locator('.cirs-visual-frame').boundingBox())!.width - initial.width)).toBeLessThan(2)
+  await ready(page, '/work')
   await wheelTo(page, '#community')
   await expect(page.locator('#community')).toContainText('Social Media & Technology Head')
   await page.screenshot({ path: `docs/${prefix}-community.png` })
@@ -123,6 +129,7 @@ test('mobile retains native scrolling and captures school, community and AccuFlo
   expect(await page.locator('.hero-room img').evaluate(node => (node as HTMLImageElement).currentSrc)).toContain('atelier-room-portrait.webp')
   const prefix = browserName === 'chromium' ? 'refinement-regression-scroll-mobile' : `refinement-regression-scroll-${browserName}-mobile`
   await page.screenshot({ path: `docs/${prefix}-start.png` })
+  await ready(page, '/work')
   await wheelTo(page, '#community', 88)
   await page.screenshot({ path: `docs/${prefix}-middle.png` })
   await wheelTo(page, '#accuflow', 88)
@@ -140,6 +147,7 @@ test('reduced motion removes pins and expansion while retaining the actual conte
   const after = (await page.locator('.cirs-visual-frame').boundingBox())!
   expect(after.width).toBe(before.width)
   expect(after.x).toBe(before.x)
+  await ready(page, '/work')
   await expect(page.locator('.transition-glass')).toBeHidden()
   await expect(page.locator('#accuflow [data-flow-stage]').first()).toBeVisible()
 })
@@ -154,10 +162,11 @@ test('a failed real screenshot yields a usable static fallback instead of a pinn
   await expect(page.getByRole('link', { name: 'Visit the official CIRS website' })).toHaveAttribute('href', 'https://cirschool.org')
 })
 
-test('direct anchors and full case-study navigation clean up scroll pins and restore a single scene', async ({ page }) => {
+test('legacy anchors and full case-study navigation clean up scroll pins and restore Work', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' })
   await page.goto('/#community')
-  await page.locator('.cirs-browser-image').evaluate(node => (node as HTMLImageElement).decode())
+  await expect(page).toHaveURL(/\/work#community$/)
+  await page.locator('.admissions-detail img').evaluate(node => (node as HTMLImageElement).decode())
   await expect(page.locator('main')).toHaveAttribute('data-scroll-engine', 'gsap-lenis')
   await expect.poll(async () => Math.abs((await page.locator('#community').boundingBox())!.y)).toBeLessThan(180)
   await page.locator('#community').getByRole('link', { name: 'Read the case study', exact: true }).click()
@@ -166,7 +175,10 @@ test('direct anchors and full case-study navigation clean up scroll pins and res
   expect(await page.locator('html').getAttribute('class')).not.toContain('lenis-smooth')
   await page.getByRole('button', { name: 'Back to portfolio', exact: true }).click()
   await expect(page.locator('main')).toHaveAttribute('data-scroll-engine', 'gsap-lenis')
-  await expect(page.locator('.pin-spacer')).toHaveCount(1)
+  await expect(page).toHaveURL(/\/work$/)
+  await expect(page.locator('h1')).toHaveText(/Selected\s*work\./)
+  await expect(page.locator('.pin-spacer')).toHaveCount(0)
+  await expect(page.locator('.scroll-opening')).toHaveCount(0)
 })
 
 async function syntheticFilms(page: Page) {
@@ -184,11 +196,12 @@ async function syntheticFilms(page: Page) {
 test('test-only ready film fixtures activate scroll-driven studio and an explicit muted player', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' })
   await syntheticFilms(page)
-  await ready(page)
+  await ready(page, '/studio')
   await expect(page.locator('#studio .reel-frame')).toHaveCount(3)
   await expect(page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Studio', exact: true })).toBeVisible()
-  await expect(page.locator('video')).toHaveCount(0)
-  await wheelTo(page, '#studio', 800)
+  await expect(page.locator('#studio video:not(.studio-atmosphere-film), dialog video')).toHaveCount(0)
+  await expect(page.locator('#studio')).toBeInViewport()
+  await page.mouse.move(5, 400)
   const before = await page.locator('.studio-reel').evaluate(node => new DOMMatrixReadOnly(getComputedStyle(node).transform).m41)
   await page.mouse.wheel(0, 650)
   await expect.poll(() => page.locator('.studio-reel').evaluate(node => new DOMMatrixReadOnly(getComputedStyle(node).transform).m41)).toBeLessThan(before - 30)
@@ -213,7 +226,7 @@ test('test-only ready film fixtures activate scroll-driven studio and an explici
 test('test-only ready film fixtures keep a static grid on phones and reduced motion', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 })
   await syntheticFilms(page)
-  await ready(page)
+  await ready(page, '/studio')
   await expect(page.locator('#studio .reel-frame')).toHaveCount(3)
   expect(await page.locator('.studio-reel').evaluate(node => getComputedStyle(node).display)).toBe('grid')
   expect(await page.locator('.studio-reel').evaluate(node => getComputedStyle(node).transform)).toBe('none')

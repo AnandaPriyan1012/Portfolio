@@ -19,7 +19,12 @@ import {
 import "./case-study.css";
 import Signature from "./Signature";
 
-type Props = { project: Project; onBack: () => void; onContact: () => void };
+type Props = {
+  project: Project;
+  onBack: () => void;
+  onContact: () => void;
+  onProject?: (id: Project["id"]) => void;
+};
 const stateLabel: Record<string, string> = {
   cirs: "Live website",
   airkart: "Concept exploration",
@@ -48,12 +53,25 @@ export function AccuFlowVisual() {
   );
 }
 
-export default function CaseStudyPage({ project, onBack, onContact }: Props) {
+export default function CaseStudyPage({
+  project,
+  onBack,
+  onContact,
+  onProject,
+}: Props) {
   const [cut, setCut] = useState<"quick" | "director">("director");
   const [active, setActive] = useState("");
   const [mediaFailed, setMediaFailed] = useState(false);
   const isAccuFlow = project.id === "accuflow";
   const index = projects.findIndex((item) => item.id === project.id);
+  const sequence = projects.filter((item) =>
+    ["cirs", "community", "accuflow"].includes(item.id),
+  );
+  const nextProject =
+    sequence[
+      (sequence.findIndex((item) => item.id === project.id) + 1) %
+        sequence.length
+    ];
   const assets = projectAssets[project.id];
   const hasAdmissions = project.id === "cirs" && !!assets.admissionsUrl;
   const hasContact =
@@ -121,17 +139,23 @@ export default function CaseStudyPage({ project, onBack, onContact }: Props) {
       const element = document.getElementById(anchor(section.id));
       if (element) observer.observe(element);
     });
+    if (hasAdmissions) {
+      const admissions = document.getElementById("case-cirs-admissions");
+      if (admissions) observer.observe(admissions);
+    }
     return () => observer.disconnect();
-  }, [project.id, cut]);
+  }, [project.id, cut, hasAdmissions]);
 
   return (
     <div
       className={`case-page${isAccuFlow ? " case-accuflow" : ""}`}
+      data-project={project.id}
       style={{ "--case-accent": project.accent } as CSSProperties}
     >
       <a className="case-skip" href="#case-body">
         Skip to case study
       </a>
+      <div className="case-atmosphere" aria-hidden="true" />
       <header className="case-topbar">
         <button className="case-back" onClick={onBack}>
           <ArrowLeft size={15} />
@@ -282,8 +306,17 @@ export default function CaseStudyPage({ project, onBack, onContact }: Props) {
                 </a>
               ))}
               {hasAdmissions && (
-                <a href="#case-cirs-admissions">
-                  <span>↳</span>The Admissions page
+                <a
+                  href="#case-cirs-admissions"
+                  className={active === "case-cirs-admissions" ? "active" : ""}
+                  aria-current={
+                    active === "case-cirs-admissions" ? "location" : undefined
+                  }
+                >
+                  <span aria-hidden="true">
+                    <ArrowRight size={12} />
+                  </span>
+                  The Admissions page
                 </a>
               )}
             </nav>
@@ -401,6 +434,38 @@ export default function CaseStudyPage({ project, onBack, onContact }: Props) {
             )}
           </div>
         </div>
+        <a
+          className="case-next-story"
+          href={`/projects/${nextProject.id}`}
+          onClick={(event) => {
+            if (
+              !onProject ||
+              event.metaKey ||
+              event.ctrlKey ||
+              event.shiftKey ||
+              event.altKey
+            )
+              return;
+            event.preventDefault();
+            onProject(nextProject.id);
+          }}
+        >
+          <div>
+            <span className="section-label">Next project</span>
+            <h2>{nextProject.title}</h2>
+            <p>{nextProject.subtitle}</p>
+            <span className="case-next-action">
+              Open the story <ArrowUpRight size={18} aria-hidden="true" />
+            </span>
+          </div>
+          {projectAssets[nextProject.id].previewUrl && (
+            <img
+              src={projectAssets[nextProject.id].previewUrl!}
+              alt={`${nextProject.title} — actual website interface`}
+              loading="lazy"
+            />
+          )}
+        </a>
         <section className="case-closing">
           {hasContact ? (
             <>

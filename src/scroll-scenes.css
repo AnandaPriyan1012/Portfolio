@@ -1,0 +1,180 @@
+/* Scroll scenes activate only after the capable desktop coordinator is running.
+   Native scroll, reduced motion and unavailable JavaScript keep the normal flow. */
+.community-scroll-meter,
+.accuflow-scroll-meter,
+.chapter-motion-caption {
+  display: none;
+}
+
+@media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
+  main[data-scroll-engine="gsap-lenis"] .chapter-motion-caption {
+    display: block;
+    color: #aab9aa;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    margin: 0 0 20px;
+  }
+
+  main[data-scroll-engine="gsap-lenis"] .community-scroll-runway {
+    position: relative;
+  }
+
+  main[data-scroll-engine="gsap-lenis"] .community-world {
+    align-items: start;
+    perspective: 1600px;
+    min-height: min(110svh, 1100px);
+  }
+
+  main[data-scroll-engine="gsap-lenis"] .community-image-reservation {
+    position: sticky;
+    top: calc(var(--header-height, 76px) + 38px);
+    align-self: start;
+    transform-origin: left center;
+  }
+
+  main[data-scroll-engine="gsap-lenis"] .community-purpose {
+    min-height: min(110svh, 1100px);
+    display: grid;
+    grid-template-rows: 1fr 1.12fr;
+    gap: clamp(40px, 7vh, 80px);
+    padding-block: 26px 20px;
+  }
+
+  main[data-scroll-engine="gsap-lenis"] .community-purpose .service-step {
+    --service-focus: 0.18;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    isolation: isolate;
+  }
+
+  main[data-scroll-engine="gsap-lenis"]
+    .community-purpose
+    .service-step::before {
+    content: "";
+    position: absolute;
+    inset: -20px -20px -20px -24px;
+    z-index: -1;
+    pointer-events: none;
+    border-left: 1px solid #dce9c766;
+    background: linear-gradient(105deg, #ccdec810, #e2f1ce03 68%, transparent);
+    opacity: var(--service-focus);
+  }
+
+  main[data-scroll-engine="gsap-lenis"] .community-scroll-meter,
+  main[data-scroll-engine="gsap-lenis"] .accuflow-scroll-meter {
+    display: block;
+    height: 2px;
+    width: 100%;
+    margin-top: 24px;
+    transform-origin: left center;
+    background: linear-gradient(90deg, #d9d9b8, #8da68c);
+    box-shadow: 0 0 12px #b9d0aa26;
+    pointer-events: none;
+  }
+
+  main[data-scroll-engine="gsap-lenis"] .accuflow-assembly {
+    perspective: 1600px;
+  }
+
+  main[data-scroll-engine="gsap-lenis"] .flow-interface-map {
+    perspective: 900px;
+    overflow: visible;
+  }
+
+  main[data-scroll-engine="gsap-lenis"] .flow-interface-map li {
+    position: relative;
+    transform-origin: center bottom;
+    background: #a8d7dc05;
+  }
+
+  main[data-scroll-engine="gsap-lenis"] .accuflow-assembly .feature-media {
+    transform-origin: center top;
+  }
+
+  main[data-scroll-engine="gsap-lenis"] .accuflow-assembly .media-glass-edge {
+    opacity: var(--flow-exposure, 1);
+    background: linear-gradient(
+      110deg,
+      #e1f8fc16,
+      transparent 35%,
+      transparent 70%,
+      #d8ffff08
+    );
+  }
+
+  main[data-scroll-engine="gsap-lenis"] .accuflow-scroll-meter {
+    background: linear-gradient(90deg, #b5dce5, #6dabb6);
+    box-shadow: 0 0 12px #8acbda33;
+  }
+
+  main[data-scroll-engine="gsap-lenis"] .accuflow-stage-info {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 28px;
+  }
+
+  main[data-scroll-engine="gsap-lenis"] .accuflow-stage-info [data-flow-stage] {
+    --flow-stage-focus: 0.08;
+    position: relative;
+    margin: 0;
+    padding-top: 19px;
+  }
+
+  main[data-scroll-engine="gsap-lenis"]
+    .accuflow-stage-info
+    [data-flow-stage]::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 2px;
+    background: linear-gradient(90deg, #c3edf0, #7eb9c266);
+    transform: scaleX(var(--flow-stage-focus));
+    transform-origin: left center;
+    opacity: calc(0.35 + var(--flow-stage-focus) * 0.65);
+  }
+
+  main[data-scroll-engine="gsap-lenis"] .about-section {
+    transform-origin: center center;
+  }
+
+  main[data-scroll-engine="gsap-lenis"] .about-section::before {
+    opacity: var(--about-exposure, 0.17);
+  }
+
+  main[data-scroll-engine="gsap-lenis"] .contact-section {
+    background-position:
+      center,
+      center calc(68% - var(--contact-exposure, 1) * 12%);
+  }
+
+  main[data-scroll-engine="gsap-lenis"] .contact-section::before {
+    opacity: calc(0.2 + var(--contact-exposure, 1) * 0.8);
+    transform: translateX(calc((1 - var(--contact-exposure, 1)) * 80px))
+      skewX(-22deg);
+  }
+
+  main[data-scroll-engine="gsap-lenis"] .contact-action {
+    position: relative;
+    border-bottom-color: transparent;
+  }
+
+  main[data-scroll-engine="gsap-lenis"] .contact-action::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 -1px;
+    height: 1px;
+    background: #d9c5a2;
+    transform: scaleX(var(--contact-exposure, 1));
+    transform-origin: left center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .community-scroll-meter,
+  .accuflow-scroll-meter,
+  .chapter-motion-caption {
+    display: none !important;
+  }
+}

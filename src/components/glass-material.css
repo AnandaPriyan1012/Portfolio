@@ -11,41 +11,35 @@
   contain: layout style;
 }
 .material-pane {
-  stroke-width: 1.1px;
+  stroke-width: 0.65px;
 }
 .material-inner-edge {
-  stroke-width: 0.45px;
-  opacity: 0.45;
+  stroke-width: 0.3px;
+  opacity: 0.25;
 }
 .glass-material[data-world="community"] .material-pane {
-  stroke-width: 1.25px;
+  stroke-width: 0.7px;
 }
 .glass-material[data-world="community"] .material-inner-edge {
-  opacity: 0.68;
-}
-.glass-material[data-world="accuflow"] .material-pane {
-  stroke-width: 1.05px;
-}
-.glass-material[data-world="accuflow"] .material-inner-edge {
   opacity: 0.3;
 }
+.glass-material[data-world="accuflow"] .material-pane {
+  stroke-width: 0.65px;
+}
+.glass-material[data-world="accuflow"] .material-inner-edge {
+  opacity: 0.2;
+}
 .glass-material[data-world="studio"] .material-pane {
-  stroke-width: 1.2px;
+  stroke-width: 0.6px;
 }
 .material-film-edge {
-  stroke-width: 5px;
-  stroke-dasharray: 7px 14px;
-  opacity: 0;
+  display: none;
 }
 main[data-scroll-engine="static"] .glass-material {
   display: none;
 }
 @media (max-width: 1023px), (pointer: coarse) {
-  .material-pane {
-    stroke-width: 0.8px;
-  }
-  .material-inner-edge,
-  .material-film-edge {
+  .glass-material {
     display: none;
   }
 }

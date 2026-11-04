@@ -20,6 +20,22 @@ const escapeHtml = (value) =>
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;");
+for (const [path, title] of [
+  ["work", "Selected work"],
+  ["studio", "The screening room"],
+  ["about", "About & contact"],
+]) {
+  const directory = join("dist", path);
+  await mkdir(directory, { recursive: true });
+  await writeFile(
+    join(directory, "index.html"),
+    template.replace(
+      /<title>[\s\S]*?<\/title>/,
+      `<title>${escapeHtml(title)} — Ananda Priyan</title>`,
+    ),
+  );
+}
+console.log("Created the Work, Studio and About static entry points.");
 for (const project of projects) {
   if (!/^[a-z0-9-]+$/.test(project.id))
     throw new Error("Invalid project route");

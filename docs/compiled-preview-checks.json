@@ -1,0 +1,81 @@
+{
+  "origin": "Local compiled Vite preview; not deployed",
+  "checks": [
+    {
+      "path": "/",
+      "width": 1440,
+      "status": 200,
+      "h1": "Ananda\nPriyan",
+      "engine": "gsap-lenis",
+      "scrollWidth": 1440,
+      "errors": []
+    },
+    {
+      "path": "/work",
+      "width": 1440,
+      "status": 200,
+      "h1": "Selected work.",
+      "engine": "gsap-lenis",
+      "scrollWidth": 1440,
+      "errors": []
+    },
+    {
+      "path": "/studio",
+      "width": 1440,
+      "status": 200,
+      "h1": "The screening room.",
+      "engine": "gsap-lenis",
+      "scrollWidth": 1440,
+      "errors": []
+    },
+    {
+      "path": "/about",
+      "width": 1440,
+      "status": 200,
+      "h1": "There’s a person\nbehind every project.",
+      "engine": "gsap-lenis",
+      "scrollWidth": 1440,
+      "errors": []
+    },
+    {
+      "flow": "compiled Work → CIRS case → Work",
+      "errors": []
+    },
+    {
+      "path": "/",
+      "width": 390,
+      "status": 200,
+      "h1": "Ananda\nPriyan",
+      "engine": "static",
+      "scrollWidth": 390,
+      "errors": []
+    },
+    {
+      "path": "/work",
+      "width": 390,
+      "status": 200,
+      "h1": "Selected work.",
+      "engine": "static",
+      "scrollWidth": 390,
+      "errors": []
+    },
+    {
+      "path": "/studio",
+      "width": 390,
+      "status": 200,
+      "h1": "The screening room.",
+      "engine": "static",
+      "scrollWidth": 390,
+      "errors": []
+    },
+    {
+      "path": "/about",
+      "width": 390,
+      "status": 200,
+      "h1": "There’s a person\nbehind every project.",
+      "engine": "static",
+      "scrollWidth": 390,
+      "errors": []
+    }
+  ]
+}
