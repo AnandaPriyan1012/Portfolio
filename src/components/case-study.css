@@ -915,6 +915,9 @@
   .case-footer > a,
   .case-read-link,
   .case-live-link,
+  .case-passport-strip a,
+  .case-media figcaption a,
+  .case-admissions > a,
   .case-closing > button,
   .case-sidebar nav > a {
     min-height: 44px;
@@ -1138,6 +1141,13 @@
     pointer-events: none;
     background: linear-gradient(120deg, transparent 16%, rgb(var(--case-light) / 0.1) 43%, transparent 68%);
     opacity: calc((1 - var(--media-arrival)) * 0.65);
+  }
+  /* Annotation controls take over from entrance staging while in use. */
+  .case-page[data-reader-depth] .case-admissions [data-reader-media]:has(.cirs-tour-controls:focus-within) {
+    transform: none;
+  }
+  .case-page[data-reader-depth] .case-admissions [data-reader-media]:has(.cirs-tour-controls:focus-within)::after {
+    opacity: 0;
   }
   :is(.case-stage, .case-admissions)::before,
   .case-sidebar nav > a::before {

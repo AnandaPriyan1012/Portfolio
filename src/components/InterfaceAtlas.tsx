@@ -1,5 +1,6 @@
 import { useId, useRef, useState, type KeyboardEvent } from "react";
 import { ArrowRight } from "lucide-react";
+import CaptureInspection from "./CaptureInspection";
 
 type ProjectId = "cirs" | "accuflow";
 type InterfaceView = {
@@ -120,9 +121,13 @@ const views: Record<ProjectId, InterfaceView[]> = {
   ],
 };
 
-export default function InterfaceAtlas({ project }: { project: ProjectId }) {
+export default function InterfaceAtlas({ project, initialView, onViewChange }: {
+  project: ProjectId;
+  initialView?: string;
+  onViewChange?: (id: string) => void;
+}) {
   const id = useId();
-  const [selected, setSelected] = useState(0);
+  const [selected, setSelected] = useState(() => Math.max(0, views[project].findIndex((view) => view.id === initialView)));
   const buttons = useRef<(HTMLButtonElement | null)[]>([]);
   const projectViews = views[project];
   const view = projectViews[selected];
@@ -139,6 +144,7 @@ export default function InterfaceAtlas({ project }: { project: ProjectId }) {
     else return;
     event.preventDefault();
     setSelected(next);
+    onViewChange?.(projectViews[next].id);
     buttons.current[next]?.focus();
   }
 
@@ -176,7 +182,7 @@ export default function InterfaceAtlas({ project }: { project: ProjectId }) {
               buttons.current[index] = element;
             }}
             key={item.id}
-            onClick={() => setSelected(index)}
+            onClick={() => { setSelected(index); onViewChange?.(item.id); }}
             onKeyDown={(event) => moveTab(event, index)}
           >
             <span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
@@ -213,6 +219,13 @@ export default function InterfaceAtlas({ project }: { project: ProjectId }) {
             Public interface capture ·{" "}
             <time dateTime="2026-11-04">4 Nov 2026</time>
           </figcaption>
+          <CaptureInspection
+            src={`/media/atlas-${project}-${view.id}-desktop.webp`}
+            mobileSrc={`/media/atlas-${project}-${view.id}-${compactUsesDesktop ? "desktop" : "mobile"}.webp`}
+            title={`${projectName} · ${view.label}`}
+            alt={view.alt}
+            caption="Original browser capture · 4 November 2026."
+          />
         </figure>
         <div className="interface-atlas-notes">
           <span className="interface-atlas-eyebrow">

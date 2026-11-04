@@ -1,14 +1,18 @@
 import { useId, useRef, useState, type KeyboardEvent } from "react";
 import { ArrowRight } from "lucide-react";
+import CaptureInspection from "./CaptureInspection";
 
 const languages = [
   { id: "en", label: "English", height: 500, mobileHeight: 420 },
   { id: "ta", label: "Tamil", height: 400, mobileHeight: 360 },
 ] as const;
 
-export default function CommunityLanguageStudy() {
+export default function CommunityLanguageStudy({ initialLanguage, onLanguageChange }: {
+  initialLanguage?: "en" | "ta";
+  onLanguageChange?: (id: "en" | "ta") => void;
+} = {}) {
   const id = useId();
-  const [selected, setSelected] = useState(0);
+  const [selected, setSelected] = useState(() => initialLanguage === "ta" ? 1 : 0);
   const buttons = useRef<(HTMLButtonElement | null)[]>([]);
   const language = languages[selected];
 
@@ -20,6 +24,7 @@ export default function CommunityLanguageStudy() {
     else return;
     event.preventDefault();
     setSelected(next);
+    onLanguageChange?.(languages[next].id);
     buttons.current[next]?.focus();
   }
 
@@ -46,7 +51,7 @@ export default function CommunityLanguageStudy() {
             tabIndex={selected === index ? 0 : -1}
             key={item.id}
             ref={(element) => { buttons.current[index] = element; }}
-            onClick={() => setSelected(index)}
+            onClick={() => { setSelected(index); onLanguageChange?.(item.id); }}
             onKeyDown={(event) => moveTab(event, index)}
           >
             {item.id === "ta" ? <><span lang="ta">தமிழ்</span><small>Tamil</small></> : "English"}
@@ -81,6 +86,13 @@ export default function CommunityLanguageStudy() {
             {language.label} About page opening · Website review preview · {" "}
             <time dateTime="2026-11-04">4 Nov 2026</time>
           </figcaption>
+          <CaptureInspection
+            src={`/media/vallalar-language-${language.id}-desktop.webp`}
+            mobileSrc={`/media/vallalar-language-${language.id}-mobile.webp`}
+            title={`Vallalar · ${language.label} About page`}
+            alt={`Original ${language.label} About-page opening from the Vallalar website review preview`}
+            caption="Website review preview · 4 November 2026."
+          />
         </figure>
         <div className="community-language-note">
           <span className="community-language-eyebrow">Volunteer contribution</span>

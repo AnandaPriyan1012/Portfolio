@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import type { CSSProperties, FocusEvent } from "react";
 import { ArrowRight, Play } from "lucide-react";
 import type { creativeMedia } from "../content";
@@ -13,6 +13,15 @@ function isReady(film: Film) {
     hasApprovedNativePlayback(film) ||
     isApprovedDriveEmbed(film.embedUrl),
   );
+}
+
+function linkedFilmId(films: Film[]) {
+  try {
+    const id = decodeURIComponent(window.location.hash.slice(1));
+    return films.find((film) => film.id === id && isReady(film))?.id ?? null;
+  } catch {
+    return null;
+  }
 }
 
 export default function ScreeningRoom({
@@ -34,11 +43,42 @@ export default function ScreeningRoom({
   const projectionRef = useRef<HTMLDivElement>(null);
   const reelPointerDown = useRef(false);
   const reelFocusFrame = useRef(0);
-  const [selectedId, setSelectedId] = useState(() => films.find(isReady)?.id ?? "");
+  const [selectedId, setSelectedId] = useState(() =>
+    (asPage && linkedFilmId(films)) || films.find(isReady)?.id || "",
+  );
+  const linkedFocus = useRef(asPage ? linkedFilmId(films) : null);
+  const [linkedArrival, setLinkedArrival] = useState(0);
   const [scrollProgramme, setScrollProgramme] = useState(false);
   const readyFilms = films.filter(isReady);
   const selected = readyFilms.find((film) => film.id === selectedId) ?? readyFilms[0];
   const selectedIndex = films.findIndex((film) => film.id === selected?.id);
+
+  useEffect(() => {
+    if (!asPage) return;
+    const selectLinkedFilm = () => {
+      const id = linkedFilmId(films);
+      if (!id) return;
+      linkedFocus.current = id;
+      setSelectedId(id);
+      setLinkedArrival((arrival) => arrival + 1);
+    };
+    window.addEventListener("hashchange", selectLinkedFilm);
+    window.addEventListener("ap:pathnamechange", selectLinkedFilm);
+    return () => {
+      window.removeEventListener("hashchange", selectLinkedFilm);
+      window.removeEventListener("ap:pathnamechange", selectLinkedFilm);
+    };
+  }, [asPage, films]);
+
+  useLayoutEffect(() => {
+    if (!linkedFocus.current || linkedFocus.current !== selected?.id) return;
+    // Give the linked film a native reading/focus destination. The programme's
+    // existing focus guard then keeps scroll staging from replacing it on arrival.
+    projectionRef.current?.querySelector<HTMLElement>(".screening-title-card h3")
+      ?.focus({ preventScroll: true });
+    linkedFocus.current = null;
+  }, [selected?.id, linkedArrival]);
+
   useEffect(() => {
     const releasePointer = () => { reelPointerDown.current = false; };
     window.addEventListener("pointerup", releasePointer, true);
@@ -191,7 +231,7 @@ export default function ScreeningRoom({
         <StudioAtmosphere enabled={motionEnabled} films={readyFilms} selectedId={selected?.id ?? ""} />
 
         <div className="screening-layout">
-          <div className="screening-projection" ref={projectionRef}>
+          <div className="screening-projection" ref={projectionRef} id={selected?.id}>
             <div
               className="screening-screen"
               data-has-still={Boolean(selectedPoster)}
@@ -230,7 +270,7 @@ export default function ScreeningRoom({
                     {String(selectedIndex + 1).padStart(2, "0")}
                   </span>
                   <p>{selected.type}</p>
-                  <h3>{selected.title}</h3>
+                  <h3 tabIndex={-1}>{selected.title}</h3>
                   {isReady(selected) && (
                     <button
                       className="screening-play"

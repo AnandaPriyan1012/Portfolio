@@ -125,6 +125,10 @@ for (const [anchor, destination] of [['cirs', '/work'], ['community', '/work'], 
 
 for (const project of ['cirs', 'accuflow']) test(`${project} interface views expose real source captures and complete keyboard navigation`, async ({ page }) => {
   await page.goto('/work')
+  const drawer = page.locator(`#${project}-evidence`)
+  await drawer.locator(':scope > summary').focus()
+  await page.keyboard.press('Enter')
+  await expect(drawer).toHaveAttribute('open', '')
   const atlas = page.locator(`.interface-atlas[data-project="${project}"]`)
   const tabs = atlas.getByRole('tab')
   await expect(tabs).toHaveCount(4)
@@ -168,6 +172,10 @@ test('the Home source composes an opening and directory without mounting complet
 
 test('Vallalar language tabs change the genuine capture and source by keyboard and fit phones', async ({ page }) => {
   await page.goto('/work')
+  const drawer = page.locator('#community-evidence')
+  await drawer.locator(':scope > summary').focus()
+  await page.keyboard.press('Enter')
+  await expect(drawer).toHaveAttribute('open', '')
   const study = page.locator('.community-language-study')
   await expect(study.getByRole('tab')).toHaveCount(2)
   await expect(study.getByRole('tabpanel')).toHaveCount(1)

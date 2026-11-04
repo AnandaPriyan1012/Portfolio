@@ -10,15 +10,20 @@ import {
 } from "lucide-react";
 import {
   accuflowStages,
+  creativeMedia,
   projectAssets,
   projects,
   siteContent,
   type Project,
 } from "../content";
 import "./case-study.css";
+import "./case-evidence.css";
+import { hasApprovedNativePlayback } from "../media-readiness";
 import Signature from "./Signature";
 import CirsAdmissionsTour from "./CirsAdmissionsTour";
 import CaseFilmCollection from "./CaseFilmCollection";
+import CommunityLanguageStudy from "./CommunityLanguageStudy";
+import InterfaceAtlas from "./InterfaceAtlas";
 
 type Props = {
   project: Project;
@@ -26,7 +31,7 @@ type Props = {
   onBack: () => void;
   onContact: () => void;
   onProject?: (id: Project["id"]) => void;
-  onStudio?: () => void;
+  onStudio?: (filmId?: string) => void;
 };
 const stateLabel: Record<string, string> = {
   cirs: "Live website",
@@ -35,6 +40,35 @@ const stateLabel: Record<string, string> = {
   creative: "Creative collection",
   community: "Volunteer work · since 2023",
 };
+
+type CaseEvidencePreferences = {
+  communityLanguage: "en" | "ta";
+  accuflowView: "home" | "product" | "workflow" | "guide";
+};
+const evidenceStorageKey = "ap-case-evidence-v1";
+let evidenceMemory: CaseEvidencePreferences = { communityLanguage: "en", accuflowView: "home" };
+const isAccuflowView = (value: unknown): value is CaseEvidencePreferences["accuflowView"] =>
+  typeof value === "string" && ["home", "product", "workflow", "guide"].includes(value);
+
+function readEvidencePreferences() {
+  try {
+    const value: unknown = JSON.parse(sessionStorage.getItem(evidenceStorageKey) ?? "null");
+    if (value && typeof value === "object") {
+      const saved = value as Record<string, unknown>;
+      if (saved.communityLanguage === "en" || saved.communityLanguage === "ta")
+        evidenceMemory.communityLanguage = saved.communityLanguage;
+      if (isAccuflowView(saved.accuflowView)) evidenceMemory.accuflowView = saved.accuflowView;
+    }
+  } catch { /* Optional storage cannot prevent inspecting the actual work. */ }
+  return { ...evidenceMemory };
+}
+
+function rememberEvidencePreferences(selection: Partial<CaseEvidencePreferences>) {
+  evidenceMemory = { ...evidenceMemory, ...selection };
+  try { sessionStorage.setItem(evidenceStorageKey, JSON.stringify(evidenceMemory)); }
+  catch { /* Keep this document's selections when storage is unavailable. */ }
+  return { ...evidenceMemory };
+}
 
 export function AccuFlowVisual() {
   return (
@@ -67,6 +101,7 @@ export default function CaseStudyPage({
   const [cut, setCut] = useState<"quick" | "director">("director");
   const [active, setActive] = useState("");
   const [mediaFailed, setMediaFailed] = useState(false);
+  const [evidencePreferences, setEvidencePreferences] = useState(readEvidencePreferences);
   const pageRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<HTMLProgressElement>(null);
   const progressLabelRef = useRef<HTMLSpanElement>(null);
@@ -82,6 +117,16 @@ export default function CaseStudyPage({
     ];
   const assets = projectAssets[project.id];
   const hasAdmissions = project.id === "cirs" && !!assets.admissionsUrl;
+  const launchFilm = project.id === "cirs"
+    ? creativeMedia.find((film) => film.id === "cirs-website-launch" && hasApprovedNativePlayback(film))
+    : undefined;
+  const evidenceChapter = project.id === "community"
+    ? { id: "languages", label: "English & Tamil website views" }
+    : isAccuFlow
+      ? { id: "interfaces", label: "Inside the website prototype" }
+      : launchFilm
+        ? { id: "launch", label: "The website launch film" }
+        : null;
   const hasContact =
     !!siteContent.contact.email || siteContent.contact.socials.length > 0;
   const chapterTitles =
@@ -477,6 +522,16 @@ export default function CaseStudyPage({
                   The Admissions page
                 </a>
               )}
+              {evidenceChapter && (
+                <a
+                  href={`#${anchor(evidenceChapter.id)}`}
+                  className={active === anchor(evidenceChapter.id) ? "active" : ""}
+                  aria-current={active === anchor(evidenceChapter.id) ? "location" : undefined}
+                >
+                  <span aria-hidden="true"><ArrowRight size={12} /></span>
+                  {evidenceChapter.label}
+                </a>
+              )}
             </nav>
             <span className="case-sidebar-bottom">
               Ananda Priyan
@@ -573,6 +628,70 @@ export default function CaseStudyPage({
                 >
                   Visit the Admissions Guide <ArrowRight size={16} />
                 </a>
+              </section>
+            )}
+            {evidenceChapter && (
+              <section
+                id={anchor(evidenceChapter.id)}
+                className={`case-project-evidence case-project-evidence-${project.id}`}
+                data-reader-chapter
+                aria-labelledby={`${anchor(evidenceChapter.id)}-title`}
+                tabIndex={-1}
+              >
+                <span className="case-micro">
+                  {project.id === "community" ? "A bilingual website preview" : isAccuFlow ? "Four routes through the prototype" : "From the website to its launch"}
+                </span>
+                <h2 id={`${anchor(evidenceChapter.id)}-title`}>
+                  {project.id === "community" ? "The website, in two languages." : isAccuFlow ? "From product introduction to guide." : "The website launch, on film."}
+                </h2>
+                <p>
+                  {project.id === "community"
+                    ? "The matching English and Tamil About-page routes come from the public website review preview. Switch between their captured openings below."
+                    : isAccuFlow
+                      ? "Follow the actual Homepage, Product, How it works and Guide captures. Each view shows a different part of the website prototype, with its original interface and a link to the source route."
+                      : "A 38-second website launch film is part of the Studio collection. Open its programme entry to watch the supplied footage."}
+                </p>
+                {project.id === "community" ? (
+                  <CommunityLanguageStudy
+                    initialLanguage={evidencePreferences.communityLanguage}
+                    onLanguageChange={(language) => setEvidencePreferences(rememberEvidencePreferences({ communityLanguage: language }))}
+                  />
+                ) : isAccuFlow ? (
+                  <InterfaceAtlas
+                    project="accuflow"
+                    initialView={evidencePreferences.accuflowView}
+                    onViewChange={(view) => {
+                      if (isAccuflowView(view)) setEvidencePreferences(rememberEvidencePreferences({ accuflowView: view }));
+                    }}
+                  />
+                ) : launchFilm?.posterUrl && (
+                  <div className="case-launch-artifact">
+                    <figure>
+                      <picture data-reader-media>
+                        <img
+                          src={launchFilm.posterUrl}
+                          alt="Frame from the supplied CIRS website launch film"
+                          width={1920}
+                          height={1080}
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      </picture>
+                      <figcaption>CIRS website launch · Supplied film · 0:38</figcaption>
+                    </figure>
+                    <a
+                      href="/studio#cirs-website-launch"
+                      onClick={(event) => {
+                        if (!onStudio || event.defaultPrevented || event.button !== 0 ||
+                          event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+                        event.preventDefault();
+                        onStudio("cirs-website-launch");
+                      }}
+                    >
+                      Open the launch film in Studio · 0:38 <ArrowRight size={16} aria-hidden="true" />
+                    </a>
+                  </div>
+                )}
               </section>
             )}
             {project.link && (

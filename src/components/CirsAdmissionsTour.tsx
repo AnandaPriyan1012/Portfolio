@@ -1,5 +1,6 @@
 import { useId, useState, type CSSProperties } from "react";
 import "./cirs-admissions-tour.css";
+import CaptureInspection from "./CaptureInspection";
 
 // Bounds refer to the actual 1440 × 1000 public capture, excluding its frame.
 const notes = [
@@ -88,6 +89,12 @@ export default function CirsAdmissionsTour({ src, motionEnabled = false }: Props
           ? "The capture could not load. The current Admissions Guide is linked below."
           : active?.text ?? "Application access and process guidance sit alongside the details families need to confirm with Admissions."}
       </p>
+      {!failed && <CaptureInspection
+        src={src}
+        title="CIRS Admissions Guide"
+        alt="Original 1440 by 1000 browser capture of the CIRS Admissions Guide"
+        caption="Public Admissions page capture. Image-note coordinates use this same original."
+      />}
     </div>
   );
 }

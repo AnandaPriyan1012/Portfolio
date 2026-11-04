@@ -878,15 +878,13 @@ export const scrollStoryCopy = {
 
 export const communityStory = {
   purposeLabel: "The purpose",
-  purpose: "Supporting community work at Vallalar Sathya Dharmasalai.",
+  purpose:
+    "After helping prepare and distribute meals, I asked the organisers how else I could contribute. Their request for a stronger online presence led to website and social-media work.",
   role: "Social Media & Technology Head",
-  tenure: "Serving voluntarily since 2023.",
   contributions: [
     "Digital storytelling",
     "Social-media work",
     "Work on the organisation’s website",
   ],
   contributionLabel: "My contribution",
-  editorNote:
-    "Add the organisation’s approved purpose, one real communication challenge, specific work samples and Ananda’s reasoning. Do not infer impact statistics.",
 };

@@ -1,0 +1,107 @@
+/* Project-specific evidence uses the full reading column. Nested viewer grids
+   become a single clear capture followed by its source/context. */
+.case-project-evidence {
+  position: relative;
+  isolation: isolate;
+  padding: 48px 0 44px;
+  border-bottom: 1px solid var(--case-rule);
+  scroll-margin-top: 108px;
+  --chapter-progress: 0;
+}
+.case-project-evidence > h2 {
+  margin: 19px 0 24px;
+  font: 400 clamp(30px, 3vw, 38px)/1.2 var(--font-display);
+  letter-spacing: -.035em;
+}
+.case-project-evidence > p {
+  max-width: 65ch;
+  margin-bottom: 30px;
+  color: var(--case-muted);
+  font-size: 16px;
+  line-height: 1.9;
+}
+.case-project-evidence:focus-visible {
+  outline: 1px solid var(--case-accent);
+  outline-offset: 8px;
+}
+.case-project-evidence::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 12px -22px 12px -18px;
+  border: 1px solid rgb(var(--case-light) / .13);
+  background: linear-gradient(115deg, rgb(var(--case-light) / .035), transparent 70%);
+  opacity: 0;
+  pointer-events: none;
+}
+.case-project-evidence[data-reading]::before { opacity: 1; }
+.case-project-evidence::after {
+  content: "";
+  position: absolute;
+  top: 12px;
+  bottom: 12px;
+  left: -18px;
+  width: 2px;
+  background: linear-gradient(var(--case-accent), rgb(var(--case-light)));
+  transform: scaleY(var(--chapter-progress));
+  transform-origin: top;
+  pointer-events: none;
+}
+.case-project-evidence :is(.community-language-study, .interface-atlas) {
+  margin: 0;
+  padding: 0;
+  max-width: none;
+  border-top: 0;
+  background: none;
+}
+/* The case chapter above supplies the visible heading and introduction. The
+   shared section retains its accessible name for its own tablist/panel. */
+.case-project-evidence :is(.community-language-header, .interface-atlas-header) { display: none; }
+.case-project-evidence :is(.community-language-panel, .interface-atlas-panel) {
+  display: block;
+}
+.case-project-evidence :is(.community-language-note, .interface-atlas-notes) {
+  margin-top: 26px;
+  padding-top: 0;
+}
+.case-project-evidence :is(.community-language-note > p, .interface-atlas-notes > p) { max-width: 65ch; }
+.case-project-evidence .interface-atlas-capture picture { padding: 8px; }
+.case-project-evidence .interface-atlas-capture img { max-height: 640px; object-fit: contain; }
+.case-project-evidence .interface-atlas-notes h4 { font-size: clamp(24px, 2.2vw, 29px); }
+.case-project-evidence .interface-atlas-notes small { max-width: 65ch; }
+.case-project-evidence .community-language-capture picture { aspect-ratio: 1440 / 500; }
+.case-launch-artifact figure { margin: 0; }
+.case-launch-artifact picture {
+  display: block;
+  padding: 8px;
+  border: 1px solid var(--case-rule);
+  background: linear-gradient(130deg, rgb(var(--case-light) / .1), #ffffff02);
+  box-shadow: inset 0 1px 0 #ffffff0f, 0 22px 55px #0003;
+}
+.case-launch-artifact img { display: block; width: 100%; height: auto; object-fit: contain; }
+.case-launch-artifact figcaption { margin-top: 14px; color: var(--case-muted); font-size: 12px; line-height: 1.8; }
+.case-launch-artifact > a {
+  display: inline-flex;
+  align-items: center;
+  gap: 18px;
+  min-height: 44px;
+  margin-top: 18px;
+  padding-block: 10px;
+  border-bottom: 1px solid var(--case-rule);
+  font-size: 14px;
+  line-height: 1.7;
+}
+@media (max-width: 767px) {
+  .case-project-evidence { padding-block: 35px; }
+  .case-project-evidence > p { font-size: 15px; }
+  .case-project-evidence::before { inset: 10px -10px; }
+  .case-project-evidence::after { left: -10px; }
+  .case-project-evidence .community-language-capture picture { aspect-ratio: 390 / 420; }
+  .case-project-evidence .interface-atlas-capture picture { padding: 6px; }
+  .case-project-evidence .interface-atlas-capture img { max-height: none; }
+}
+@media (forced-colors: active) {
+  .case-project-evidence::before { background: Canvas; }
+  .case-project-evidence[data-reading]::before { border-color: Highlight; }
+  .case-project-evidence::after { background: Highlight; forced-color-adjust: none; }
+}

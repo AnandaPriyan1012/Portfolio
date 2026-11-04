@@ -113,7 +113,17 @@ test("Motion off leaves the annotation instant while case anchors, cuts and prog
   await page.keyboard.press("Enter");
   await expect(page).toHaveURL(/#case-cirs-admissions$/);
   await expect(page.locator("#case-cirs-admissions")).toBeFocused();
-  await expect.poll(() => page.getByRole("progressbar").evaluate((element) => (element as HTMLProgressElement).value)).toBeGreaterThan(50);
+  await expect(admissionLink).toHaveAttribute("aria-current", "location");
+  const admissionsProgress = await page.getByRole("progressbar").evaluate((element) => (element as HTMLProgressElement).value);
+  expect(admissionsProgress).toBeGreaterThan(0);
+  expect(admissionsProgress).toBeLessThan(100);
+  const launchLink = page.getByRole("navigation", { name: "Case study chapters" })
+    .getByRole("link", { name: "The website launch film", exact: true });
+  await launchLink.focus();
+  await page.keyboard.press("Enter");
+  await expect(page.locator("#case-cirs-launch")).toBeFocused();
+  await expect(launchLink).toHaveAttribute("aria-current", "location");
+  await expect.poll(() => page.getByRole("progressbar").evaluate((element) => (element as HTMLProgressElement).value)).toBeGreaterThan(admissionsProgress);
 });
 
 test("capable desktop uses a finite outline transition and one arrow on annotation buttons", async ({ page }) => {
@@ -138,6 +148,34 @@ test("capable desktop uses a finite outline transition and one arrow on annotati
   await expect(page.locator("html")).toHaveAttribute("data-glass-pointer", "visible");
   await expect(page.locator(".glass-arrow-cursor")).toHaveCount(1);
   expect(await tour.evaluate((element) => element.getAnimations({ subtree: true }).some((animation) => animation.playState === "running"))).toBe(false);
+});
+
+test("focused image notes remain pixel-stable during a partial media entrance", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, "hardwareConcurrency", { get: () => 8 });
+    Object.defineProperty(navigator, "deviceMemory", { get: () => 8 });
+  });
+  const tour = await ready(page);
+  await page.locator(".state-opening").waitFor({ state: "detached" });
+  const surface = page.locator(".case-admissions [data-reader-media]");
+  await expect(page.locator(".case-page")).toHaveAttribute("data-reader-depth", "");
+  // A real scroll leaves the note buttons visible while the large image is
+  // still entering. The arrival animation must yield to precise interaction.
+  await tour.locator(".cirs-tour-image").evaluate((image) => window.scrollTo({
+    top: window.scrollY + image.getBoundingClientRect().top - 760,
+    behavior: "instant",
+  }));
+  await expect.poll(() => surface.evaluate((element) => Number(getComputedStyle(element).getPropertyValue("--media-arrival")))).toBeLessThan(0.95);
+  const process = tour.getByRole("button", { name: "Process", exact: true });
+  await process.click();
+  await expect(process).toBeFocused();
+  await expect(surface).toHaveCSS("transform", "none");
+  await assertAligned(page, targets[1]);
+  await page.getByRole("button", { name: "Back to portfolio", exact: true })
+    .evaluate((button) => (button as HTMLButtonElement).focus({ preventScroll: true }));
+  await expect(surface).not.toHaveCSS("transform", "none");
+  await expect.poll(() => surface.evaluate((element) => Number(getComputedStyle(element).getPropertyValue("--media-arrival")))).toBeLessThan(0.95);
 });
 
 for (const width of [320, 390, 767, 768]) {

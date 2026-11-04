@@ -1,5 +1,5 @@
-import { useRef, useState } from "react";
-import type { CSSProperties } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { ArrowRight, Plus } from "lucide-react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
@@ -12,12 +12,61 @@ import type { Project } from "../content";
 import InterfaceAtlas from "./InterfaceAtlas";
 import CirsConceptStudy from "./CirsConceptStudy";
 import CommunityLanguageStudy from "./CommunityLanguageStudy";
+import "./work-evidence-drawers.css";
 
 type WorkPageProps = {
   onQuick: (id: Project["id"]) => void;
   onPage: (id: Project["id"]) => void;
   motionEnabled?: boolean;
 };
+
+const evidenceProjects = ["cirs", "community", "accuflow"] as const;
+type EvidenceProject = (typeof evidenceProjects)[number];
+type EvidencePreference = { open: boolean; view: string };
+const evidenceDefaults: Record<EvidenceProject, string> = {
+  cirs: "home", community: "en", accuflow: "home",
+};
+const evidenceViews: Record<EvidenceProject, readonly string[]> = {
+  cirs: ["home", "admissions", "process", "questions"],
+  community: ["en", "ta"],
+  accuflow: ["home", "product", "workflow", "guide"],
+};
+const evidenceStorageKey = "ap-work-evidence-v1";
+let evidenceMemory: Map<EvidenceProject, EvidencePreference> | undefined;
+
+function readEvidence(project: EvidenceProject): EvidencePreference {
+  if (!evidenceMemory) {
+    evidenceMemory = new Map(evidenceProjects.map((id) => [id, { open: false, view: evidenceDefaults[id] }]));
+    try {
+      const saved: unknown = JSON.parse(sessionStorage.getItem(evidenceStorageKey) ?? "null");
+      if (saved && typeof saved === "object" && !Array.isArray(saved)) {
+        const record = saved as Record<string, unknown>;
+        evidenceProjects.forEach((id) => {
+          const value = record[id];
+          if (!value || typeof value !== "object" || Array.isArray(value)) return;
+          const preference = value as Record<string, unknown>;
+          evidenceMemory!.set(id, {
+            open: preference.open === true,
+            view: typeof preference.view === "string" && evidenceViews[id].includes(preference.view)
+              ? preference.view : evidenceDefaults[id],
+          });
+        });
+      }
+    } catch { /* Work remains usable with per-tab memory when storage is denied. */ }
+  }
+  return evidenceMemory.get(project)!;
+}
+
+function saveEvidence(project: EvidenceProject, change: Partial<EvidencePreference>) {
+  const previous = readEvidence(project);
+  const next = { ...previous, ...change };
+  if (previous.open === next.open && previous.view === next.view) return previous;
+  evidenceMemory!.set(project, next);
+  try {
+    sessionStorage.setItem(evidenceStorageKey, JSON.stringify(Object.fromEntries(evidenceMemory!)));
+  } catch { /* The bounded in-memory preferences survive ordinary SPA returns. */ }
+  return next;
+}
 
 const projectBriefs = {
   cirs: [
@@ -71,6 +120,62 @@ function ProjectBrief({ project }: { project: keyof typeof projectBriefs }) {
         </div>
       ))}
     </dl>
+  );
+}
+
+function WorkEvidenceDrawer({
+  project,
+  eyebrow,
+  title,
+  description,
+  action,
+  children,
+}: {
+  project: EvidenceProject;
+  eyebrow: string;
+  title: string;
+  description: string;
+  action: string;
+  children: (view: string, onChange: (view: string) => void) => ReactNode;
+}) {
+  const [preference, setPreference] = useState(() => readEvidence(project));
+  const [mounted, setMounted] = useState(preference.open);
+
+  useLayoutEffect(() => {
+    if (mounted) ScrollTrigger.refresh();
+  }, [preference.open, preference.view, mounted]);
+
+  return (
+    <details
+      id={`${project}-evidence`}
+      className="work-evidence-drawer"
+      data-project={project}
+      open={preference.open}
+      onToggle={(event) => {
+        const open = event.currentTarget.open;
+        if (open) setMounted(true);
+        setPreference(saveEvidence(project, { open }));
+      }}
+    >
+      <summary className="page-width">
+        <span className="work-evidence-copy">
+          <span className="section-label">{eyebrow}</span>
+          <strong>{title}</strong>
+          <span className="work-evidence-description">{description}</span>
+        </span>
+        <span className="work-evidence-action">
+          {action}<Plus size={18} aria-hidden="true" />
+        </span>
+      </summary>
+      {mounted && (
+        <div className="work-evidence-content">
+          {children(preference.view, (view) => {
+            if (evidenceViews[project].includes(view))
+              setPreference(saveEvidence(project, { view }));
+          })}
+        </div>
+      )}
+    </details>
   );
 }
 
@@ -359,10 +464,7 @@ function Feature({
         </div>
         {project.id === "community" ? (
           <div className="community-scroll-runway">
-            <div
-              className="community-world"
-              data-editor-note={communityStory.editorNote}
-            >
+            <div className="community-world">
               <div className="community-image-reservation">
                 <div className="project-window-label">
                   <span>Vallalar / The website</span>
@@ -381,11 +483,7 @@ function Feature({
               <div className="community-purpose">
                 <div className="service-step" data-service-step="purpose">
                   <p className="section-label">{communityStory.purposeLabel}</p>
-                  <h3>
-                    In service of
-                    <br />
-                    the community.
-                  </h3>
+                  <h3>From meal service<br />to digital work.</h3>
                   <p>{communityStory.purpose}</p>
                 </div>
                 <div className="service-step" data-service-step="contribution">
@@ -393,7 +491,6 @@ function Feature({
                     {communityStory.contributionLabel}
                   </p>
                   <h4 className="community-role">{communityStory.role}</h4>
-                  <p className="community-tenure">{communityStory.tenure}</p>
                   <ul>
                     {communityStory.contributions.map((contribution) => (
                       <li key={contribution}>{contribution}</li>
@@ -600,7 +697,15 @@ export default function WorkPage({
           onQuick={() => onQuick("cirs")}
           onPage={() => onPage("cirs")}
         />
-        <InterfaceAtlas project="cirs" />
+        <WorkEvidenceDrawer
+          project="cirs"
+          eyebrow="CIRS / Website details"
+          title="From the homepage to parent questions."
+          description="Homepage, Admissions, process and parent questions from the live school website."
+          action="4 interface views"
+        >
+          {(view, onChange) => <InterfaceAtlas project="cirs" initialView={view} onViewChange={onChange} />}
+        </WorkEvidenceDrawer>
         <details
           className="work-process-drawer"
           onToggle={() => ScrollTrigger.refresh()}
@@ -627,7 +732,15 @@ export default function WorkPage({
           onQuick={() => onQuick("community")}
           onPage={() => onPage("community")}
         />
-        <CommunityLanguageStudy />
+        <WorkEvidenceDrawer
+          project="community"
+          eyebrow="Vallalar / Bilingual website preview"
+          title="Read the bilingual About page."
+          description="Matching English and Tamil openings from the public website review preview."
+          action="2 language views"
+        >
+          {(view, onChange) => <CommunityLanguageStudy initialLanguage={view === "ta" ? "ta" : "en"} onLanguageChange={onChange} />}
+        </WorkEvidenceDrawer>
         <Feature
           project={accuflow}
           index={2}
@@ -635,7 +748,15 @@ export default function WorkPage({
           onQuick={() => onQuick("accuflow")}
           onPage={() => onPage("accuflow")}
         />
-        <InterfaceAtlas project="accuflow" />
+        <WorkEvidenceDrawer
+          project="accuflow"
+          eyebrow="AccuFlow / Prototype details"
+          title="From product story to guide interface."
+          description="Home, Product, How it works and the initial guide interface from the running prototype."
+          action="4 prototype views"
+        >
+          {(view, onChange) => <InterfaceAtlas project="accuflow" initialView={view} onViewChange={onChange} />}
+        </WorkEvidenceDrawer>
       </div>
     </div>
   );

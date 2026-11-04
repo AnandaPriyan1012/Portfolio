@@ -41,8 +41,10 @@ test.describe("case-study reading motion", () => {
     const chapters = page.locator(".case-stage");
     await readChapter(page, chapters.nth(1));
     const middle = await progress(page);
-    expect(middle).toBeGreaterThan(20);
-    expect(middle).toBeLessThan(60);
+    // Genuine evidence now follows the text. Assert forward/reverse reading,
+    // not a percentage tied to the former text-only page length.
+    expect(middle).toBeGreaterThan(0);
+    expect(middle).toBeLessThan(100);
     await expect(chapters.nth(1)).toHaveCSS("transform", "none");
     await expect(chapters.nth(1).locator("p")).toHaveCSS("transform", "none");
     await expect.poll(() => chapters.nth(1).evaluate((element) =>
@@ -103,11 +105,12 @@ test.describe("case-study reading motion", () => {
     await expect(admissions).toHaveAttribute("aria-current", "location");
     await page.getByRole("button", { name: "Quick cut", exact: true }).click();
     await expect(page.locator(".case-stage")).toHaveCount(3);
-    await expect(navigation.getByRole("link")).toHaveCount(4);
+    await expect(navigation.getByRole("link")).toHaveCount(5);
+    await expect(navigation.getByRole("link", { name: "The website launch film", exact: true })).toHaveAttribute("href", "#case-cirs-launch");
     await readChapter(page, page.locator(".case-stage").nth(1));
     await page.getByRole("button", { name: "Director’s cut", exact: true }).click();
     await expect(page.locator(".case-stage")).toHaveCount(4);
-    await expect(navigation.getByRole("link")).toHaveCount(5);
+    await expect(navigation.getByRole("link")).toHaveCount(6);
     await expect(page.locator(".case-admissions img")).toHaveAttribute("src", /cirs-admissions/);
     await page.locator(".case-next-story").click();
     await expect(page).toHaveURL(/\/projects\/community$/);
@@ -151,19 +154,24 @@ test.describe("quiet case-study variants", () => {
 
   test("phone and reduced motion keep sources flat, text legible and progress functional", async ({ browser }) => {
     const context = await browser.newContext({
+      baseURL: test.info().project.use.baseURL,
       viewport: { width: 390, height: 844 },
       isMobile: true,
       hasTouch: true,
       reducedMotion: "reduce",
     });
     const page = await context.newPage();
-    await ready(page, "http://127.0.0.1:5173/projects/accuflow");
+    await ready(page, "/projects/accuflow");
     await expect(page.locator(".case-page")).not.toHaveAttribute("data-reader-depth", "");
     await expect(page.locator("[data-reader-media]")).toHaveCSS("transform", "none");
     await readChapter(page, page.locator(".case-stage").nth(2));
-    expect(await progress(page)).toBeGreaterThan(45);
+    const textProgress = await progress(page);
+    expect(textProgress).toBeGreaterThan(0);
+    expect(textProgress).toBeLessThan(100);
     await expect(page.locator(".case-stage").nth(2).locator("p")).toHaveCSS("transform", "none");
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+    await readChapter(page, page.locator("#case-accuflow-interfaces"));
+    expect(await progress(page)).toBeGreaterThan(textProgress);
     await page.evaluate(() => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "instant" }));
     await expect.poll(() => progress(page)).toBe(100);
     await context.close();
@@ -177,7 +185,12 @@ test.describe("quiet case-study variants", () => {
     await ready(page);
     await expect(page.locator(".case-page")).not.toHaveAttribute("data-reader-depth", "");
     await expect(page.locator("[data-reader-media]")).toHaveCSS("transform", "none");
+    await readChapter(page, page.locator(".case-stage").nth(0));
+    const initial = await progress(page);
     await readChapter(page, page.locator(".case-stage").nth(2));
-    expect(await progress(page)).toBeGreaterThan(45);
+    const textProgress = await progress(page);
+    expect(textProgress).toBeGreaterThan(initial);
+    await readChapter(page, page.locator("#case-community-languages"));
+    expect(await progress(page)).toBeGreaterThan(textProgress);
   });
 });

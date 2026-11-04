@@ -501,7 +501,7 @@ export default function App() {
   const navigationSequence = useRef(0);
   const historyIntent = useRef<{ sequence: number; cancelled: boolean } | null>(null);
 
-  const caseReturn = useRef<{ path: string; top: number; aboutHref?: string }>({ path: "/work", top: 0 });
+  const caseReturn = useRef<{ path: string; top: number; originHref?: string }>({ path: "/work", top: 0 });
   const currentProject = projects.find(
     (project) => route === `/projects/${project.id}`,
   );
@@ -687,13 +687,14 @@ export default function App() {
     window.addEventListener("keydown", close);
     return () => window.removeEventListener("keydown", close);
   }, [menuOpen]);
-  function focusDestination(aboutHref?: string) {
+  function focusDestination(originHref?: string) {
     const main = document.querySelector("main");
-    // Only an explicit return from an About evidence link restores that
-    // native link. Ordinary page/hash navigation keeps its heading focus.
-    if (aboutHref && main?.dataset.page === "about" && !window.location.hash) {
-      const origin = [...main.querySelectorAll<HTMLAnchorElement>(".about-identity-links a")]
-        .find((link) => link.getAttribute("href") === aboutHref);
+    // Return to the exact native project link used in Work or About. Ordinary
+    // page/hash navigation retains its heading or summary focus.
+    if (originHref && main && ["about", "work"].includes(main.dataset.page ?? "") && !window.location.hash) {
+      const links = main.dataset.page === "about" ? ".about-identity-links a" : ".work-page a[href]";
+      const origin = [...main.querySelectorAll<HTMLAnchorElement>(links)]
+        .find((link) => link.getAttribute("href") === originHref);
       if (origin) {
         origin.focus({ preventScroll: true });
         return;
@@ -724,7 +725,7 @@ export default function App() {
       focusTarget.focus({ preventScroll: true });
     }
   }
-  function navigate(destination: string, restoreTop = 0, aboutHref?: string) {
+  function navigate(destination: string, restoreTop = 0, originHref?: string) {
     const next = destination.split("#")[0].replace(/\/+$/, "") || "/";
     saveHistoryPosition();
     historyIntent.current = null;
@@ -744,18 +745,23 @@ export default function App() {
       if (sequence !== navigationSequence.current) return;
       if (window.location.hash) storyMotion.scrollTo(window.location.hash);
       else storyMotion.restoreTo(restoreTop, next);
-      focusDestination(aboutHref);
+      focusDestination(originHref);
     });
   }
   function navigateSection(id: string) {
     navigate(id === "contact" ? "/about#contact" : `/${id}`);
   }
   function page(id: Project["id"], aboutHref?: string) {
-    caseReturn.current = { path: route, top: scrollY, ...(route === "/about" && aboutHref ? { aboutHref } : {}) };
+    const focused = document.activeElement;
+    const workHref = route === "/work" && focused instanceof HTMLAnchorElement &&
+      focused.closest(".work-page") && focused.getAttribute("href") === `/projects/${id}`
+      ? focused.getAttribute("href")! : undefined;
+    const originHref = route === "/about" ? aboutHref : workHref;
+    caseReturn.current = { path: route, top: scrollY, ...(originHref ? { originHref } : {}) };
     navigate(`/projects/${id}`);
   }
   function home() {
-    navigate(caseReturn.current.path, caseReturn.current.top, caseReturn.current.aboutHref);
+    navigate(caseReturn.current.path, caseReturn.current.top, caseReturn.current.originHref);
   }
   function quick(id: Project["id"]) {
     setOsOpen(false);
@@ -785,7 +791,7 @@ export default function App() {
             navigate("/about#contact");
           }}
           onProject={(id) => navigate(`/projects/${id}`)}
-          onStudio={() => navigate("/studio")}
+          onStudio={(filmId?: string) => navigate(filmId ? `/studio#${encodeURIComponent(filmId)}` : "/studio")}
         />
       </>
     );
