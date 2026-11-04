@@ -1,5 +1,27 @@
 /* Scroll scenes activate only after the capable desktop coordinator is running.
    Native scroll, reduced motion and unavailable JavaScript keep the normal flow. */
+.cirs-scene-case-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-left: auto;
+  padding: 10px 0;
+  border-bottom: 1px solid currentColor;
+  color: inherit;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.scroll-opening .cirs-browser-bar { height: 48px; gap: 12px; }
+.scroll-opening .cirs-browser-body { height: calc(100% - 48px); }
+@media (max-width: 767px) {
+  .scroll-opening .cirs-browser-bar > span:nth-child(2) { display: none; }
+  .cirs-scene-case-link { font-size: 10px; }
+}
+.cirs-scene-case-link:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 5px;
+}
+
 .community-scroll-meter,
 .accuflow-scroll-meter,
 .chapter-motion-caption {

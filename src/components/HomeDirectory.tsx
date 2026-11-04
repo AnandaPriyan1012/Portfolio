@@ -3,10 +3,12 @@ import { ArrowRight } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { creativeMedia } from "../content";
+import { hasApprovedNativePlayback } from "../media-readiness";
+import { isApprovedDriveEmbed } from "./DriveFilmPlayer";
 
 export type DirectoryPath = "/work" | "/studio" | "/about";
 type HomeDirectoryProps = {
-  onNavigate: (path: string) => void;
+  onNavigate: (path: string, homeOrigin?: string) => void;
   motionEnabled?: boolean;
   visitedPaths?: readonly DirectoryPath[];
   onResetVisits?: () => void;
@@ -48,38 +50,66 @@ const destinations = [
 const workViews = [
   {
     id: "cirs",
+    project: "cirs",
     label: "CIRS",
     title: "A school’s digital home.",
     src: "/media/cirs-home-desktop.webp",
     mobile: "/media/cirs-home-mobile.webp",
     alt: "The actual CIRS school website homepage",
-    note: "CIRS / Desktop website capture",
+    note: "CIRS / Website capture",
+    mobileHeight: 844,
     type: "Website",
   },
   {
     id: "vallalar",
+    project: "community",
     label: "Vallalar",
     title: "In service of a community.",
     src: "/media/vallalar-language-en-desktop.webp",
     mobile: "/media/vallalar-language-en-mobile.webp",
     alt: "The English About page from the Vallalar website review preview",
-    note: "Vallalar / Desktop review preview",
+    note: "Vallalar / Website review preview",
+    mobileHeight: 420,
     type: "Community",
   },
   {
     id: "accuflow",
+    project: "accuflow",
     label: "AccuFlow",
     title: "An idea, made interactive.",
     src: "/media/accuflow-prototype-desktop.webp",
     mobile: "/media/accuflow-prototype-mobile.webp",
     alt: "The real AccuFlow exploratory guide interface prototype",
-    note: "AccuFlow / Desktop prototype capture",
+    note: "AccuFlow / Website prototype capture",
+    mobileHeight: 844,
     type: "Prototype",
   },
 ] as const;
 const studioViews = ["vantara", "ted-ed-2026", "cirs-website-launch"]
   .map((id) => creativeMedia.find((film) => film.id === id))
-  .filter((film) => film?.posterUrl);
+  .filter((film): film is NonNullable<typeof film> => Boolean(film?.posterUrl &&
+    (hasApprovedNativePlayback(film) || isApprovedDriveEmbed(film.embedUrl))));
+
+type PreviewPreferences = { selection: Selection; work: string; film: string };
+const previewStorageKey = "ap-home-preview-v1";
+let previewMemory: PreviewPreferences | undefined;
+
+function readPreviewPreferences(): PreviewPreferences {
+  if (previewMemory) return previewMemory;
+  const defaults: PreviewPreferences = { selection: "work", work: "cirs", film: studioViews[0]?.id ?? "" };
+  try {
+    const value: unknown = JSON.parse(sessionStorage.getItem(previewStorageKey) ?? "null");
+    if (value && typeof value === "object" && !Array.isArray(value)) {
+      const saved = value as Record<string, unknown>;
+      if (saved.selection === "work" || saved.selection === "studio" || saved.selection === "about")
+        defaults.selection = saved.selection;
+      if (workViews.some((item) => item.id === saved.work)) defaults.work = saved.work as string;
+      if (studioViews.some((item) => item.id === saved.film)) defaults.film = saved.film as string;
+    }
+  } catch { /* Preview choices still survive SPA returns in this document. */ }
+  previewMemory = defaults;
+  return defaults;
+}
 
 export default function HomeDirectory({
   onNavigate,
@@ -88,17 +118,32 @@ export default function HomeDirectory({
   onResetVisits,
 }: HomeDirectoryProps) {
   const root = useRef<HTMLElement>(null);
-  const [selected, setSelected] = useState<Selection>("work");
-  const [workIndex, setWorkIndex] = useState(0);
-  const [filmIndex, setFilmIndex] = useState(0);
+  const [preview, setPreview] = useState(readPreviewPreferences);
+  const selected = preview.selection;
+  const workIndex = Math.max(0, workViews.findIndex((item) => item.id === preview.work));
+  const filmIndex = Math.max(0, studioViews.findIndex((item) => item.id === preview.film));
   const work = workViews[workIndex];
   const film = studioViews[filmIndex];
+  const previewPath = selected === "work" ? `/projects/${work.project}`
+    : selected === "studio" && film ? `/studio#${film.id}` : selected === "studio" ? "/studio" : "/about";
+  const previewAction = selected === "work" ? `Read the ${work.label} story`
+    : selected === "studio" && film ? "Open this film in Studio" : selected === "studio" ? "Open the film collection" : "Meet Ananda";
   const activeIndex = destinations.findIndex((item) => item.id === selected);
   const visits = new Set(
     visitedPaths?.filter((path) =>
       destinations.some((item) => item.path === path),
     ),
   );
+
+  function rememberPreview(change: Partial<PreviewPreferences>) {
+    const next = { ...(previewMemory ?? preview), ...change };
+    if (next.selection === preview.selection && next.work === preview.work && next.film === preview.film) return;
+    previewMemory = next;
+    setPreview(next);
+    try { sessionStorage.setItem(previewStorageKey, JSON.stringify(next)); }
+    catch { /* Keep the bounded in-memory choices if optional storage is denied. */ }
+  }
+  const setSelected = (selection: Selection) => rememberPreview({ selection });
 
   useEffect(() => {
     if (!motionEnabled || !root.current) return;
@@ -162,7 +207,7 @@ export default function HomeDirectory({
     return () => media.revert();
   }, [motionEnabled]);
 
-  function navigate(event: MouseEvent<HTMLAnchorElement>, path: string) {
+  function navigate(event: MouseEvent<HTMLAnchorElement>, path: string, homeOrigin?: string) {
     if (
       event.defaultPrevented ||
       event.button !== 0 ||
@@ -173,7 +218,7 @@ export default function HomeDirectory({
     )
       return;
     event.preventDefault();
-    onNavigate(path);
+    onNavigate(path, homeOrigin);
   }
 
   return (
@@ -262,6 +307,7 @@ export default function HomeDirectory({
                     key={work.id}
                   >
                     <picture>
+                      <source media="(max-width: 767px)" srcSet={work.mobile} width={390} height={work.mobileHeight} />
                       <img
                         src={work.src}
                         alt={work.alt}
@@ -298,24 +344,10 @@ export default function HomeDirectory({
                       loading="lazy"
                       decoding="async"
                     />
-                    <p>
-                      Student. Builder.
-                      <br />
-                      Storyteller. Swimmer.
-                    </p>
+                    <p>{selected === "studio" ? <>The film<br />collection.</> : <>Student. Builder.<br />Storyteller. Swimmer.</>}</p>
                   </div>
                 )}
                 <span className="ap-select-glass-edge" aria-hidden="true" />
-              </div>
-              <div className="ap-select-caption">
-                <p>
-                  {selected === "work"
-                    ? work.title
-                    : selected === "studio"
-                      ? film?.title
-                      : "More than one lane."}
-                </p>
-                <ArrowRight size={23} aria-hidden="true" />
               </div>
               <div
                 className="ap-select-preview-controls"
@@ -335,7 +367,7 @@ export default function HomeDirectory({
                       type="button"
                       aria-label={`Preview ${item.label} capture`}
                       aria-pressed={workIndex === index}
-                      onClick={() => setWorkIndex(index)}
+                      onClick={() => rememberPreview({ work: item.id })}
                     >
                       {item.label}
                     </button>
@@ -349,7 +381,7 @@ export default function HomeDirectory({
                           type="button"
                           aria-label={`Preview ${item.title} poster`}
                           aria-pressed={filmIndex === index}
-                          onClick={() => setFilmIndex(index)}
+                          onClick={() => rememberPreview({ film: item.id })}
                         >
                           {item.title === "CIRS website launch"
                             ? "CIRS launch"
@@ -363,6 +395,20 @@ export default function HomeDirectory({
                   </span>
                 )}
               </div>
+              <a className="ap-select-caption" href={previewPath} data-home-origin="selected-preview"
+                onClick={(event) => navigate(event, previewPath, "selected-preview")}>
+                <span>
+                  <span className="ap-select-context-action">{previewAction}</span>
+                  <span className="ap-select-context-title">
+                  {selected === "work"
+                    ? work.title
+                    : selected === "studio"
+                      ? film?.title ?? "Browse the programme."
+                      : "More than one lane."}
+                  </span>
+                </span>
+                <ArrowRight size={23} aria-hidden="true" />
+              </a>
             </div>
             <nav
               className="home-directory-pages"

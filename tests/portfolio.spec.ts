@@ -184,7 +184,10 @@ test('silent tour can be paused and followed to the actual community story', asy
   await page.goto('/')
   await page.getByRole('button', { name: 'Take the 60-second tour', exact: true }).click()
   const tour = page.locator('.tour-panel')
-  await tour.getByRole('button', { name: 'Pause tour', exact: true }).click()
+  const pause = tour.getByRole('button', { name: 'Pause tour', exact: true })
+  if (await pause.count()) await pause.click()
+  else await expect(tour.getByRole('button', { name: 'Resume tour', exact: true })).toBeVisible()
+  await expect(tour).toHaveAttribute('data-playing', 'false')
   const pausedNote = await tour.locator('.tour-note').textContent()
   await page.waitForTimeout(400)
   await expect(tour.locator('.tour-note')).toHaveText(pausedNote!)
@@ -192,7 +195,10 @@ test('silent tour can be paused and followed to the actual community story', asy
   await expect(tour.locator('.tour-chapter')).toContainText('02 / 05')
   await tour.locator('.tour-explore').click()
   await expect(tour).toHaveCount(0)
-  await expect(page.getByRole('dialog', { name: 'Vallalar Sathya Dharmasalai', exact: true })).toBeVisible()
+  await expect(page).toHaveURL(/\/projects\/community$/)
+  await page.locator('.state-opening').waitFor({ state: 'detached' })
+  await expect(page.locator('h1')).toContainText('Vallalar Sathya Dharmasalai')
+  await expect(page.locator('h1')).toBeFocused()
 })
 
 test('interactive media and page surfaces share the glass arrow and restore native on fallback', async ({ page }) => {

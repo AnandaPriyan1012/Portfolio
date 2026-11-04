@@ -1,0 +1,68 @@
+.tour-panel.tour-panel {
+  width: 390px;
+  max-height: calc(100dvh - 40px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  border-color: color-mix(in srgb, var(--accent) 38%, transparent);
+  background: linear-gradient(130deg, #d4bf8d0b, transparent 65%), var(--surface);
+}
+.tour-panel .tour-header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 8px 16px;
+  background: var(--surface);
+}
+.tour-panel .tour-icon { flex: 0 0 44px; width: 44px; height: 44px; }
+.tour-panel .tour-progress { padding: 16px 20px 0; }
+.tour-panel .tour-content { padding: 18px 20px 20px; }
+.tour-panel .tour-content h3 { margin-top: 12px; font-size: 25px; }
+.tour-panel .tour-artwork { margin: 18px 0 0; }
+.tour-panel .tour-artwork img {
+  display: block;
+  width: 100%;
+  height: 118px;
+  object-fit: contain;
+  border: 1px solid var(--line);
+  background: #050a0a;
+}
+.tour-panel .tour-artwork figcaption {
+  padding-top: 8px;
+  color: var(--subtle);
+  font-size: 10px;
+  line-height: 1.6;
+}
+.tour-panel .tour-content > p { margin-top: 16px; font-size: 12px; }
+.tour-panel .tour-explore { min-height: 44px; padding: 10px 0; margin-top: 14px; line-height: 1.7; }
+.tour-panel .tour-footer {
+  position: sticky;
+  bottom: 0;
+  gap: 10px;
+  padding: 8px 12px 8px 18px;
+  background: var(--surface);
+}
+.tour-panel .tour-note { max-width: 170px; }
+.tour-panel .tour-swimming-record {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  margin-top: 18px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.7;
+}
+.tour-panel .tour-swimming-record strong { color: var(--text); font-size: 14px; font-weight: 400; }
+.tour-panel :is(button, h3):focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+@media (max-width: 600px) {
+  .tour-panel.tour-panel { right: 10px; bottom: 10px; width: calc(100vw - 20px); max-width: none; max-height: calc(100dvh - 20px); }
+  .tour-panel .tour-content { padding: 16px; }
+  .tour-panel .tour-content h3 { font-size: 23px; }
+  .tour-panel .tour-footer { padding-left: 14px; }
+  .tour-panel .tour-note { max-width: 135px; }
+}
+@media (max-height: 680px) { .tour-panel .tour-artwork img { height: 88px; } }
+@media (forced-colors: active) {
+  .tour-panel.tour-panel, .tour-panel :is(.tour-header,.tour-footer,.tour-artwork img,.tour-swimming-record) { background: Canvas; color: CanvasText; border-color: CanvasText; box-shadow: none; }
+  .tour-panel :is(button,h3):focus-visible { outline-color: Highlight; }
+}

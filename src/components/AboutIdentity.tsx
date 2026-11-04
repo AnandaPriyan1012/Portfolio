@@ -6,6 +6,8 @@ import {
   type MouseEvent,
 } from "react";
 import { aboutLanes, creativeMedia, projectAssets } from "../content";
+import { hasApprovedNativePlayback } from "../media-readiness";
+import { isApprovedDriveEmbed } from "./DriveFilmPlayer";
 import InteractiveSignature from "./InteractiveSignature";
 
 type Source = {
@@ -17,6 +19,7 @@ type Source = {
   alt: string;
   caption: string;
   note: string;
+  filmId?: string;
 };
 type Device = Navigator & {
   connection?: EventTarget & { saveData?: boolean };
@@ -25,6 +28,34 @@ type Device = Navigator & {
 
 const cck = creativeMedia.find((film) => film.id === "cck-trailer");
 const farewell = creativeMedia.find((film) => film.id === "farewell-video");
+type SourceChoices = { builder: "cirs" | "vallalar"; storyteller: "cck" | "farewell" };
+const sourceStorageKey = "ap-about-evidence-v1";
+let sourceMemory: SourceChoices | undefined;
+
+function readSourceChoices(): SourceChoices {
+  if (!sourceMemory) {
+    sourceMemory = { builder: "cirs", storyteller: "cck" };
+    try {
+      const value: unknown = JSON.parse(sessionStorage.getItem(sourceStorageKey) ?? "null");
+      if (value && typeof value === "object" && !Array.isArray(value)) {
+        const saved = value as Record<string, unknown>;
+        if (saved.builder === "cirs" || saved.builder === "vallalar") sourceMemory.builder = saved.builder;
+        if (saved.storyteller === "cck" || saved.storyteller === "farewell") sourceMemory.storyteller = saved.storyteller;
+      }
+    } catch { /* Source choices still survive ordinary SPA returns in memory. */ }
+  }
+  return { ...sourceMemory };
+}
+
+function rememberSourceChoice(lane: "builder" | "storyteller", id: string): SourceChoices {
+  const next = readSourceChoices();
+  if (lane === "builder" && (id === "cirs" || id === "vallalar")) next.builder = id;
+  if (lane === "storyteller" && (id === "cck" || id === "farewell")) next.storyteller = id;
+  sourceMemory = next;
+  try { sessionStorage.setItem(sourceStorageKey, JSON.stringify(next)); }
+  catch { /* Optional persistence must not block a source selection. */ }
+  return next;
+}
 const evidence: Record<string, Source[]> = {
   builder: [
     {
@@ -48,12 +79,14 @@ const evidence: Record<string, Source[]> = {
       width: 640, height: 360,
       alt: "A genuine CCK trailer frame showing hands writing in a notebook",
       caption: "CCK trailer", note: cck?.caption ?? "Trailer",
+      filmId: "cck-trailer",
     },
     {
       id: "farewell", label: "Farewell AA", src: farewell?.posterUrl ?? "",
       width: 640, height: 360,
       alt: "A photographic montage in the Farewell AA film",
       caption: "Farewell AA", note: farewell?.caption ?? "Farewell film",
+      filmId: "farewell-video",
     },
   ],
   curious: [
@@ -91,7 +124,7 @@ export default function AboutIdentity({
   onNavigate?: (path: string) => void;
 }) {
   const active = aboutLanes.find((lane) => lane.id === selected) ?? aboutLanes[0];
-  const [sources, setSources] = useState({ builder: "cirs", storyteller: "cck" });
+  const [sources, setSources] = useState(readSourceChoices);
   const [failedSources, setFailedSources] = useState<string[]>([]);
   const [capable, setCapable] = useState(false);
   const [forcedColors, setForcedColors] = useState(false);
@@ -103,6 +136,8 @@ export default function AboutIdentity({
   const options = evidence[active.id] ?? [];
   const chosen = active.id === "builder" ? sources.builder : sources.storyteller;
   const source = options.find((item) => item.id === chosen) ?? options[0];
+  const film = source?.filmId ? creativeMedia.find((item) => item.id === source.filmId) : undefined;
+  const readyFilm = film && (hasApprovedNativePlayback(film) || isApprovedDriveEmbed(film.embedUrl)) ? film : null;
   const selection = `${active.id}:${source?.id ?? "notes"}`;
 
   useEffect(() => {
@@ -221,27 +256,28 @@ export default function AboutIdentity({
             {active.id === "swimmer" && (
               <details className="about-swim-records">
                 <summary>Swimming record</summary>
-                <dl>
-                  <div><dt>50 m breaststroke</dt><dd>41.48 s</dd></div>
-                  <div><dt>100 m freestyle</dt><dd>1 min 6 s</dd></div>
-                </dl>
-                <p>Personal bests recorded in my CV.</p>
                 <p>My CV also records a relay-team bronze at the Infinity State Level Swimming Competition, Life Spring Swimming Club, Coimbatore, in 2026.</p>
               </details>
             )}
             <div className="about-identity-links">
               {active.id === "builder" && <>{link("/projects/cirs", "Read the CIRS project")}{link("/projects/community", "Explore the Vallalar work")}</>}
-              {active.id === "storyteller" && link("/studio", "Watch the films in Studio")}
+              {active.id === "storyteller" && link(
+                readyFilm ? `/studio#${readyFilm.id}` : "/studio",
+                readyFilm ? `Open ${source.caption} in Studio` : "Explore the film collection",
+              )}
               {active.id === "curious" && <>{link("/projects/accuflow", "Explore the AccuFlow prototype")}{link("/work#airkart", "See the AirKart experiment")}</>}
             </div>
           </div>
 
           {active.id === "swimmer" ? (
             <div className="about-identity-evidence about-identity-swimming" ref={(node) => { frame.current = node; }} aria-label="Swimming details">
-              <p className="about-identity-source-heading">Swimming</p>
+              <p className="about-identity-source-heading">Swimming / Personal bests</p>
               <div className="about-identity-swim-notes">
-                <p>CIRS <span>Started in Class 10</span></p>
-                <div><span>Freestyle</span><span>Breaststroke</span></div>
+                <dl>
+                  <div><dt>50 m breaststroke</dt><dd>41.48 <span>s</span></dd></div>
+                  <div><dt>100 m freestyle</dt><dd>1 <span>min</span> 6 <span>s</span></dd></div>
+                </dl>
+                <p>Personal bests recorded in my CV.</p>
               </div>
               <svg className="about-identity-trace" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M .5,.5 H 99.5 V 99.5 H .5 Z" /></svg>
             </div>
@@ -250,7 +286,7 @@ export default function AboutIdentity({
               <div className="about-identity-source-bar">
                 {options.length > 1 ? <div role="group" aria-label={active.id === "builder" ? "Choose a website capture" : "Choose a film still"}>
                   {options.map((item) => <button key={item.id} type="button" aria-pressed={source.id === item.id}
-                    onClick={() => setSources((current) => ({ ...current, [active.id]: item.id }))}>{item.label}</button>)}
+                    onClick={() => setSources(rememberSourceChoice(active.id as "builder" | "storyteller", item.id))}>{item.label}</button>)}
                 </div> : <span>{source.label}</span>}
                 <span>{active.id === "storyteller" ? "Actual film stills" : "Actual site capture"}</span>
               </div>

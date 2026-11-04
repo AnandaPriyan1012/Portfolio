@@ -44,16 +44,15 @@
 .about-identity-evidence > figcaption > span:last-child { font-size: 9px; color: #a5af9d; }
 .about-identity-swimming { max-width: 420px; margin-top: 10px; }
 .about-identity-source-heading { min-height: 48px; padding: 15px 18px; border-bottom: 1px solid #ffffff18; color: #b5bfad; font-size: 9px; letter-spacing: .06em; text-transform: uppercase; }
-.about-identity-swim-notes { min-height: 130px; padding: 22px 18px; }
-.about-identity-swim-notes > p { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 24px; color: #e1e3d8; font: 500 22px/1.2 var(--font-display); letter-spacing: -.03em; }
-.about-identity-swim-notes > p > span { color: #a5af9d; font: 400 10px/1.5 var(--font-body); letter-spacing: 0; }
-.about-identity-swim-notes > div { display: flex; justify-content: space-between; gap: 14px; padding-top: 18px; border-top: 1px solid #e6e5ce22; color: #d3dbcb; font-size: 12px; }
+.about-identity-swim-notes { padding: 12px 22px 20px; }
+.about-identity-swim-notes dl { margin: 0; }
+.about-identity-swim-notes dl > div { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: 18px; min-height: 77px; padding: 16px 0; border-bottom: 1px solid #e6e5ce22; }
+.about-identity-swim-notes dt { max-width: 140px; color: #bdc7b8; font: 400 12px/1.6 var(--font-body); }
+.about-identity-swim-notes dd { margin: 0; color: #eddbc0; font: 500 36px/1.1 var(--font-display); font-variant-numeric: tabular-nums; letter-spacing: -.04em; white-space: nowrap; }
+.about-identity-swim-notes dd > span { color: #a5af9d; font: 400 11px/1.5 var(--font-body); letter-spacing: 0; }
+.about-identity-swim-notes > p { margin: 16px 0 0; color: #a5af9d; font: 400 11px/1.8 var(--font-body); }
 .about-swim-records { max-width: 350px; margin: 22px 0; border-block: 1px solid var(--line); }
 .about-swim-records > summary { display: list-item; min-height: 48px; padding: 15px 0; list-style-position: inside; color: var(--text); font-size: 12px; }
-.about-swim-records dl { margin: 4px 0 14px; }
-.about-swim-records dl > div { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
-.about-swim-records dt { color: var(--muted); font-size: 11px; line-height: 1.6; }
-.about-swim-records dd { margin: 0; color: var(--text); font: 500 17px/1.4 var(--font-display); white-space: nowrap; font-variant-numeric: tabular-nums; }
 .about-swim-records > p { margin-bottom: 15px; color: var(--muted); font-size: 11px; line-height: 1.8; }
 .achievement-source { display: block; margin-top: 15px; color: var(--subtle); font-size: 11px; line-height: 1.6; }
 .achievement-verification { display: grid; gap: 10px; margin-top: 16px; color: var(--muted); font-size: 11px; line-height: 1.8; }
@@ -77,9 +76,9 @@
 }
 :root[data-motion="off"] .about-identity :is(.about-identity-evidence,.about-identity-beam path,.about-identity-trace path) { animation: none; }
 :root[data-theme="light"] .about-identity-evidence { border-color: #52655745; background: linear-gradient(118deg,#ffffff70,transparent 31%,#fff9e620 47%,transparent 69%),linear-gradient(165deg,#e2e9e2cc,#d4dfd5ed 68%); box-shadow: 0 26px 65px #27332912,9px 9px 0 -8px #52655745,18px 18px 0 -17px #52655730,inset 0 1px #fff8; }
-:root[data-theme="light"] .about-identity :is(.about-identity-source-bar,.about-identity-source-heading,.about-identity-evidence>figcaption,.about-identity-swim-notes>div) { border-color: #52655730; }
-:root[data-theme="light"] .about-identity :is(.about-identity-source-bar,.about-identity-source-heading,.about-identity-swim-notes>p,.about-identity-swim-notes>div,.about-identity-evidence>figcaption) { color: #2e4030; }
-:root[data-theme="light"] .about-identity :is(.about-identity-source-bar>span:last-child,.about-identity-source-bar button,.about-identity-evidence>figcaption>span:last-child,.about-identity-swim-notes>p>span) { color: #54644c; }
+:root[data-theme="light"] .about-identity :is(.about-identity-source-bar,.about-identity-source-heading,.about-identity-evidence>figcaption,.about-identity-swim-notes dl>div) { border-color: #52655730; }
+:root[data-theme="light"] .about-identity :is(.about-identity-source-bar,.about-identity-source-heading,.about-identity-swim-notes>p,.about-identity-swim-notes dt,.about-identity-swim-notes dd,.about-identity-swim-notes dd>span,.about-identity-evidence>figcaption) { color: #2e4030; }
+:root[data-theme="light"] .about-identity :is(.about-identity-source-bar>span:last-child,.about-identity-source-bar button,.about-identity-evidence>figcaption>span:last-child,.about-identity-swim-notes dt,.about-identity-swim-notes dd>span) { color: #54644c; }
 :root[data-theme="light"] .about-identity-source-bar button[aria-pressed="true"] { background: #77633712; color: #655021; }
 @media (max-width:1023px) and (min-width:768px) { .about-identity-intro { grid-template-columns: minmax(0,1fr) 230px; gap: 35px; } .about-identity-signature { min-height: 286px; } .about-identity-panel { grid-template-columns: minmax(210px,.85fr) minmax(0,1.15fr); gap: 35px; } .about-identity-copy > h3 { font-size: 30px; } .about-identity-source-bar { padding-inline: 8px; gap: 5px; } .about-identity-source-bar button { padding-inline: 8px; } .about-identity-source-bar > span:last-child { max-width: 80px; } }
 @media (max-width:767px) {
@@ -111,10 +110,10 @@
   .about-identity-evidence > figcaption { padding: 11px 12px; font-size: 10px; }
   .about-identity-evidence > figcaption > span:last-child { font-size: 9px; }
   .about-identity-swimming { margin: 0; }
-  .about-identity-swim-notes { min-height: 120px; padding: 20px 16px; }
-  .about-identity-swim-notes > p { font-size: 21px; }
-  .about-identity-swim-notes > p > span { font-size: 9px; }
-  .about-identity-swim-notes > div { padding-top: 16px; font-size: 11px; }
+  .about-identity-swim-notes { padding: 8px 16px 16px; }
+  .about-identity-swim-notes dl > div { min-height: 70px; gap: 14px; padding-block: 15px; }
+  .about-identity-swim-notes dt { font-size: 11px; }
+  .about-identity-swim-notes dd { font-size: 32px; }
   .about-identity-perspectives > summary { min-height: 48px; font-size: 10px; }
   .about-identity-perspectives h4 { font-size: 13px; }
   .about-identity-perspectives p { font-size: 12px; }
@@ -135,17 +134,19 @@
   .about-identity-aperture { height: 220px; }
   .about-identity-evidence > figcaption { font-size: 9px; }
   .about-identity-evidence > figcaption > span:last-child { font-size: 8px; }
-  .about-identity-swim-notes { min-height: 116px; }
-  .about-identity-swim-notes > p { gap: 10px; font-size: 20px; }
-  .about-identity-swim-notes > p > span { font-size: 8px; }
+  .about-identity-swim-notes dd { font-size: 30px; }
 }
 @media (prefers-reduced-motion:reduce) { .about-identity :is(.about-identity-evidence,.about-identity-beam path,.about-identity-trace path) { animation: none; } }
 @media (forced-colors:active) {
-  .about-identity :is(.about-identity-evidence,.about-identity-tabs,.about-identity-source-bar,.about-identity-source-heading,.about-identity-evidence>figcaption,.about-identity-swim-notes>div,.about-identity-perspectives,.about-identity-links>a) { border-color: CanvasText; background: Canvas; box-shadow: none; }
-  .about-identity :is(.about-identity-source-bar,.about-identity-source-bar button,.about-identity-source-bar>span:last-child,.about-identity-source-heading,.about-identity-evidence>figcaption,.about-identity-evidence>figcaption>span:last-child,.about-identity-swim-notes>p,.about-identity-swim-notes>p>span,.about-identity-swim-notes>div) { color: CanvasText; }
+  .about-identity :is(.about-identity-evidence,.about-identity-tabs,.about-identity-source-bar,.about-identity-source-heading,.about-identity-evidence>figcaption,.about-identity-swim-notes dl>div,.about-identity-perspectives,.about-identity-links>a) { border-color: CanvasText; background: Canvas; box-shadow: none; }
+  .about-identity :is(.about-identity-source-bar,.about-identity-source-bar button,.about-identity-source-bar>span:last-child,.about-identity-source-heading,.about-identity-evidence>figcaption,.about-identity-evidence>figcaption>span:last-child,.about-identity-swim-notes>p,.about-identity-swim-notes dt,.about-identity-swim-notes dd>span,.about-identity-swim-notes dl>div) { color: CanvasText; }
   .about-identity-tabs > button[aria-selected="true"]::after { background: Highlight; forced-color-adjust: none; }
   .about-identity-source-bar button[aria-pressed="true"] { outline: 1px solid Highlight; outline-offset: -2px; }
   .about-identity :is(.about-identity-beam,.about-identity-trace) { display: none; }
   .about-identity-signature .signature-study-ink { background: CanvasText; forced-color-adjust: none; }
   .about-identity-signature .signature-study-aperture { background: Canvas; box-shadow: none; }
+}
+
+@media (forced-colors: active) {
+  :root[data-theme] .about-identity .about-identity-swim-notes :is(dt, dd, dd>span) { color: CanvasText; }
 }

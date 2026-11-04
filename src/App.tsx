@@ -211,11 +211,13 @@ function Dialog({
 
 function ScrollOpening({
   onWork,
+  onCaseStudy,
   onImageError,
   onDirector,
   motionEnabled,
 }: {
   onWork: () => void;
+  onCaseStudy?: () => void;
   onImageError: () => void;
   onDirector: () => void;
   motionEnabled: boolean;
@@ -286,6 +288,20 @@ function ScrollOpening({
         <div className="cirs-browser-bar">
           <span>cirschool.org</span>
           <span>Official school website</span>
+          <a
+            className="cirs-scene-case-link"
+            href="/projects/cirs"
+            data-home-origin="cirs-scene"
+            aria-label="Read the CIRS case study"
+            onClick={(event) => {
+              if (!onCaseStudy || event.defaultPrevented || event.button !== 0 ||
+                event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+              event.preventDefault();
+              onCaseStudy();
+            }}
+          >
+            Read case study
+          </a>
         </div>
         <a
           href="https://cirschool.org"
@@ -501,7 +517,7 @@ export default function App() {
   const navigationSequence = useRef(0);
   const historyIntent = useRef<{ sequence: number; cancelled: boolean } | null>(null);
 
-  const caseReturn = useRef<{ path: string; top: number; originHref?: string }>({ path: "/work", top: 0 });
+  const caseReturn = useRef<{ path: string; top: number; originHref?: string; originToken?: string }>({ path: "/work", top: 0 });
   const currentProject = projects.find(
     (project) => route === `/projects/${project.id}`,
   );
@@ -687,8 +703,24 @@ export default function App() {
     window.addEventListener("keydown", close);
     return () => window.removeEventListener("keydown", close);
   }, [menuOpen]);
-  function focusDestination(originHref?: string) {
+  function focusDestination(originHref?: string, originToken?: string) {
     const main = document.querySelector("main");
+    if (originToken === "tour-launcher") {
+      const origin = document.querySelector<HTMLElement>('[data-navigation-origin="tour-launcher"]');
+      const bounds = origin?.getBoundingClientRect();
+      if (origin && bounds && bounds.height > 0 && bounds.bottom > 0 && bounds.top < innerHeight) {
+        origin.focus({ preventScroll: true });
+        return;
+      }
+    }
+    if (originToken && main?.dataset.page === "home" && !window.location.hash) {
+      const origin = [...main.querySelectorAll<HTMLAnchorElement>("a[data-home-origin]")]
+        .find((link) => link.dataset.homeOrigin === originToken);
+      if (origin && origin.getClientRects().length) {
+        origin.focus({ preventScroll: true });
+        return;
+      }
+    }
     // Return to the exact native project link used in Work or About. Ordinary
     // page/hash navigation retains its heading or summary focus.
     if (originHref && main && ["about", "work"].includes(main.dataset.page ?? "") && !window.location.hash) {
@@ -725,7 +757,7 @@ export default function App() {
       focusTarget.focus({ preventScroll: true });
     }
   }
-  function navigate(destination: string, restoreTop = 0, originHref?: string) {
+  function navigate(destination: string, restoreTop = 0, originHref?: string, originToken?: string) {
     const next = destination.split("#")[0].replace(/\/+$/, "") || "/";
     saveHistoryPosition();
     historyIntent.current = null;
@@ -743,25 +775,33 @@ export default function App() {
     window.dispatchEvent(new Event("ap:pathnamechange"));
     requestAnimationFrame(() => {
       if (sequence !== navigationSequence.current) return;
-      if (window.location.hash) storyMotion.scrollTo(window.location.hash);
-      else storyMotion.restoreTo(restoreTop, next);
-      focusDestination(originHref);
+      // A tour return retains the film fragment as selection state while
+      // restoring the footer. Ordinary fragment links still reach their anchor.
+      const returningToTour = originToken === "tour-launcher";
+      if (window.location.hash && !returningToTour) storyMotion.scrollTo(window.location.hash);
+      else storyMotion.restoreTo(restoreTop, next, originToken ? () => {
+        if (sequence === navigationSequence.current) focusDestination(undefined, originToken);
+      } : undefined, { preserveHash: returningToTour });
+      if (!originToken || (window.location.hash && !returningToTour)) focusDestination(originHref);
     });
   }
   function navigateSection(id: string) {
     navigate(id === "contact" ? "/about#contact" : `/${id}`);
   }
-  function page(id: Project["id"], aboutHref?: string) {
+  function page(id: Project["id"], aboutHref?: string, originToken?: string) {
     const focused = document.activeElement;
     const workHref = route === "/work" && focused instanceof HTMLAnchorElement &&
       focused.closest(".work-page") && focused.getAttribute("href") === `/projects/${id}`
       ? focused.getAttribute("href")! : undefined;
     const originHref = route === "/about" ? aboutHref : workHref;
-    caseReturn.current = { path: route, top: scrollY, ...(originHref ? { originHref } : {}) };
+    caseReturn.current = { path: originToken === "tour-launcher" ? `${route}${window.location.hash}` : route,
+      top: scrollY, ...(originHref ? { originHref } : {}),
+      ...((route === "/" && (originToken === "selected-preview" || originToken === "cirs-scene")) ||
+        (mainRoutes.includes(route) && originToken === "tour-launcher") ? { originToken } : {}) };
     navigate(`/projects/${id}`);
   }
   function home() {
-    navigate(caseReturn.current.path, caseReturn.current.top, caseReturn.current.originHref);
+    navigate(caseReturn.current.path, caseReturn.current.top, caseReturn.current.originHref, caseReturn.current.originToken);
   }
   function quick(id: Project["id"]) {
     setOsOpen(false);
@@ -817,13 +857,18 @@ export default function App() {
             <ScrollOpening
               motionEnabled={preferences.motion}
               onWork={() => navigate("/work")}
+              onCaseStudy={() => page("cirs", undefined, "cirs-scene")}
               onImageError={() => setCirsImageFailed(true)}
               onDirector={() =>
                 setModal({ type: "media", id: "directors-cut" })
               }
             />
             <HomeDirectory
-              onNavigate={navigate}
+              onNavigate={(path, originToken) => {
+                const project = projects.find((item) => path === `/projects/${item.id}`);
+                if (project) page(project.id, undefined, originToken);
+                else navigate(path);
+              }}
               motionEnabled={preferences.motion}
               visitedPaths={visitedPaths}
               onResetVisits={resetVisits}
@@ -1091,7 +1136,7 @@ export default function App() {
           ))}
         </nav>
         <div className="footer-settings">
-          <button onClick={() => setTourOpen(true)}>
+          <button data-navigation-origin="tour-launcher" onClick={() => setTourOpen(true)}>
             Take the 60-second tour
           </button>
           <button onClick={() => setOsOpen(true)}>AP OS</button>
@@ -1147,7 +1192,7 @@ export default function App() {
       {tourOpen && (
         <GuidedTour
           onClose={() => setTourOpen(false)}
-          onProject={quick}
+          onProject={(id) => page(id, undefined, "tour-launcher")}
           onSwim={swim}
         />
       )}

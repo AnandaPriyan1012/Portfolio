@@ -59,7 +59,10 @@ test('the identity scene keeps one page title, native four-lane navigation and t
   await expect(identity.getByRole('tab', { name: 'Curious Mind', exact: true })).toBeFocused()
   await identity.getByRole('tab', { name: 'Swimmer', exact: true }).click()
   await expect(identity.getByRole('tabpanel')).toContainText('I started at CIRS in Class 10')
-  expect((await identity.locator('.about-identity-swimming').boundingBox())!.height).toBeLessThanOrEqual(190)
+  const plate = identity.locator('.about-identity-swimming')
+  await expect(plate.locator('dt')).toHaveText(['50 m breaststroke', '100 m freestyle'])
+  await expect(plate.locator('dd')).toHaveText(['41.48 s', '1 min 6 s'])
+  await expect(plate).toContainText('Personal bests recorded in my CV.')
   await identity.locator('.about-identity-perspectives > summary').click()
   await expect(identity.locator('.about-identity-perspectives h4')).toHaveCount(4)
   await expect(page.locator('.achievement')).toHaveCount(5)
@@ -240,7 +243,7 @@ test('remaining evidence links reach genuine case, Studio and experiment destina
   const identity = await ready(page)
   for (const item of [
     { lane: 'Builder', link: 'Explore the Vallalar work', path: /\/projects\/community$/ },
-    { lane: 'Storyteller', link: 'Watch the films in Studio', path: /\/studio$/ },
+    { lane: 'Storyteller', link: 'Open CCK trailer in Studio', path: /\/studio#cck-trailer$/ },
     { lane: 'Curious Mind', link: 'See the AirKart experiment', path: /\/work#airkart$/ },
   ]) {
     await identity.getByRole('tab', { name: item.lane, exact: true }).click()
@@ -364,7 +367,7 @@ test('height changes refresh Contact scrolling and native disclosure without acc
   await identity.locator('.about-identity-perspectives > summary').click()
   for (let pass = 0; pass < 2; pass++) {
     await identity.getByRole('tab', { name: 'Storyteller', exact: true }).click()
-    await identity.getByRole('link', { name: 'Watch the films in Studio', exact: true }).click()
+    await identity.getByRole('link', { name: 'Open CCK trailer in Studio', exact: true }).click()
     await expect.poll(() => page.evaluate(() => (window as Window & { aboutObserverCount: () => number }).aboutObserverCount())).toBe(0)
     await page.goBack()
     await expect(identity).toBeVisible()

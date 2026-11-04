@@ -5,7 +5,7 @@ for (const width of [320, 390, 1440]) {
     await page.setViewportSize({ width, height: 900 })
     const external: string[] = []
     page.on('request', request => {
-      if (new URL(request.url()).origin !== 'http://127.0.0.1:5173') external.push(request.url())
+      if (new URL(request.url()).origin !== new URL(test.info().project.use.baseURL!).origin) external.push(request.url())
     })
     await page.goto('/about')
     await page.locator('.state-opening').waitFor({ state: 'detached' })
@@ -18,9 +18,11 @@ for (const width of [320, 390, 1440]) {
     await record.locator('summary').focus()
     await page.keyboard.press('Enter')
     await expect(record).toHaveAttribute('open', '')
-    await expect(record.locator('dt')).toHaveText(['50 m breaststroke', '100 m freestyle'])
-    await expect(record.locator('dd')).toHaveText(['41.48 s', '1 min 6 s'])
-    await expect(record).toContainText('Personal bests recorded in my CV.')
+    const plate = panel.locator('.about-identity-swimming')
+    await expect(plate.locator('dt')).toHaveText(['50 m breaststroke', '100 m freestyle'])
+    await expect(plate.locator('dd')).toHaveText(['41.48 s', '1 min 6 s'])
+    await expect(plate).toContainText('Personal bests recorded in my CV.')
+    await expect(record.locator('dl')).toHaveCount(0)
     await expect(record).toContainText('relay-team bronze')
     await page.keyboard.press('Space')
     await expect(record).not.toHaveAttribute('open', '')

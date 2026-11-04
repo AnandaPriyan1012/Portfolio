@@ -236,13 +236,26 @@
   justify-content: space-between;
   gap: 20px;
   padding: 18px 17px 12px;
+  min-height: 44px;
+  text-decoration: none;
 }
-.ap-select-caption p {
+.ap-select-context-title {
+  display: block;
   margin: 0;
   color: #eae3d2;
   font: 500 clamp(20px, 2.3vw, 30px)/1.12 var(--font-display);
   letter-spacing: -0.04em;
 }
+.ap-select-context-action {
+  display: block;
+  margin-bottom: 9px;
+  color: #c9b783;
+  font-size: 10px;
+  line-height: 1.6;
+}
+.ap-select-caption:hover .ap-select-context-action { color: #f2deb0; }
+.ap-select-caption:hover > svg { transform: translateX(3px); }
+.ap-select-caption > svg { transition: transform .2s ease-out; }
 .ap-select-caption > svg {
   color: #bda46d;
   flex-shrink: 0;
@@ -590,7 +603,7 @@
   .ap-select-caption {
     padding: 15px 13px 11px;
   }
-  .ap-select-caption p {
+  .ap-select-context-title {
     font-size: 24px;
   }
   .ap-select-preview-heading {
@@ -604,7 +617,7 @@
     min-height: 54px;
   }
   .ap-select-preview-controls > button {
-    min-height: 40px;
+    min-height: 44px;
     padding: 7px 10px;
     font-size: 9px;
   }
@@ -681,7 +694,7 @@
   .ap-select-position {
     font-size: 12px;
   }
-  .ap-select-caption p {
+  .ap-select-context-title {
     font-size: 21px;
   }
   .ap-select-preview-controls > button {
@@ -690,6 +703,14 @@
   .ap-select-cabinet-bottom > span:last-child {
     display: none;
   }
+}
+@media (max-width: 767px) {
+  /* A real phone capture needs a portrait viewing area. The unchanged film
+     and signature modes keep their own compact landscape stage. */
+  .ap-select-display[data-preview="work"] .ap-select-art-window {
+    height: clamp(300px, 54svh, 420px);
+  }
+  .ap-select-context-action { font-size: 11px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .home-directory *,

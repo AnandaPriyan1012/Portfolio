@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Pause, Play } from "lucide-react";
 
 const desktopQuery =
-  "(min-width: 1100px) and (min-height: 760px) and (pointer: fine) and (hover: hover) and (prefers-reduced-motion: no-preference)";
+  "(min-width: 1100px) and (min-height: 760px) and (pointer: fine) and (hover: hover) and (forced-colors: none) and (prefers-reduced-motion: no-preference)";
 
 function canShowFilm(enabled: boolean) {
   if (!enabled || !matchMedia(desktopQuery).matches) return false;

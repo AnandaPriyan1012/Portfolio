@@ -461,7 +461,7 @@ export default function useScrollStory({ root, enabled, route }: Options) {
   const lenisRef = useRef<Lenis | null>(null);
   const reduceRef = useRef(false);
   const cleanupRef = useRef<(() => void) | null>(null);
-  const pendingRestore = useRef<{ route: string; top: number; onRestored?: () => void } | null>(null);
+  const pendingRestore = useRef<{ route: string; top: number; onRestored?: () => void; preserveHash?: boolean } | null>(null);
   const restoreCoordinator = useRef<{ route: string; refresh: () => void } | null>(null);
 
   useLayoutEffect(() => {
@@ -551,8 +551,11 @@ export default function useScrollStory({ root, enabled, route }: Options) {
         ScrollTrigger.refresh();
         lenisRef.current?.resize();
         const restoration = pendingRestore.current;
-        if (restoration?.route === route && !window.location.hash) {
+        if (restoration?.route === route && (!window.location.hash || restoration.preserveHash)) {
           pendingRestore.current = null;
+          // An explicit return may keep a fragment as selection state. A later
+          // media refresh must not reinterpret it as a new anchor navigation.
+          initialHashPending = false;
           // Refresh can temporarily set the native scroller to zero. Restore
           // only after it finishes, synchronizing Lenis and GSAP's scroll cache
           // before another image/font/layout refresh can read a stale value.
@@ -1091,11 +1094,11 @@ export default function useScrollStory({ root, enabled, route }: Options) {
   );
 
   const beforeNavigate = useCallback(() => cleanupRef.current?.(), []);
-  const restoreTo = useCallback((top: number, destination: string, onRestored?: () => void) => {
+  const restoreTo = useCallback((top: number, destination: string, onRestored?: () => void, options?: { preserveHash?: boolean }) => {
     const currentPath = window.location.pathname.replace(/\/+$/, "") || "/";
-    if (destination !== currentPath || window.location.hash) return;
+    if (destination !== currentPath || (window.location.hash && !options?.preserveHash)) return;
     const position = Number.isFinite(top) ? Math.max(0, top) : 0;
-    pendingRestore.current = { route: destination, top: position, onRestored };
+    pendingRestore.current = { route: destination, top: position, onRestored, preserveHash: options?.preserveHash };
     const coordinator = restoreCoordinator.current;
     if (coordinator?.route === destination) coordinator.refresh();
     else {
