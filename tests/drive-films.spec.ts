@@ -46,7 +46,6 @@ test('approved CCK export loads only after a keyboard Watch action and closes ac
   const screen = await page.locator('.screening-screen').boundingBox()
   expect(aperture!.width, 'The actual still occupies the screening aperture').toBeGreaterThan(screen!.width * 0.8)
   expect(aperture!.height).toBeGreaterThan(100)
-  await expect(page.locator('.screening-film-note')).toContainText('Actual film still')
   await expect(page.getByRole('button', { name: 'Play CCK trailer', exact: true }).locator('img')).toHaveAttribute('src', '/media/cck-trailer-still.jpg')
   expect(requests, 'The real poster is local and does not load Google Drive').toEqual([])
   await expect(page.locator('.screening-film-note')).toContainText('Public export, 2:22')
@@ -82,9 +81,8 @@ test('Farewell AA plays from its approved source while unavailable titles retain
   await expect(dialog.getByTitle('Farewell video — Google Drive player', { exact: true })).toHaveAttribute('src', farewell)
   await expect.poll(() => requests).toEqual([farewell])
   await dialog.getByRole('button', { name: 'Close dialog', exact: true }).click()
-  await page.getByRole('radio', { name: 'CIRSMUN 2026', exact: true }).check()
-  await expect(page.locator('.screening-play')).toHaveCount(0)
-  await expect(page.locator('.screening-film-note')).toContainText('Original film')
+  await expect(page.getByRole('radio', { name: 'CIRSMUN 2026', exact: true })).toBeDisabled()
+  await expect(page.getByRole('button', { name: 'Play selected film: Farewell video', exact: true })).toBeVisible()
   await expect(page.locator('iframe')).toHaveCount(0)
   await expect(page.locator('.screening-ready-films .reel-frame')).toHaveCount(5)
   expect(requests).toEqual([farewell])
@@ -121,6 +119,19 @@ test('desktop playback preserves the chosen film and its opener until the modal 
   await expect(watch).toBeFocused()
 
   // Once focus leaves the projection, real scrolling can select titles again.
+  // Clicking an initially offscreen Watch control can naturally scroll the new
+  // artwork layout. Re-establish the intended midpoint with real input first.
+  const recenter = await cckRow.evaluate(node => {
+    const bounds = node.getBoundingClientRect()
+    return bounds.top + bounds.height / 2 - innerHeight / 2
+  })
+  await page.mouse.move(10, 500)
+  await page.mouse.wheel(0, recenter)
+  await expect.poll(() => cckRow.evaluate(node => {
+    const bounds = node.getBoundingClientRect()
+    return Math.abs(bounds.top + bounds.height / 2 - innerHeight / 2)
+  })).toBeLessThan(2)
+  await expect(watch).toBeFocused()
   await page.getByRole('link', { name: 'Ananda Priyan, home', exact: true }).focus()
   await expect(page.locator('.screening-title-card h3')).toHaveText('CCK trailer')
   const distance = await farewellRow.evaluate(node => {
@@ -163,8 +174,9 @@ test('a non-Drive embed target cannot create a playable title or third-party fra
     await route.fulfill({ response, body: `${source}\n;creativeMedia.find(item=>item.id==='cck-trailer').embedUrl='https://drive.google.com.evil.invalid/file/d/foreign/preview';\n` })
   })
   await studio(page)
-  await expect(page.locator('.screening-title-card h3')).toHaveText('CCK trailer')
-  await expect(page.locator('.screening-play')).toHaveCount(0)
+  await expect(page.getByRole('radio', { name: 'CCK trailer', exact: true })).toBeDisabled()
+  await expect(page.locator('.screening-title-card h3')).toHaveText('Farewell video')
+  await expect(page.getByRole('button', { name: 'Play selected film: CCK trailer', exact: true })).toHaveCount(0)
   await expect(page.locator('.screening-ready-films .reel-frame')).toHaveCount(4)
   await expect(page.locator('iframe')).toHaveCount(0)
   await page.getByRole('radio', { name: 'Farewell video', exact: true }).check()

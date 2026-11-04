@@ -23,6 +23,7 @@ import GlassMaterial from "./components/GlassMaterial";
 import NotFound from "./components/NotFound";
 import useScrollStory from "./animation/useScrollStory";
 import useActiveSection from "./animation/useActiveSection";
+import useVisitTrail from "./hooks/useVisitTrail";
 import { GuidedTour } from "./components/Discovery";
 import AtelierNavigation from "./components/AtelierNavigation";
 import ScreeningRoom from "./components/ScreeningRoom";
@@ -436,6 +437,7 @@ export default function App() {
   const [cut, setCut] = useState<"quick" | "director">("quick");
   const [question, setQuestion] = useState<string | null>(null);
   const [route, setRoute] = useState(normalizedPath());
+  const { visitedPaths, resetVisits } = useVisitTrail(route);
   const caseReturn = useRef<{ path: string; top: number; aboutHref?: string }>({ path: "/work", top: 0 });
   const currentProject = projects.find(
     (project) => route === `/projects/${project.id}`,
@@ -637,6 +639,7 @@ export default function App() {
             navigate("/about#contact");
           }}
           onProject={(id) => navigate(`/projects/${id}`)}
+          onStudio={() => navigate("/studio")}
         />
       </>
     );
@@ -670,6 +673,8 @@ export default function App() {
             <HomeDirectory
               onNavigate={navigate}
               motionEnabled={preferences.motion}
+              visitedPaths={visitedPaths}
+              onResetVisits={resetVisits}
             />
           </>
         )}
@@ -977,7 +982,7 @@ export default function App() {
       {osOpen && (
         <OSExperience
           onClose={() => setOsOpen(false)}
-          onOpenProject={quick}
+          onOpenProject={page}
           onSwim={swim}
         />
       )}

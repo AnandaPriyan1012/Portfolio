@@ -29,6 +29,8 @@ import {
   type Project,
 } from "../content";
 import "./os.css";
+import { hasApprovedNativePlayback } from "../media-readiness";
+import { isApprovedDriveEmbed } from "./DriveFilmPlayer";
 
 type AppId = Project["id"] | "swimming";
 type DesktopWindow = {
@@ -90,7 +92,7 @@ const apps = [
   (app) =>
     app.id !== "creative" ||
     creativeMedia.some(
-      (item) => item.videoUrl && item.posterUrl && item.credits,
+      (item) => hasApprovedNativePlayback(item) || isApprovedDriveEmbed(item.embedUrl),
     ),
 );
 const WindowVisual = ({ id }: { id: AppId }) => {
@@ -99,16 +101,16 @@ const WindowVisual = ({ id }: { id: AppId }) => {
   return source ? (
     <img
       src={source}
-      alt={`${project?.title} — approved project visual`}
+      alt={id === "creative" ? "Vantara / Masquerade trailer — poster from the film collection" : `${project?.title} — approved project visual`}
       loading="lazy"
     />
   ) : (
     <div className={`os-media-slot os-media-${id}`}>
-      <span>{project?.title ?? "Beyond the screen"}</span>
+      <span>{project?.title ?? "Swimming"}</span>
       <p>
         {id === "swimming"
-          ? "Personal photographs to be added."
-          : "Project visuals to be added."}
+          ? "Freestyle / Breaststroke"
+          : id === "airkart" ? "Student concept / Website & 3D model" : "Project overview"}
       </p>
     </div>
   );
@@ -435,12 +437,12 @@ export default function OSExperience({
                       </span>
                       <p>{project.story.challenge}</p>
                     </div>
-                    <div>
+                    {project.story.role && <div>
                       <span>
                         <MousePointer2 size={12} /> My role
                       </span>
                       <p>{project.story.role}</p>
-                    </div>
+                    </div>}
                     <div>
                       <span>
                         <Check size={12} /> Where it stands
@@ -465,10 +467,7 @@ export default function OSExperience({
                   {project ? "Open the full case study" : "Meet the person"}{" "}
                   <ArrowRight size={16} />
                 </button>
-                <p className="os-passport-note">
-                  {project?.mediaStatus ??
-                    "Personal photographs and verified details pending."}
-                </p>
+                {project?.mediaStatus && <p className="os-passport-note">{project.mediaStatus}</p>}
               </div>
             </section>
           );

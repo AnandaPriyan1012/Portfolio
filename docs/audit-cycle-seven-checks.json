@@ -1,0 +1,64 @@
+{
+  "date": "2026-11-04",
+  "baseCommit": "1b822d849b77c837747dfdc5fa86264f33610ff5",
+  "productionBuild": "passed",
+  "bundle": "index-DWu7E_sB.js",
+  "css": "index-BINW4TPR.css",
+  "fullChromiumRun": {
+    "scenarios": 272,
+    "passed": 270,
+    "failed": 2,
+    "duration": "7.4 minutes"
+  },
+  "resolutions": [
+    {
+      "issue": "At320px a wrapped Farewell title overlapped the complete poster aperture by21.47px.",
+      "change": "Mobile screen uses intrinsic aspect ratio/natural grid rows; full16:9 artworks and44px Watch controls are preserved."
+    },
+    {
+      "issue": "Old Drive test assumed the pre-click row stayed at viewport midpoint after an ordinary Watch click naturally scrolled the new layout.",
+      "change": "The test re-establishes the intended midpoint with real wheel input while Watch retains focus; all selection/focus/provider assertions remain."
+    },
+    {
+      "issue": "Studio footer intercepted modifier clicks.",
+      "change": "Native button/modifier/defaultPrevented guard preserves new-tab/middle-click behavior; normal keyboard Contact still focuses heading\u2192email."
+    }
+  ],
+  "finalTargetedRun": {
+    "passed": 21,
+    "duration": "27.5 seconds",
+    "scope": [
+      "both resolved regressions",
+      "all five posters on320/390px phones",
+      "native/Drive approval and privacy gates",
+      "disabled unmatched/default/no-ready state",
+      "native Contact modified/middle/keyboard paths"
+    ]
+  },
+  "isolatedNewFeatureChecks": {
+    "home": "8 development +8 compiled tests passed",
+    "visitTrail": "7 development +7 compiled tests passed with actual Home UI",
+    "studio": "10 targeted checks passed before narrow-aperture followup",
+    "creativeCase": "4 initial actual UI/privacy/link tests passed; final combined5 included OS path"
+  },
+  "originalAssets": {
+    "apSha256": "80ccec808c2b7a5323d7401d1fd235d5f37b64362247656e08b9c742f6bf34a4",
+    "nativeFilmsAndPosters": "all supplied bytes unchanged",
+    "driveFrames": "unchanged",
+    "retiredDecorativeAssets": "kept unchanged; no longer rendered in directory/Studio"
+  },
+  "newAsset": "Self-hosted unchanged Pixelify Sans variableTTF with complete SIL OFL and recorded upstream hash.",
+  "dependencyChanges": false,
+  "limits": [
+    "Chromium desktop and phone emulation; physical Safari/iOS not verified.",
+    "Native playback samples and selected seeks do not establish full-film continuity or audio audition."
+  ],
+  "compiledReview": {
+    "status": "passed",
+    "routes": 8,
+    "features": 39,
+    "browserErrors": [],
+    "transportFailures": [],
+    "scope": "New Home/real trail/private storage, Studio ready-only art, Creative case/OS/footer, phones/device modes and preserved C6 flows."
+  }
+}

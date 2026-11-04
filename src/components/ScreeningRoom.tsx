@@ -34,11 +34,11 @@ export default function ScreeningRoom({
   const projectionRef = useRef<HTMLDivElement>(null);
   const reelPointerDown = useRef(false);
   const reelFocusFrame = useRef(0);
-  const [selectedId, setSelectedId] = useState(films[0]?.id ?? "");
+  const [selectedId, setSelectedId] = useState(() => films.find(isReady)?.id ?? "");
   const [scrollProgramme, setScrollProgramme] = useState(false);
-  const selected = films.find((film) => film.id === selectedId) ?? films[0];
-  const selectedIndex = films.findIndex((film) => film.id === selected?.id);
   const readyFilms = films.filter(isReady);
+  const selected = readyFilms.find((film) => film.id === selectedId) ?? readyFilms[0];
+  const selectedIndex = films.findIndex((film) => film.id === selected?.id);
   useEffect(() => {
     const releasePointer = () => { reelPointerDown.current = false; };
     window.addEventListener("pointerup", releasePointer, true);
@@ -126,6 +126,7 @@ export default function ScreeningRoom({
       ) return;
       const midpoint = innerHeight / 2;
       const row = rows.find((item) => {
+        if (item.dataset.ready !== "true") return false;
         const bounds = item.getBoundingClientRect();
         return bounds.top <= midpoint && bounds.bottom >= midpoint;
       });
@@ -174,7 +175,6 @@ export default function ScreeningRoom({
       data-page={asPage ? "studio" : undefined}
       aria-labelledby={`${choiceGroup}-heading`}
     >
-      <StudioAtmosphere enabled={motionEnabled} />
       <div className="page-width">
         <header className="section-heading screening-heading">
           <div>
@@ -185,8 +185,10 @@ export default function ScreeningRoom({
               The screening <em>room.</em>
             </Heading>
           </div>
-          <p className="screening-intro">Trailers, films &amp; event work.</p>
+          <p className="screening-intro">Trailers. Auditions. A website launch.</p>
         </header>
+
+        <StudioAtmosphere enabled={motionEnabled} films={readyFilms} selectedId={selected?.id ?? ""} />
 
         <div className="screening-layout">
           <div className="screening-projection" ref={projectionRef}>
@@ -206,7 +208,7 @@ export default function ScreeningRoom({
                       ? "CCK trailer — an open notebook, desk and hands"
                       : selected.id === "farewell-video"
                         ? "Farewell video — a montage of classroom and social photographs"
-                        : `${selected.title} — original film still`}
+                        : `${selected.title} — poster`}
                     width={640}
                     height={360}
                     loading="lazy"
@@ -241,6 +243,12 @@ export default function ScreeningRoom({
                   )}
                 </div>
               )}
+              {!selected && (
+                <div className="screening-empty" role="status">
+                  <h3>No films available yet.</h3>
+                  <p>The collection titles remain listed below.</p>
+                </div>
+              )}
               <div className="screening-screen-bottom" aria-hidden="true">
                 <span>Ananda Priyan</span>
                 <span>Creative collection</span>
@@ -248,15 +256,10 @@ export default function ScreeningRoom({
             </div>
             <div className="screening-sill" aria-hidden="true" />
             <p className="screening-film-note">
-              {selectedPoster && "Actual film still · "}
-              {selected && isReady(selected) ? selected.caption : "Original film and confirmed contribution details to follow."}
+              {selected?.caption}
             </p>
             <p className="screening-availability">
-              {readyFilms.length === films.length && films.length > 0
-                ? "Select a title to explore the collection."
-                : readyFilms.length === 0
-                  ? "Original films and confirmed contribution credits are needed before playback can open here."
-                  : `${readyFilms.length} films available to watch. Players load only after you choose Watch film.`}
+              {readyFilms.length} films. Choose a title.
             </p>
           </div>
 
@@ -275,6 +278,7 @@ export default function ScreeningRoom({
                   <li
                     key={film.id}
                     data-film-id={film.id}
+                    data-ready={isReady(film)}
                     data-selected={film.id === selected?.id}
                   >
                     <label>
@@ -283,7 +287,8 @@ export default function ScreeningRoom({
                         type="radio"
                         name={choiceGroup}
                         checked={film.id === selected?.id}
-                        onChange={() => setSelectedId(film.id)}
+                        disabled={!isReady(film)}
+                        onChange={() => { if (isReady(film)) setSelectedId(film.id); }}
                         aria-label={film.title}
                       />
                       <span className="screening-row">
@@ -296,7 +301,7 @@ export default function ScreeningRoom({
                         <span className="screening-row-copy">
                           <span>{film.title}</span>
                           {film.alternateTitle && <small>{film.alternateTitle}</small>}
-                          <small>{film.type}{isReady(film) ? " · Available to watch" : ""}</small>
+                          <small>{isReady(film) ? `${film.type} · Available to watch` : "Not available"}</small>
                         </span>
                         <span
                           className="screening-selection"
@@ -331,7 +336,7 @@ export default function ScreeningRoom({
                   {film.posterUrl ? (
                     <img
                       src={film.posterUrl}
-                      alt={`${film.title} — original film still`}
+                      alt={hasApprovedNativePlayback(film) ? `${film.title} — poster` : `${film.title} — original film still`}
                       width={640}
                       height={360}
                       loading="lazy"
@@ -355,10 +360,10 @@ export default function ScreeningRoom({
             <a
               href="/about#contact"
               onClick={(event) => {
-                if (onContact) {
-                  event.preventDefault();
-                  onContact();
-                }
+                if (!onContact || event.defaultPrevented || event.button !== 0 ||
+                  event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+                event.preventDefault();
+                onContact();
               }}
             >
               Let’s talk <ArrowRight size={16} aria-hidden="true" />

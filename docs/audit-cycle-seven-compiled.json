@@ -1,0 +1,1327 @@
+{
+  "base": "http://127.0.0.1:5174",
+  "phase": "compiled",
+  "bundle": "index-DWu7E_sB.js",
+  "date": "2026-11-04T17:33:38.968Z",
+  "routes": [
+    {
+      "path": "/",
+      "width": 1440,
+      "status": 200,
+      "heading": "Ananda\nPriyan",
+      "scrollWidth": 1440
+    },
+    {
+      "path": "/work",
+      "width": 1440,
+      "status": 200,
+      "heading": "Selected work.",
+      "scrollWidth": 1440
+    },
+    {
+      "path": "/studio",
+      "width": 1440,
+      "status": 200,
+      "heading": "The screening room.",
+      "scrollWidth": 1440
+    },
+    {
+      "path": "/about",
+      "width": 1440,
+      "status": 200,
+      "heading": "Ananda Priyan.",
+      "scrollWidth": 1440
+    },
+    {
+      "path": "/",
+      "width": 390,
+      "status": 200,
+      "heading": "Ananda\nPriyan",
+      "scrollWidth": 390
+    },
+    {
+      "path": "/work",
+      "width": 390,
+      "status": 200,
+      "heading": "Selected work.",
+      "scrollWidth": 390
+    },
+    {
+      "path": "/studio",
+      "width": 390,
+      "status": 200,
+      "heading": "The screening room.",
+      "scrollWidth": 390
+    },
+    {
+      "path": "/about",
+      "width": 390,
+      "status": 200,
+      "heading": "Ananda Priyan.",
+      "scrollWidth": 390
+    }
+  ],
+  "checks": [
+    {
+      "name": "Home real artwork, separate keyboard previews, licensed Pixelify and no premature film/corridor/provider requests 1440px",
+      "observations": [
+        {
+          "src": "/media/cirs-home-desktop.webp",
+          "width": 1440,
+          "height": 1000,
+          "fit": "contain",
+          "filter": "none",
+          "box": {
+            "x": 87.40625,
+            "y": 427.75,
+            "right": 770.546875,
+            "bottom": 725.75,
+            "width": 683.140625,
+            "height": 298
+          }
+        },
+        {
+          "src": "/media/vallalar-language-en-desktop.webp",
+          "width": 1440,
+          "height": 500,
+          "fit": "contain",
+          "filter": "none",
+          "box": {
+            "x": 87.40625,
+            "y": 434.75,
+            "right": 770.546875,
+            "bottom": 732.75,
+            "width": 683.140625,
+            "height": 298
+          }
+        },
+        {
+          "src": "/media/accuflow-prototype-desktop.webp",
+          "width": 1440,
+          "height": 1000,
+          "fit": "contain",
+          "filter": "none",
+          "box": {
+            "x": 87.40625,
+            "y": 434.53594970703125,
+            "right": 770.546875,
+            "bottom": 732.5359497070312,
+            "width": 683.140625,
+            "height": 298
+          }
+        },
+        {
+          "src": "/media/vantara-masquerade-poster.jpg",
+          "width": 1920,
+          "height": 1080,
+          "fit": "contain",
+          "filter": "none",
+          "box": {
+            "x": 87.40625,
+            "y": 434.13677978515625,
+            "right": 770.546875,
+            "bottom": 732.1367797851562,
+            "width": 683.140625,
+            "height": 298
+          }
+        },
+        {
+          "src": "/media/teded-auditions-poster.jpg",
+          "width": 1920,
+          "height": 1080,
+          "fit": "contain",
+          "filter": "none",
+          "box": {
+            "x": 87.40625,
+            "y": 434.75,
+            "right": 770.546875,
+            "bottom": 732.75,
+            "width": 683.140625,
+            "height": 298
+          }
+        },
+        {
+          "src": "/media/cirs-website-launch-poster.jpg",
+          "width": 1920,
+          "height": 1080,
+          "fit": "contain",
+          "filter": "none",
+          "box": {
+            "x": 87.40625,
+            "y": 434.75,
+            "right": 770.546875,
+            "bottom": 732.75,
+            "width": 683.140625,
+            "height": 298
+          }
+        }
+      ],
+      "loadedPixelify": true,
+      "prematureMedia": []
+    },
+    {
+      "name": "All three Home routes activate on their first click 1440px",
+      "paths": [
+        "/work",
+        "/studio",
+        "/about"
+      ]
+    },
+    {
+      "name": "Home native modified click opens Work separately without changing the parent visit trail; keyboard Enter navigates",
+      "href": "/work",
+      "initialPopupTransportLimit": null,
+      "certificateBypass": false
+    },
+    {
+      "name": "Studio genuine five-art contact sheet, native six-title programme/disabled compact unavailable item, contained selected artwork and no media before Watch 1440px",
+      "readyCount": 5,
+      "visibleCount": 6,
+      "prematureMedia": []
+    },
+    {
+      "name": "Creative case contains five approved artworks, factual copy, no empty cuts/placeholders and native Studio handoff 1440px",
+      "prematureMedia": []
+    },
+    {
+      "name": "OS shared film readiness exposes Film, genuine Vantara preview and full creative case instead of another quick view",
+      "passed": true
+    },
+    {
+      "name": "Studio footer preserves native modified Contact destination/current tab; normal keyboard handoff focuses Contact then email",
+      "href": "/about#contact",
+      "initialPopupTransportLimit": null,
+      "certificateBypass": false
+    },
+    {
+      "name": "Ten direct main/case/404 paths receive opaque exact-AP stages; natural drawing stays bounded",
+      "direct": [
+        {
+          "path": "/",
+          "status": 200,
+          "route": "/",
+          "mode": "animated",
+          "openedAt": 172.5,
+          "closedAt": null,
+          "background": "rgb(0, 0, 0)",
+          "opacity": "1",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 1000
+          },
+          "covered": true,
+          "source": "/media/ap-signature.png",
+          "generation": "0",
+          "strokeMax": 1,
+          "strokeMin": 1,
+          "naturalDuration": 1585,
+          "strokeOffsets": {
+            "max": 1,
+            "min": 0
+          }
+        },
+        {
+          "path": "/work",
+          "status": 200,
+          "route": "/work",
+          "mode": "animated",
+          "openedAt": 148.60000000149012,
+          "closedAt": null,
+          "background": "rgb(0, 0, 0)",
+          "opacity": "1",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 1000
+          },
+          "covered": true,
+          "source": "/media/ap-signature.png",
+          "generation": "0",
+          "strokeMax": 1,
+          "strokeMin": 1
+        },
+        {
+          "path": "/studio",
+          "status": 200,
+          "route": "/studio",
+          "mode": "animated",
+          "openedAt": 135.30000000074506,
+          "closedAt": null,
+          "background": "rgb(0, 0, 0)",
+          "opacity": "1",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 1000
+          },
+          "covered": true,
+          "source": "/media/ap-signature.png",
+          "generation": "0",
+          "strokeMax": 1,
+          "strokeMin": 1
+        },
+        {
+          "path": "/about",
+          "status": 200,
+          "route": "/about",
+          "mode": "animated",
+          "openedAt": 131.10000000149012,
+          "closedAt": null,
+          "background": "rgb(0, 0, 0)",
+          "opacity": "1",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 1000
+          },
+          "covered": true,
+          "source": "/media/ap-signature.png",
+          "generation": "0",
+          "strokeMax": 1,
+          "strokeMin": 1
+        },
+        {
+          "path": "/projects/cirs",
+          "status": 200,
+          "route": "/projects/cirs",
+          "mode": "animated",
+          "openedAt": 148.80000000074506,
+          "closedAt": null,
+          "background": "rgb(0, 0, 0)",
+          "opacity": "1",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 1000
+          },
+          "covered": true,
+          "source": "/media/ap-signature.png",
+          "generation": "0",
+          "strokeMax": 1,
+          "strokeMin": 1
+        },
+        {
+          "path": "/projects/community",
+          "status": 200,
+          "route": "/projects/community",
+          "mode": "animated",
+          "openedAt": 89.10000000149012,
+          "closedAt": null,
+          "background": "rgb(0, 0, 0)",
+          "opacity": "1",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 1000
+          },
+          "covered": true,
+          "source": "/media/ap-signature.png",
+          "generation": "0",
+          "strokeMax": 1,
+          "strokeMin": 1
+        },
+        {
+          "path": "/projects/accuflow",
+          "status": 200,
+          "route": "/projects/accuflow",
+          "mode": "animated",
+          "openedAt": 80.89999999850988,
+          "closedAt": null,
+          "background": "rgb(0, 0, 0)",
+          "opacity": "1",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 1000
+          },
+          "covered": true,
+          "source": "/media/ap-signature.png",
+          "generation": "0",
+          "strokeMax": 1,
+          "strokeMin": 1
+        },
+        {
+          "path": "/projects/airkart",
+          "status": 200,
+          "route": "/projects/airkart",
+          "mode": "animated",
+          "openedAt": 83,
+          "closedAt": null,
+          "background": "rgb(0, 0, 0)",
+          "opacity": "1",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 1000
+          },
+          "covered": true,
+          "source": "/media/ap-signature.png",
+          "generation": "0",
+          "strokeMax": 1,
+          "strokeMin": 1
+        },
+        {
+          "path": "/projects/creative",
+          "status": 200,
+          "route": "/projects/creative",
+          "mode": "animated",
+          "openedAt": 81.89999999850988,
+          "closedAt": null,
+          "background": "rgb(0, 0, 0)",
+          "opacity": "1",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 1000
+          },
+          "covered": true,
+          "source": "/media/ap-signature.png",
+          "generation": "0",
+          "strokeMax": 1,
+          "strokeMin": 1
+        },
+        {
+          "path": "/not-in-the-story",
+          "status": 200,
+          "route": "/not-in-the-story",
+          "mode": "animated",
+          "openedAt": 89.29999999701977,
+          "closedAt": null,
+          "background": "rgb(0, 0, 0)",
+          "opacity": "1",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 1000
+          },
+          "covered": true,
+          "source": "/media/ap-signature.png",
+          "generation": "0",
+          "strokeMax": 1,
+          "strokeMin": 1
+        }
+      ]
+    },
+    {
+      "name": "SPA pathname changes, Back/Forward and reload replay; same-page Contact hash preserves focus without replay",
+      "events": [
+        {
+          "route": "/studio",
+          "mode": "animated",
+          "openedAt": 2285.800000000745,
+          "closedAt": null,
+          "background": "rgb(0, 0, 0)",
+          "opacity": "1",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 1000
+          },
+          "covered": true,
+          "source": "/media/ap-signature.png",
+          "generation": "1",
+          "strokeMax": 1,
+          "strokeMin": 0.891766
+        },
+        {
+          "route": "/work",
+          "mode": "animated",
+          "openedAt": 2481.5,
+          "closedAt": null,
+          "background": "rgb(0, 0, 0)",
+          "opacity": "1",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 1000
+          },
+          "covered": true,
+          "source": "/media/ap-signature.png",
+          "generation": "2",
+          "strokeMax": 1,
+          "strokeMin": 1
+        },
+        {
+          "route": "/studio",
+          "mode": "animated",
+          "openedAt": 2678.699999999255,
+          "closedAt": null,
+          "background": "rgb(0, 0, 0)",
+          "opacity": "1",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 1000
+          },
+          "covered": true,
+          "source": "/media/ap-signature.png",
+          "generation": "3",
+          "strokeMax": 1,
+          "strokeMin": 1
+        },
+        {
+          "route": "/about",
+          "mode": "animated",
+          "openedAt": 3030,
+          "closedAt": null,
+          "background": "rgb(0, 0, 0)",
+          "opacity": "1",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 1000
+          },
+          "covered": true,
+          "source": "/media/ap-signature.png",
+          "generation": "4",
+          "strokeMax": 1,
+          "strokeMin": 1
+        },
+        {
+          "route": "/about",
+          "mode": "animated",
+          "openedAt": 106.5,
+          "closedAt": null,
+          "background": "rgb(0, 0, 0)",
+          "opacity": "1",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 1000
+          },
+          "covered": true,
+          "source": "/media/ap-signature.png",
+          "generation": "0",
+          "strokeMax": 1,
+          "strokeMin": 1
+        }
+      ]
+    },
+    {
+      "name": "Native quick-view dialog closes before the new opaque case opening covers the top layer",
+      "passed": true
+    },
+    {
+      "name": "One 21×27 arrow survives keyboard routes/case/Back/404 at its last real point; ordinary click and wheel stay continuous",
+      "passed": true
+    },
+    {
+      "name": "Modal controls rehost persistent arrow; native text fields restore standard editing pointer",
+      "passed": true
+    },
+    {
+      "name": "Three local films and five playable entries remain MP4/Google-request-free before Watch 1440px",
+      "nativeRequestsBeforeWatch": [],
+      "googleBeforeWatch": [],
+      "canonicalVantaraRows": 1
+    },
+    {
+      "name": "All three approved real films decode and advance with native controls; close stops retained videos 1440px",
+      "plays": [
+        {
+          "film": "vantara",
+          "input": "Trusted native Space play/pause",
+          "before": {
+            "src": "/media/vantara-masquerade-web-720p.mp4",
+            "duration": 166.42,
+            "size": [
+              1280,
+              720
+            ],
+            "readyState": 4,
+            "controls": true,
+            "playsInline": true,
+            "preload": "metadata",
+            "tabIndex": 0,
+            "autoplay": false,
+            "muted": false,
+            "paused": true,
+            "time": 0,
+            "frames": 0,
+            "error": null
+          },
+          "playing": {
+            "src": "/media/vantara-masquerade-web-720p.mp4",
+            "duration": 166.42,
+            "size": [
+              1280,
+              720
+            ],
+            "readyState": 4,
+            "controls": true,
+            "playsInline": true,
+            "preload": "metadata",
+            "tabIndex": 0,
+            "autoplay": false,
+            "muted": false,
+            "paused": false,
+            "time": 0.744637,
+            "frames": 22,
+            "error": null
+          },
+          "scriptPlayCalls": 0,
+          "retainedAfterClose": {
+            "connected": false,
+            "time": 0.761376,
+            "paused": true,
+            "error": null
+          },
+          "laterTime": 0.761376
+        },
+        {
+          "film": "ted-ed-2026",
+          "input": "Trusted native Space play/pause",
+          "before": {
+            "src": "/media/teded-auditions-web.mp4",
+            "duration": 31.722667,
+            "size": [
+              1920,
+              1080
+            ],
+            "readyState": 4,
+            "controls": true,
+            "playsInline": true,
+            "preload": "metadata",
+            "tabIndex": 0,
+            "autoplay": false,
+            "muted": false,
+            "paused": true,
+            "time": 0,
+            "frames": 0,
+            "error": null
+          },
+          "playing": {
+            "src": "/media/teded-auditions-web.mp4",
+            "duration": 31.722667,
+            "size": [
+              1920,
+              1080
+            ],
+            "readyState": 4,
+            "controls": true,
+            "playsInline": true,
+            "preload": "metadata",
+            "tabIndex": 0,
+            "autoplay": false,
+            "muted": false,
+            "paused": false,
+            "time": 0.313946,
+            "frames": 10,
+            "error": null
+          },
+          "scriptPlayCalls": 0,
+          "retainedAfterClose": {
+            "connected": false,
+            "time": 0.342047,
+            "paused": true,
+            "error": null
+          },
+          "laterTime": 0.342047
+        },
+        {
+          "film": "cirs-website-launch",
+          "input": "Trusted native Space play/pause",
+          "before": {
+            "src": "/media/cirs-website-launch-web.mp4",
+            "duration": 38,
+            "size": [
+              1920,
+              1080
+            ],
+            "readyState": 4,
+            "controls": true,
+            "playsInline": true,
+            "preload": "metadata",
+            "tabIndex": 0,
+            "autoplay": false,
+            "muted": false,
+            "paused": true,
+            "time": 0,
+            "frames": 0,
+            "error": null
+          },
+          "playing": {
+            "src": "/media/cirs-website-launch-web.mp4",
+            "duration": 38,
+            "size": [
+              1920,
+              1080
+            ],
+            "readyState": 4,
+            "controls": true,
+            "playsInline": true,
+            "preload": "metadata",
+            "tabIndex": 0,
+            "autoplay": false,
+            "muted": false,
+            "paused": false,
+            "time": 0.772383,
+            "frames": 50,
+            "error": null
+          },
+          "scriptPlayCalls": 0,
+          "retainedAfterClose": {
+            "connected": false,
+            "time": 0.796625,
+            "paused": true,
+            "error": null
+          },
+          "laterTime": 0.796625
+        }
+      ],
+      "requests": [
+        {
+          "path": "/media/vantara-masquerade-web-720p.mp4",
+          "range": "bytes=0-"
+        },
+        {
+          "path": "/media/vantara-masquerade-web-720p.mp4",
+          "range": "bytes=1048576-"
+        },
+        {
+          "path": "/media/teded-auditions-web.mp4",
+          "range": "bytes=0-"
+        },
+        {
+          "path": "/media/teded-auditions-web.mp4",
+          "range": "bytes=917504-"
+        },
+        {
+          "path": "/media/cirs-website-launch-web.mp4",
+          "range": "bytes=0-"
+        },
+        {
+          "path": "/media/cirs-website-launch-web.mp4",
+          "range": "bytes=1048576-"
+        }
+      ],
+      "google": [],
+      "completeFilmDecodeClaim": false
+    },
+    {
+      "name": "Vantara genuine black source sections remain black and real content seeks correctly",
+      "samples": [
+        {
+          "time": 0,
+          "readyState": 4,
+          "paused": true,
+          "error": null,
+          "meanLuma": 0,
+          "maxLuma": 0,
+          "brightFraction": 0
+        },
+        {
+          "time": 6,
+          "readyState": 4,
+          "paused": true,
+          "error": null,
+          "meanLuma": 31.837657638889233,
+          "maxLuma": 221.6604,
+          "brightFraction": 0.5986111111111111
+        },
+        {
+          "time": 130,
+          "readyState": 4,
+          "paused": true,
+          "error": null,
+          "meanLuma": 0,
+          "maxLuma": 0,
+          "brightFraction": 0
+        },
+        {
+          "time": 162,
+          "readyState": 4,
+          "paused": true,
+          "error": null,
+          "meanLuma": 22.505318416665382,
+          "maxLuma": 186.5022,
+          "brightFraction": 0.5721527777777777
+        }
+      ],
+      "privacy": "Only aggregate pixel statistics saved; no film frames exported."
+    },
+    {
+      "name": "Native reel opener remains focused and visible after close; browser Back stops detached playback before route opening",
+      "record": {
+        "focusedNativeOpener": true,
+        "visibleAfterClose": true
+      },
+      "firstHeldPaused": true,
+      "backStopped": {
+        "connected": false,
+        "paused": true,
+        "time": 0.812782
+      }
+    },
+    {
+      "name": "Six explicit About→case→return trips restore real origin link, lane and short-desktop saved Y",
+      "values": [
+        {
+          "lane": "Builder",
+          "path": "cirs",
+          "pass": 0,
+          "savedY": 589,
+          "returnedY": 589,
+          "focusedNativeLink": true
+        },
+        {
+          "lane": "Builder",
+          "path": "cirs",
+          "pass": 1,
+          "savedY": 589,
+          "returnedY": 589,
+          "focusedNativeLink": true
+        },
+        {
+          "lane": "Curious Mind",
+          "path": "accuflow",
+          "pass": 0,
+          "savedY": 564,
+          "returnedY": 564,
+          "focusedNativeLink": true
+        },
+        {
+          "lane": "Curious Mind",
+          "path": "accuflow",
+          "pass": 1,
+          "savedY": 564,
+          "returnedY": 564,
+          "focusedNativeLink": true
+        },
+        {
+          "lane": "Builder",
+          "path": "community",
+          "pass": 0,
+          "savedY": 637,
+          "returnedY": 637,
+          "focusedNativeLink": true
+        },
+        {
+          "lane": "Builder",
+          "path": "community",
+          "pass": 1,
+          "savedY": 637,
+          "returnedY": 637,
+          "focusedNativeLink": true
+        }
+      ]
+    },
+    {
+      "name": "Curious→AirKart hands keyboard to native summary with Enter and Space disclosure",
+      "passed": true
+    },
+    {
+      "name": "Contact anchor keyboard h2→email→card 1440px",
+      "passed": true
+    },
+    {
+      "name": "Preserved native contact card keyboard flip/inert and real vCard download 1440px",
+      "bytes": 126,
+      "sha256": "d3b50a3f19f04f161dfe179bf823c86e81a36adb93b399d8e98dd5195f2dd89e"
+    },
+    {
+      "name": "Actual visit trail ignores previews, deduplicates real routes, survives reload, resets only its own session key and restarts on a real visit",
+      "visited": [
+        "/work",
+        "/studio",
+        "/about"
+      ],
+      "preservedPreferences": [
+        "on",
+        "dark",
+        "keep"
+      ]
+    },
+    {
+      "name": "Private/denied session storage read retains functional in-memory trail/reset/routes and reload clears unpersisted visits",
+      "passed": true
+    },
+    {
+      "name": "Private/denied session storage write retains functional in-memory trail/reset/routes and reload clears unpersisted visits",
+      "passed": true
+    },
+    {
+      "name": "Home real artwork, separate keyboard previews, licensed Pixelify and no premature film/corridor/provider requests 390px",
+      "observations": [
+        {
+          "src": "/media/cirs-home-desktop.webp",
+          "width": 1440,
+          "height": 1000,
+          "fit": "contain",
+          "filter": "none",
+          "box": {
+            "x": 24.40625,
+            "y": 98.546875,
+            "right": 365.59375,
+            "bottom": 333.265625,
+            "width": 341.1875,
+            "height": 234.71875
+          }
+        },
+        {
+          "src": "/media/vallalar-language-en-desktop.webp",
+          "width": 1440,
+          "height": 500,
+          "fit": "contain",
+          "filter": "none",
+          "box": {
+            "x": 24.40625,
+            "y": 98.546875,
+            "right": 365.59375,
+            "bottom": 333.265625,
+            "width": 341.1875,
+            "height": 234.71875
+          }
+        },
+        {
+          "src": "/media/accuflow-prototype-desktop.webp",
+          "width": 1440,
+          "height": 1000,
+          "fit": "contain",
+          "filter": "none",
+          "box": {
+            "x": 24.40625,
+            "y": 98.546875,
+            "right": 365.59375,
+            "bottom": 333.265625,
+            "width": 341.1875,
+            "height": 234.71875
+          }
+        },
+        {
+          "src": "/media/vantara-masquerade-poster.jpg",
+          "width": 1920,
+          "height": 1080,
+          "fit": "contain",
+          "filter": "none",
+          "box": {
+            "x": 24.40625,
+            "y": 121.546875,
+            "right": 365.59375,
+            "bottom": 356.265625,
+            "width": 341.1875,
+            "height": 234.71875
+          }
+        },
+        {
+          "src": "/media/teded-auditions-poster.jpg",
+          "width": 1920,
+          "height": 1080,
+          "fit": "contain",
+          "filter": "none",
+          "box": {
+            "x": 24.40625,
+            "y": 121.546875,
+            "right": 365.59375,
+            "bottom": 356.265625,
+            "width": 341.1875,
+            "height": 234.71875
+          }
+        },
+        {
+          "src": "/media/cirs-website-launch-poster.jpg",
+          "width": 1920,
+          "height": 1080,
+          "fit": "contain",
+          "filter": "none",
+          "box": {
+            "x": 24.40625,
+            "y": 121.546875,
+            "right": 365.59375,
+            "bottom": 356.265625,
+            "width": 341.1875,
+            "height": 234.71875
+          }
+        }
+      ],
+      "loadedPixelify": true,
+      "prematureMedia": []
+    },
+    {
+      "name": "All three Home routes activate on their first tap 390px",
+      "paths": [
+        "/work",
+        "/studio",
+        "/about"
+      ]
+    },
+    {
+      "name": "Studio genuine five-art contact sheet, native six-title programme/disabled compact unavailable item, contained selected artwork and no media before Watch 390px",
+      "readyCount": 5,
+      "visibleCount": 6,
+      "prematureMedia": []
+    },
+    {
+      "name": "Creative case contains five approved artworks, factual copy, no empty cuts/placeholders and native Studio handoff 390px",
+      "prematureMedia": []
+    },
+    {
+      "name": "Three local films and five playable entries remain MP4/Google-request-free before Watch 390px",
+      "nativeRequestsBeforeWatch": [],
+      "googleBeforeWatch": [],
+      "canonicalVantaraRows": 1
+    },
+    {
+      "name": "All three approved real films decode and advance with native controls; close stops retained videos 390px",
+      "plays": [
+        {
+          "film": "vantara",
+          "input": "Trusted native-control touchscreen tap",
+          "before": {
+            "src": "/media/vantara-masquerade-web-720p.mp4",
+            "duration": 166.42,
+            "size": [
+              1280,
+              720
+            ],
+            "readyState": 4,
+            "controls": true,
+            "playsInline": true,
+            "preload": "metadata",
+            "tabIndex": 0,
+            "autoplay": false,
+            "muted": false,
+            "paused": true,
+            "time": 0,
+            "frames": 0,
+            "error": null
+          },
+          "playing": {
+            "src": "/media/vantara-masquerade-web-720p.mp4",
+            "duration": 166.42,
+            "size": [
+              1280,
+              720
+            ],
+            "readyState": 4,
+            "controls": true,
+            "playsInline": true,
+            "preload": "metadata",
+            "tabIndex": 0,
+            "autoplay": false,
+            "muted": false,
+            "paused": false,
+            "time": 0.32411,
+            "frames": 13,
+            "error": null
+          },
+          "scriptPlayCalls": 0,
+          "retainedAfterClose": {
+            "connected": false,
+            "time": 0.372171,
+            "paused": true,
+            "error": null
+          },
+          "laterTime": 0.372171
+        },
+        {
+          "film": "ted-ed-2026",
+          "input": "Trusted native-control touchscreen tap",
+          "before": {
+            "src": "/media/teded-auditions-web.mp4",
+            "duration": 31.722667,
+            "size": [
+              1920,
+              1080
+            ],
+            "readyState": 4,
+            "controls": true,
+            "playsInline": true,
+            "preload": "metadata",
+            "tabIndex": 0,
+            "autoplay": false,
+            "muted": false,
+            "paused": true,
+            "time": 0,
+            "frames": 0,
+            "error": null
+          },
+          "playing": {
+            "src": "/media/teded-auditions-web.mp4",
+            "duration": 31.722667,
+            "size": [
+              1920,
+              1080
+            ],
+            "readyState": 4,
+            "controls": true,
+            "playsInline": true,
+            "preload": "metadata",
+            "tabIndex": 0,
+            "autoplay": false,
+            "muted": false,
+            "paused": false,
+            "time": 0.329445,
+            "frames": 13,
+            "error": null
+          },
+          "scriptPlayCalls": 0,
+          "retainedAfterClose": {
+            "connected": false,
+            "time": 0.388068,
+            "paused": true,
+            "error": null
+          },
+          "laterTime": 0.388068
+        },
+        {
+          "film": "cirs-website-launch",
+          "input": "Trusted native-control touchscreen tap",
+          "before": {
+            "src": "/media/cirs-website-launch-web.mp4",
+            "duration": 38,
+            "size": [
+              1920,
+              1080
+            ],
+            "readyState": 4,
+            "controls": true,
+            "playsInline": true,
+            "preload": "metadata",
+            "tabIndex": 0,
+            "autoplay": false,
+            "muted": false,
+            "paused": true,
+            "time": 0,
+            "frames": 0,
+            "error": null
+          },
+          "playing": {
+            "src": "/media/cirs-website-launch-web.mp4",
+            "duration": 38,
+            "size": [
+              1920,
+              1080
+            ],
+            "readyState": 4,
+            "controls": true,
+            "playsInline": true,
+            "preload": "metadata",
+            "tabIndex": 0,
+            "autoplay": false,
+            "muted": false,
+            "paused": false,
+            "time": 0.806326,
+            "frames": 53,
+            "error": null
+          },
+          "scriptPlayCalls": 0,
+          "retainedAfterClose": {
+            "connected": false,
+            "time": 0.877628,
+            "paused": true,
+            "error": null
+          },
+          "laterTime": 0.877628
+        }
+      ],
+      "requests": [
+        {
+          "path": "/media/vantara-masquerade-web-720p.mp4",
+          "range": "bytes=0-"
+        },
+        {
+          "path": "/media/vantara-masquerade-web-720p.mp4",
+          "range": "bytes=1048576-"
+        },
+        {
+          "path": "/media/teded-auditions-web.mp4",
+          "range": "bytes=0-"
+        },
+        {
+          "path": "/media/teded-auditions-web.mp4",
+          "range": "bytes=524288-"
+        },
+        {
+          "path": "/media/cirs-website-launch-web.mp4",
+          "range": "bytes=0-"
+        },
+        {
+          "path": "/media/cirs-website-launch-web.mp4",
+          "range": "bytes=458752-"
+        }
+      ],
+      "google": [],
+      "completeFilmDecodeClaim": false
+    },
+    {
+      "name": "Contact anchor keyboard h2→email→card 390px",
+      "passed": true
+    },
+    {
+      "name": "Preserved native contact card keyboard flip/inert and real vCard download 390px",
+      "bytes": 126,
+      "sha256": "d3b50a3f19f04f161dfe179bf823c86e81a36adb93b399d8e98dd5195f2dd89e"
+    },
+    {
+      "name": "Home real artwork, separate keyboard previews, licensed Pixelify and no premature film/corridor/provider requests 320px",
+      "observations": [
+        {
+          "src": "/media/cirs-home-desktop.webp",
+          "width": 1440,
+          "height": 1000,
+          "fit": "contain",
+          "filter": "none",
+          "box": {
+            "x": 20.203125,
+            "y": 62.546875,
+            "right": 299.796875,
+            "bottom": 248.65625,
+            "width": 279.59375,
+            "height": 186.109375
+          }
+        },
+        {
+          "src": "/media/vallalar-language-en-desktop.webp",
+          "width": 1440,
+          "height": 500,
+          "fit": "contain",
+          "filter": "none",
+          "box": {
+            "x": 20.203125,
+            "y": 62.546875,
+            "right": 299.796875,
+            "bottom": 248.65625,
+            "width": 279.59375,
+            "height": 186.109375
+          }
+        },
+        {
+          "src": "/media/accuflow-prototype-desktop.webp",
+          "width": 1440,
+          "height": 1000,
+          "fit": "contain",
+          "filter": "none",
+          "box": {
+            "x": 20.203125,
+            "y": 62.546875,
+            "right": 299.796875,
+            "bottom": 248.65625,
+            "width": 279.59375,
+            "height": 186.109375
+          }
+        },
+        {
+          "src": "/media/vantara-masquerade-poster.jpg",
+          "width": 1920,
+          "height": 1080,
+          "fit": "contain",
+          "filter": "none",
+          "box": {
+            "x": 20.203125,
+            "y": 508.546875,
+            "right": 299.796875,
+            "bottom": 694.65625,
+            "width": 279.59375,
+            "height": 186.109375
+          }
+        },
+        {
+          "src": "/media/teded-auditions-poster.jpg",
+          "width": 1920,
+          "height": 1080,
+          "fit": "contain",
+          "filter": "none",
+          "box": {
+            "x": 20.203125,
+            "y": 508.546875,
+            "right": 299.796875,
+            "bottom": 694.65625,
+            "width": 279.59375,
+            "height": 186.109375
+          }
+        },
+        {
+          "src": "/media/cirs-website-launch-poster.jpg",
+          "width": 1920,
+          "height": 1080,
+          "fit": "contain",
+          "filter": "none",
+          "box": {
+            "x": 20.203125,
+            "y": 508.546875,
+            "right": 299.796875,
+            "bottom": 694.65625,
+            "width": 279.59375,
+            "height": 186.109375
+          }
+        }
+      ],
+      "loadedPixelify": true,
+      "prematureMedia": []
+    },
+    {
+      "name": "All three Home routes activate on their first tap 320px",
+      "paths": [
+        "/work",
+        "/studio",
+        "/about"
+      ]
+    },
+    {
+      "name": "Studio genuine five-art contact sheet, native six-title programme/disabled compact unavailable item, contained selected artwork and no media before Watch 320px",
+      "readyCount": 5,
+      "visibleCount": 6,
+      "prematureMedia": []
+    },
+    {
+      "name": "Creative case contains five approved artworks, factual copy, no empty cuts/placeholders and native Studio handoff 320px",
+      "prematureMedia": []
+    },
+    {
+      "name": "C7 user-motion-off keeps Home/Studio art, routes and programme usable without selector or contact-sheet motion",
+      "passed": true
+    },
+    {
+      "name": "C7 reduced keeps Home/Studio art, routes and programme usable without selector or contact-sheet motion",
+      "passed": true
+    },
+    {
+      "name": "C7 low-memory keeps Home/Studio art, routes and programme usable without selector or contact-sheet motion",
+      "passed": true
+    },
+    {
+      "name": "C7 forced-colors keeps Home/Studio art, routes and programme usable without selector or contact-sheet motion",
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "networkFailures": [],
+  "scope": "C7 combined compiled/public verification: actual Home/art/previews/native links, real session trail and private-storage fallbacks, Studio contact sheet/disabled unavailable source, creative gallery/OS, plus preserved C6 exact AP/cursor/three real films/C5 returns/card. Existing Drive player UI uses isolated documents; native MP4 playback is real and bounded.",
+  "screenshots": [
+    "/workspace/cycle-seven-release-review/compiled-home-1440.png",
+    "/workspace/cycle-seven-release-review/compiled-work-1440.png",
+    "/workspace/cycle-seven-release-review/compiled-studio-1440.png",
+    "/workspace/cycle-seven-release-review/compiled-about-1440.png",
+    "/workspace/cycle-seven-release-review/compiled-new-studio-1440.png",
+    "/workspace/cycle-seven-release-review/compiled-black-ap-opening-1440.png",
+    "/workspace/cycle-seven-release-review/compiled-about-return-1440x720.png",
+    "/workspace/cycle-seven-release-review/compiled-home-390.png",
+    "/workspace/cycle-seven-release-review/compiled-work-390.png",
+    "/workspace/cycle-seven-release-review/compiled-studio-390.png",
+    "/workspace/cycle-seven-release-review/compiled-about-390.png",
+    "/workspace/cycle-seven-release-review/compiled-new-studio-390.png",
+    "/workspace/cycle-seven-release-review/compiled-new-studio-320.png",
+    "/workspace/cycle-seven-release-review/compiled-C7-mode-user-motion-off.png",
+    "/workspace/cycle-seven-release-review/compiled-C7-mode-reduced.png",
+    "/workspace/cycle-seven-release-review/compiled-C7-mode-low-memory.png",
+    "/workspace/cycle-seven-release-review/compiled-C7-mode-forced-colors.png"
+  ],
+  "status": "passed"
+}

@@ -1,114 +1,45 @@
-import { useEffect, useRef, useState } from "react";
-import { Pause, Play } from "lucide-react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 
-const desktopQuery =
-  "(min-width: 1100px) and (min-height: 760px) and (pointer: fine) and (hover: hover) and (prefers-reduced-motion: no-preference) and (forced-colors: none)";
+type Artwork = { id: string; title: string; posterUrl: string | null };
+const accents: Record<string, string> = {
+  "cck-trailer": "#d0aa65", "farewell-video": "#bd9473", vantara: "#81a6b8",
+  "ted-ed-2026": "#ca8273", "cirs-website-launch": "#c6b778",
+};
 
-function canShowAtmosphere(enabled: boolean) {
-  if (!enabled || !matchMedia(desktopQuery).matches) return false;
-  const device = navigator as Navigator & {
-    deviceMemory?: number;
-    connection?: EventTarget & { saveData?: boolean };
-  };
+/** Genuine, duplicate film artwork: the native programme remains the interface. */
+export default function StudioAtmosphere({ enabled, films, selectedId }: {
+  enabled: boolean; films: Artwork[]; selectedId: string;
+}) {
+  const sheet = useRef<HTMLDivElement>(null);
+  const [arrived, setArrived] = useState(false);
+  useEffect(() => {
+    if (!enabled || !sheet.current) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) { setArrived(true); observer.disconnect(); }
+    }, { threshold: .15 });
+    observer.observe(sheet.current);
+    return () => observer.disconnect();
+  }, [enabled, films.length]);
+  if (!films.some(film => film.posterUrl)) return null;
   return (
-    !device.connection?.saveData &&
-    !(device.hardwareConcurrency > 0 && device.hardwareConcurrency <= 2) &&
-    !(device.deviceMemory && device.deviceMemory <= 2)
-  );
-}
-
-/** A conceptual room atmosphere, separate from the actual film collection. */
-export default function StudioAtmosphere({ enabled }: { enabled: boolean }) {
-  const video = useRef<HTMLVideoElement>(null);
-  const [eligible, setEligible] = useState(() => canShowAtmosphere(enabled));
-  const [failed, setFailed] = useState(false);
-  const [paused, setPaused] = useState(false);
-  const [inView, setInView] = useState(true);
-  const [documentVisible, setDocumentVisible] = useState(() => !document.hidden);
-  const active = eligible && !failed;
-
-  useEffect(() => {
-    const query = matchMedia(desktopQuery);
-    const device = navigator as Navigator & { connection?: EventTarget };
-    const sync = () => setEligible(canShowAtmosphere(enabled));
-    query.addEventListener("change", sync);
-    device.connection?.addEventListener?.("change", sync);
-    sync();
-    return () => {
-      query.removeEventListener("change", sync);
-      device.connection?.removeEventListener?.("change", sync);
-    };
-  }, [enabled]);
-
-  useEffect(() => {
-    if (!active || !video.current) return;
-    const element = video.current;
-    const stage = element.closest(".studio-atmosphere-stage");
-    const observer = new IntersectionObserver(
-      ([entry]) => setInView(entry.isIntersecting),
-      { threshold: 0.05 },
-    );
-    if (stage) observer.observe(stage);
-    const visibility = () => setDocumentVisible(!document.hidden);
-    document.addEventListener("visibilitychange", visibility);
-    visibility();
-    return () => {
-      observer.disconnect();
-      document.removeEventListener("visibilitychange", visibility);
-      element.pause();
-    };
-  }, [active]);
-
-  useEffect(() => {
-    const element = video.current;
-    if (!active || !element) return;
-    let cancelled = false;
-    if (paused || !inView || !documentVisible) {
-      element.pause();
-    } else {
-      element.muted = true;
-      void element.play().catch((error: DOMException) => {
-        if (!cancelled && error.name !== "AbortError") setPaused(true);
-      });
-    }
-    return () => {
-      cancelled = true;
-    };
-  }, [active, paused, inView, documentVisible]);
-
-  if (!active) return null;
-  return (
-    <div className="studio-atmosphere">
-      <div className="studio-atmosphere-stage">
-        <video
-          ref={video}
-          className="studio-atmosphere-film"
-          src="/media/studio-atmosphere-loop.mp4"
-          poster="/media/studio-atmosphere-poster.png"
-          aria-hidden="true"
-          tabIndex={-1}
-          muted
-          loop
-          playsInline
-          autoPlay={!paused}
-          preload="metadata"
-          onError={() => setFailed(true)}
-        />
+    <div
+      className="studio-contact-sheet"
+      ref={sheet}
+      aria-hidden="true"
+      data-motion={enabled ? "on" : "off"}
+      data-arrived={arrived}
+      style={{ "--studio-art-accent": accents[selectedId] ?? "#d0aa65" } as CSSProperties}
+    >
+      <div className="studio-contact-meta"><span>AP / SCREEN CLUB</span><span>{String(films.length).padStart(2, "0")} films ready / select below</span></div>
+      <div className="studio-contact-frames">
+        {films.filter(film => film.posterUrl).map((film, index) => (
+          <figure key={film.id} data-film={film.id} data-active={film.id === selectedId} style={{ "--contact-order": index } as CSSProperties}>
+            <div className="studio-contact-image"><img src={film.posterUrl!} alt="" width={640} height={360} loading="lazy" decoding="async" /></div>
+            <figcaption><span>{String(index + 1).padStart(2, "0")}</span>{film.title}</figcaption>
+          </figure>
+        ))}
       </div>
-      <div className="studio-atmosphere-control-frame">
-        <div className="studio-atmosphere-controls">
-          <span>Conceptual room</span>
-          <button
-            type="button"
-            className="studio-atmosphere-toggle"
-            aria-pressed={paused}
-            onClick={() => setPaused(!paused)}
-          >
-            {paused ? <Play size={12} aria-hidden="true" /> : <Pause size={12} aria-hidden="true" />}
-            {paused ? "Play room atmosphere" : "Pause room atmosphere"}
-          </button>
-        </div>
-      </div>
+      <div className="studio-contact-edge"><span>Studio collection</span><span>PICTURE / SOUND / PLAY</span></div>
     </div>
   );
 }

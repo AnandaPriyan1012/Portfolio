@@ -245,8 +245,8 @@ test('unapproved native sources with null credits cannot expose Watch or request
   })
   await studio(page)
   for (const film of films) {
-    await choose(page, film)
-    await expect(page.locator('.screening-play')).toHaveCount(0)
+    await expect(page.getByRole('radio', { name: film.title, exact: true })).toBeDisabled()
+    await expect(page.getByRole('button', { name: `Play selected film: ${film.title}`, exact: true })).toHaveCount(0)
     await expect(page.locator('iframe, dialog video')).toHaveCount(0)
   }
   await expect(page.locator('.screening-ready-films .reel-frame')).toHaveCount(2)
@@ -261,8 +261,8 @@ test('approval cannot unlock a deferred video or missing poster', async ({ page,
   })
   await studio(page)
   for (const film of films.slice(1)) {
-    await choose(page, film)
-    await expect(page.locator('.screening-play')).toHaveCount(0)
+    await expect(page.getByRole('radio', { name: film.title, exact: true })).toBeDisabled()
+    await expect(page.getByRole('button', { name: `Play selected film: ${film.title}`, exact: true })).toHaveCount(0)
     await expect(page.locator('iframe, dialog video')).toHaveCount(0)
   }
   await expect(page.locator('.screening-ready-films .reel-frame')).toHaveCount(3)

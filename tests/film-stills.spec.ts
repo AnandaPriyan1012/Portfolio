@@ -88,7 +88,7 @@ for (const width of [320, 390, 1440]) {
       await expect(page.getByRole('radio', { name: approved.title, exact: true })).toBeChecked()
       await expect(page.locator('.screening-title-card h3')).toHaveText(approved.title)
       await expectCompleteFrame(page.locator('.screening-still'), approved.path)
-      await expect(page.locator('.screening-film-note')).toContainText(`Actual film still · ${index ? 'Farewell AA · ' : 'Trailer · Public export, '}${approved.duration}`)
+      await expect(page.locator('.screening-film-note')).toContainText(`${index ? 'Farewell AA · ' : 'Trailer · Public export, '}${approved.duration}`)
       const aperture = (await page.locator('.screening-still-window').boundingBox())!
       const title = (await page.locator('.screening-title-card').boundingBox())!
       expect(aperture.width).toBeGreaterThan(100)

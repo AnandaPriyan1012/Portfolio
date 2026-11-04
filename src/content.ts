@@ -321,17 +321,15 @@ export const projects: Project[] = [
     tags: ["Storytelling", "Film & editing"],
     accent: "#b69d85",
     mediaStatus:
-      "Verified films and genuine posters are available in Studio. CIRSMUN 2026 is awaiting a matched source.",
+      "Five films are available in Studio.",
     story: {
       challenge:
-        "Bring creative storytelling work into a collection that gives each project room to be understood. Individual project briefs are still to be supplied.",
-      role: "Creative storyteller. Exact production contributions, collaborators and credits are awaiting verification.",
-      process:
-        "The collection brings together trailers, auditions and a website launch. Supplied source exports are preserved, with exact production details still to follow.",
+        "Trailers, auditions and a school website launch, collected in Studio.",
+      role: "",
+      process: "",
       outcome:
-        "A watchable collection of trailers, auditions and website launch footage, with further project context to follow.",
-      lessons:
-        "Project-specific creative decisions and personal reflections will accompany the finished media.",
+        "Watch CCK trailer, Farewell video, Vantara, TED-Ed auditions and the CIRS website launch.",
+      lessons: "",
     },
   },
   {
@@ -531,7 +529,8 @@ export const projectAssets: Record<
     afterUrl: null,
   },
   creative: {
-    previewUrl: null,
+    previewUrl: "/media/vantara-masquerade-poster.jpg",
+    previewCaption: "Vantara / Masquerade trailer · supplied film poster",
     draftUrl: null,
     beforeUrl: null,
     afterUrl: null,

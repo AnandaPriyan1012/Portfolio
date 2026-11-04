@@ -18,6 +18,7 @@ import {
 import "./case-study.css";
 import Signature from "./Signature";
 import CirsAdmissionsTour from "./CirsAdmissionsTour";
+import CaseFilmCollection from "./CaseFilmCollection";
 
 type Props = {
   project: Project;
@@ -25,6 +26,7 @@ type Props = {
   onBack: () => void;
   onContact: () => void;
   onProject?: (id: Project["id"]) => void;
+  onStudio?: () => void;
 };
 const stateLabel: Record<string, string> = {
   cirs: "Live website",
@@ -60,6 +62,7 @@ export default function CaseStudyPage({
   onBack,
   onContact,
   onProject,
+  onStudio,
 }: Props) {
   const [cut, setCut] = useState<"quick" | "director">("director");
   const [active, setActive] = useState("");
@@ -123,6 +126,8 @@ export default function CaseStudyPage({
         },
         { id: "lessons", title: "What I learned", body: project.story.lessons },
       ];
+  const hasLongerCut = detailed.some((section) => section.body.trim() &&
+    !["challenge", "role", "outcome"].includes(section.id));
   const sections = (
     cut === "director"
       ? detailed
@@ -366,7 +371,9 @@ export default function CaseStudyPage({
           </div>
         </section>
         <section className="case-media" aria-label="Project media">
-          {assets?.previewUrl && !mediaFailed ? (
+          {project.id === "creative" ? (
+            <CaseFilmCollection onStudio={onStudio} />
+          ) : assets?.previewUrl && !mediaFailed ? (
             <figure>
               <picture data-reader-media>
                 {assets.mobilePreviewUrl && (
@@ -475,7 +482,7 @@ export default function CaseStudyPage({
             </span>
           </aside>
           <div className="case-story-column">
-            <div className="case-cut-controls">
+            {hasLongerCut && <div className="case-cut-controls">
               <div>
                 <span className="case-micro">Reading length</span>
                 <p>Read the essentials, or follow each part.</p>
@@ -506,7 +513,7 @@ export default function CaseStudyPage({
                   Director’s cut
                 </button>
               </div>
-            </div>
+            </div>}
             <div className="case-stages">
               {sections.map((section, i) => (
                 <section
@@ -663,8 +670,6 @@ export default function CaseStudyPage({
           Return to portfolio
         </button>
         <span>
-          Designed around curiosity.
-          <br />
           <small>Built with AI assistance for Ananda Priyan.</small>
         </span>
         <a href="#case-top" aria-label="Back to top of case study">
