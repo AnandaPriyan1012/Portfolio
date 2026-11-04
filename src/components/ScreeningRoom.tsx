@@ -78,9 +78,11 @@ export default function ScreeningRoom({
     let focusFrame = 0;
 
     const selectAtMidpoint = () => {
-      // Radio-keyboard navigation and an already focused Watch action always
-      // take precedence over scroll-driven presentation.
+      // Keep the inert programme unchanged during playback so its Watch
+      // opener remains mounted for the dialog's focus restoration.
+      // Focused programme controls also take precedence over scrolling.
       if (
+        document.querySelector("dialog[open]") ||
         programme.contains(document.activeElement) ||
         projectionRef.current?.contains(document.activeElement)
       ) return;

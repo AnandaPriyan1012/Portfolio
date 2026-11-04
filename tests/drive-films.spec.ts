@@ -75,6 +75,48 @@ test('Farewell AA plays from its approved source while unavailable titles retain
   expect(requests).toEqual([farewell])
 })
 
+test('desktop playback preserves the chosen film and its opener until the modal closes', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  await stubDrive(page)
+  await studio(page)
+  await expect(page.locator('#studio')).toHaveAttribute('data-scroll-programme', 'true')
+  const cckRow = page.locator('[data-film-id="cck-trailer"]')
+  const farewellRow = page.locator('[data-film-id="farewell-video"]')
+  await cckRow.evaluate(node => {
+    const bounds = node.getBoundingClientRect()
+    window.scrollTo({ top: Math.max(0, scrollY + bounds.top + bounds.height / 2 - innerHeight / 2), behavior: 'instant' })
+  })
+  await expect.poll(() => cckRow.evaluate(node => {
+    const bounds = node.getBoundingClientRect()
+    return bounds.top <= innerHeight / 2 && bounds.bottom >= innerHeight / 2
+  })).toBe(true)
+  await page.getByRole('radio', { name: 'Farewell video', exact: true }).check()
+  const watch = page.getByRole('button', { name: 'Play selected film: Farewell video', exact: true })
+  await watch.click()
+  const dialog = page.getByRole('dialog', { name: 'Farewell video', exact: true })
+  await expect(dialog).toBeVisible()
+  // The projection's focusout callback runs on the next frame. While its
+  // background is inert it must not replace the chosen film with the row at
+  // the viewport midpoint, which would also remove the focus-return target.
+  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))))
+  await expect(page.locator('.screening-title-card h3')).toHaveText('Farewell video')
+  await expect(farewellRow.locator('input')).toBeChecked()
+  await page.keyboard.press('Escape')
+  await expect(dialog).toHaveCount(0)
+  await expect(watch).toBeFocused()
+
+  // Once focus leaves the projection, real scrolling can select titles again.
+  await page.getByRole('link', { name: 'Ananda Priyan, home', exact: true }).focus()
+  await expect(page.locator('.screening-title-card h3')).toHaveText('CCK trailer')
+  const distance = await farewellRow.evaluate(node => {
+    const bounds = node.getBoundingClientRect()
+    return bounds.top + bounds.height / 2 - innerHeight / 2
+  })
+  await page.mouse.move(10, 500)
+  await page.mouse.wheel(0, distance)
+  await expect(page.locator('.screening-title-card h3')).toHaveText('Farewell video')
+})
+
 test('Drive modal and controls fit 320px and 390px phones without automatic playback', async ({ page }) => {
   await stubDrive(page)
   for (const width of [320, 390]) {
