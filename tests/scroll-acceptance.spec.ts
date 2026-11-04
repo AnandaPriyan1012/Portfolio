@@ -193,11 +193,11 @@ async function syntheticFilms(page: Page) {
   await page.route('**/test-poster.svg', route => route.fulfill({ status: 200, contentType: 'image/svg+xml', body: poster }))
 }
 
-test('test-only ready film fixtures activate scroll-driven studio and an explicit muted player', async ({ page }) => {
+test('three synthetic overrides coexist with the two other approved films in a scroll-driven studio', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' })
   await syntheticFilms(page)
   await ready(page, '/studio')
-  await expect(page.locator('#studio .reel-frame')).toHaveCount(3)
+  await expect(page.locator('#studio .reel-frame')).toHaveCount(5)
   await expect(page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Studio', exact: true })).toBeVisible()
   await expect(page.locator('#studio video:not(.studio-atmosphere-film), dialog video')).toHaveCount(0)
   await expect(page.locator('#studio')).toBeInViewport()
@@ -205,11 +205,17 @@ test('test-only ready film fixtures activate scroll-driven studio and an explici
   const before = await page.locator('.studio-reel').evaluate(node => new DOMMatrixReadOnly(getComputedStyle(node).transform).m41)
   await page.mouse.wheel(0, 650)
   await expect.poll(() => page.locator('.studio-reel').evaluate(node => new DOMMatrixReadOnly(getComputedStyle(node).transform).m41)).toBeLessThan(before - 30)
-  await page.locator('.reel-frame').first().click()
+  // Forward scrolling has moved the earlier cards left. Enter the visible
+  // third fixture through its ordinary button, preserving real hit testing.
+  await wheelTo(page, '.studio-reel-window', 130)
+  const fixture = page.getByRole('button', { name: 'Play Vantara', exact: true })
+  await expect(fixture).toBeInViewport({ ratio: .2 })
+  await fixture.click()
   const player = page.locator('dialog video')
+  await expect.poll(() => player.evaluate(node => new URL((node as HTMLVideoElement).currentSrc).pathname)).toBe('/test-film.webm')
   await expect(player).toHaveAttribute('controls', '')
   await expect(page.getByRole('dialog')).toContainText('Synthetic playback fixture — not Ananda’s work')
-  expect(await player.evaluate(node => (node as HTMLVideoElement).muted)).toBe(true)
+  expect(await player.evaluate(node => (node as HTMLVideoElement).muted)).toBe(false)
   expect(await player.evaluate(node => (node as HTMLVideoElement).autoplay)).toBe(false)
   await expect.poll(() => player.evaluate(node => (node as HTMLVideoElement).readyState)).toBeGreaterThan(0)
   expect(await player.evaluate(node => (node as HTMLVideoElement).paused)).toBe(true)
@@ -223,11 +229,11 @@ test('test-only ready film fixtures activate scroll-driven studio and an explici
   await expect(os.getByRole('button', { name: 'Open Film', exact: true })).toBeVisible()
 })
 
-test('test-only ready film fixtures keep a static grid on phones and reduced motion', async ({ page }) => {
+test('three synthetic overrides and two approved films keep a static grid on phones and reduced motion', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 })
   await syntheticFilms(page)
   await ready(page, '/studio')
-  await expect(page.locator('#studio .reel-frame')).toHaveCount(3)
+  await expect(page.locator('#studio .reel-frame')).toHaveCount(5)
   expect(await page.locator('.studio-reel').evaluate(node => getComputedStyle(node).display)).toBe('grid')
   expect(await page.locator('.studio-reel').evaluate(node => getComputedStyle(node).transform)).toBe('none')
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390)
@@ -236,9 +242,9 @@ test('test-only ready film fixtures keep a static grid on phones and reduced mot
   expect(await page.locator('.studio-reel').evaluate(node => getComputedStyle(node).transform)).toBe('none')
 })
 
-test('an actual coarse-pointer phone uses native scrolling and switches to static reduced motion', async ({ browser, browserName }) => {
+test('an actual coarse-pointer phone uses native scrolling and switches to static reduced motion', async ({ browser, browserName, baseURL }) => {
   test.skip(browserName !== 'chromium', 'This check uses Chromium mobile-device emulation, not a claim of physical-device testing.')
-  const context = await browser.newContext({ baseURL: 'http://127.0.0.1:5173', viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, reducedMotion: 'no-preference' })
+  const context = await browser.newContext({ baseURL, viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, reducedMotion: 'no-preference' })
   const phone = await context.newPage()
   const errors: string[] = []
   phone.on('pageerror', error => errors.push(error.message))

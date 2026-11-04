@@ -1,92 +1,162 @@
-import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import "./atelier-states.css";
 
-const sessionKey = "ap-atelier-loader-v4";
-const openingDuration = 2400;
+const openingDuration = 1600;
+const staticDuration = 120;
+const pathnameEvent = "ap:pathnamechange";
 
-function shouldShowOpening(enabled: boolean) {
-  if (!enabled || matchMedia("(prefers-reduced-motion: reduce)").matches)
+type Opening = { visible: boolean; animated: boolean; generation: number; path: string };
+
+function pathname() {
+  return window.location.pathname.replace(/\/+$/, "") || "/";
+}
+function animationAllowed() {
+  if (matchMedia("(prefers-reduced-motion: reduce), (forced-colors: active)").matches)
     return false;
+  try {
+    if (localStorage.getItem("ap-motion") === "off") return false;
+  } catch { /* A private browser still gets a bounded opening. */ }
   const device = navigator as Navigator & {
     connection?: { saveData?: boolean };
     deviceMemory?: number;
   };
-  if (
-    device.connection?.saveData ||
-    (navigator.hardwareConcurrency > 0 && navigator.hardwareConcurrency <= 2) ||
-    (device.deviceMemory && device.deviceMemory <= 2)
-  )
-    return false;
-  try {
-    return !sessionStorage.getItem(sessionKey);
-  } catch {
-    // Access to the website must never depend on optional session storage.
-    return false;
-  }
+  return !device.connection?.saveData &&
+    !(device.hardwareConcurrency > 0 && device.hardwareConcurrency <= 2) &&
+    !(device.deviceMemory && device.deviceMemory <= 2);
 }
 
-/** A bounded signature film over an already usable page, never a loading gate. */
-export default function AtelierLoader({ enabled }: { enabled: boolean }) {
-  const [visible, setVisible] = useState(() => shouldShowOpening(enabled));
+/** A finite black signature stage; page layout, focus and scroll stay live beneath it. */
+export default function AtelierLoader() {
+  const [state, setState] = useState<Opening>(() => ({
+    visible: true, animated: animationAllowed(), generation: 0, path: pathname(),
+  }));
   const [logoFailed, setLogoFailed] = useState(false);
   const opening = useRef<HTMLDivElement>(null);
+  const skip = useRef<HTMLButtonElement>(null);
+  const lastPath = useRef(pathname());
+  const currentGeneration = useRef(0);
+  const beforeSkip = useRef<HTMLElement | null>(null);
   const signatureId = useId().replace(/:/g, "");
   const shapeId = `${signatureId}-shape`;
   const drawingId = `${signatureId}-drawing`;
   const foilId = `${signatureId}-foil`;
   const lightId = `${signatureId}-light`;
-  const dismiss = useCallback(() => {
-    // A timed title must not discard the keyboard user's current focus.
-    if (opening.current?.contains(document.activeElement)) {
-      document.querySelector<HTMLElement>(".site-header .wordmark")?.focus({
-        preventScroll: true,
-      });
+
+  const restoreFocus = useCallback(() => {
+    if (!opening.current?.contains(document.activeElement)) return;
+    const previous = beforeSkip.current;
+    if (previous?.isConnected && !opening.current.contains(previous) && previous !== document.body) {
+      previous.focus({ preventScroll: true });
+      return;
     }
-    setVisible(false);
+    const heading = document.querySelector<HTMLElement>("main h1, .notfound-page h1");
+    if (heading) {
+      heading.tabIndex = -1;
+      heading.focus({ preventScroll: true });
+    }
   }, []);
+  const dismiss = useCallback(() => {
+    restoreFocus();
+    setState((current) => current.visible ? { ...current, visible: false } : current);
+  }, [restoreFocus]);
 
   useEffect(() => {
-    if (!enabled) {
-      dismiss();
-      return;
-    }
-    if (!visible) return;
-    try {
-      sessionStorage.setItem(sessionKey, "seen");
-    } catch {
-      dismiss();
-      return;
-    }
-    const timeout = window.setTimeout(dismiss, openingDuration);
-    const reduced = matchMedia("(prefers-reduced-motion: reduce)");
+    const begin = (force = false) => {
+      const next = pathname();
+      if (!force && next === lastPath.current) return;
+      lastPath.current = next;
+      const generation = ++currentGeneration.current;
+      beforeSkip.current = null;
+      setLogoFailed(false);
+      setState({ visible: true, animated: animationAllowed(), generation, path: next });
+    };
+    const changed = () => begin();
+    const restored = (event: PageTransitionEvent) => { if (event.persisted) begin(true); };
+    window.addEventListener(pathnameEvent, changed);
+    window.addEventListener("popstate", changed);
+    window.addEventListener("pageshow", restored);
+    return () => {
+      window.removeEventListener(pathnameEvent, changed);
+      window.removeEventListener("popstate", changed);
+      window.removeEventListener("pageshow", restored);
+    };
+  }, []);
+
+  useLayoutEffect(() => {
+    if (!state.visible) return;
+    document.documentElement.dataset.opening = "active";
+    window.dispatchEvent(new CustomEvent("ap:openingchange", { detail: { active: true } }));
+    return () => {
+      delete document.documentElement.dataset.opening;
+      window.dispatchEvent(new CustomEvent("ap:openingchange", { detail: { active: false } }));
+    };
+  }, [state.visible]);
+
+  useLayoutEffect(() => {
+    if (!state.visible) return;
+    const generation = state.generation;
+    const timeout = window.setTimeout(() => {
+      if (currentGeneration.current !== generation) return;
+      restoreFocus();
+      setState((current) => current.generation === generation ? { ...current, visible: false } : current);
+    }, state.animated ? openingDuration : staticDuration);
+    const reduced = matchMedia("(prefers-reduced-motion: reduce), (forced-colors: active)");
     const respectMotion = () => {
-      if (reduced.matches) dismiss();
+      if (!animationAllowed()) setState((current) => ({ ...current, animated: false }));
     };
-    const skipOnEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") dismiss();
+    const key = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        dismiss();
+      } else if (event.key === "Tab") {
+        // Reveal the page and let native Tab continue from its existing focus
+        // target, including Contact→email and a restored case-origin link.
+        dismiss();
+      } else if (event.target !== skip.current &&
+        ["Enter", " ", "PageDown", "PageUp", "ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) {
+        dismiss();
+      }
     };
+    const hidden = () => { if (document.hidden) dismiss(); };
+    // Intent dismisses the stage; no body locks, Lenis stops or hidden scrolling.
+    const scrollIntent = () => dismiss();
     reduced.addEventListener("change", respectMotion);
-    window.addEventListener("keydown", skipOnEscape);
+    const preference = new MutationObserver(respectMotion);
+    preference.observe(document.documentElement, { attributes: true, attributeFilter: ["data-motion"] });
+    window.addEventListener("keydown", key, true);
+    window.addEventListener("wheel", scrollIntent, { passive: true, capture: true });
+    window.addEventListener("touchmove", scrollIntent, { passive: true, capture: true });
+    document.addEventListener("visibilitychange", hidden);
     return () => {
       window.clearTimeout(timeout);
       reduced.removeEventListener("change", respectMotion);
-      window.removeEventListener("keydown", skipOnEscape);
+      preference.disconnect();
+      window.removeEventListener("keydown", key, true);
+      window.removeEventListener("wheel", scrollIntent, true);
+      window.removeEventListener("touchmove", scrollIntent, true);
+      document.removeEventListener("visibilitychange", hidden);
     };
-  }, [visible, enabled, dismiss]);
+  }, [state.visible, state.generation, state.animated, dismiss, restoreFocus]);
 
-  if (!visible || !enabled) return null;
+  if (!state.visible) return null;
 
   return (
     <div
       ref={opening}
+      key={state.generation}
       className="state-opening"
+      role="region"
+      data-route={state.path}
+      data-mode={state.animated ? "animated" : "static"}
+      data-generation={state.generation}
+      data-cursor="none"
       aria-label="Ananda Priyan opening title"
       data-logo-failed={logoFailed || undefined}
     >
       <div className="state-opening-pane">
         <span className="state-opening-edge" aria-hidden="true" />
         <span className="state-opening-kicker" aria-hidden="true">
-          A portfolio by
+          Ananda Priyan
         </span>
         <div className="state-opening-mark" aria-hidden="true">
           {logoFailed ? (
@@ -192,11 +262,16 @@ export default function AtelierLoader({ enabled }: { enabled: boolean }) {
             </svg>
           )}
         </div>
-        <span className="state-opening-name">Ananda Priyan</span>
+        <span className="state-opening-name" aria-hidden="true">Web · Film · Community</span>
         <button
+          ref={skip}
           type="button"
           className="state-opening-skip"
           aria-keyshortcuts="Escape"
+          onFocus={(event) => {
+            if (event.relatedTarget instanceof HTMLElement && !opening.current?.contains(event.relatedTarget))
+              beforeSkip.current = event.relatedTarget;
+          }}
           onClick={dismiss}
         >
           Skip intro

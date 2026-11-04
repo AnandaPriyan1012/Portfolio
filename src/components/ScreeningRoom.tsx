@@ -1,15 +1,16 @@
 import { useEffect, useId, useRef, useState } from "react";
-import type { CSSProperties } from "react";
+import type { CSSProperties, FocusEvent } from "react";
 import { ArrowRight, Play } from "lucide-react";
 import type { creativeMedia } from "../content";
 import StudioAtmosphere from "./StudioAtmosphere";
 import { isApprovedDriveEmbed } from "./DriveFilmPlayer";
+import { hasApprovedNativePlayback } from "../media-readiness";
 
 type Film = (typeof creativeMedia)[number];
 
 function isReady(film: Film) {
   return Boolean(
-    (film.videoUrl && film.posterUrl && film.credits) ||
+    hasApprovedNativePlayback(film) ||
     isApprovedDriveEmbed(film.embedUrl),
   );
 }
@@ -31,11 +32,47 @@ export default function ScreeningRoom({
   const Heading = asPage ? "h1" : "h2";
   const programmeRef = useRef<HTMLDivElement>(null);
   const projectionRef = useRef<HTMLDivElement>(null);
+  const reelPointerDown = useRef(false);
+  const reelFocusFrame = useRef(0);
   const [selectedId, setSelectedId] = useState(films[0]?.id ?? "");
   const [scrollProgramme, setScrollProgramme] = useState(false);
   const selected = films.find((film) => film.id === selectedId) ?? films[0];
   const selectedIndex = films.findIndex((film) => film.id === selected?.id);
   const readyFilms = films.filter(isReady);
+  useEffect(() => {
+    const releasePointer = () => { reelPointerDown.current = false; };
+    window.addEventListener("pointerup", releasePointer, true);
+    window.addEventListener("pointercancel", releasePointer, true);
+    window.addEventListener("blur", releasePointer);
+    return () => {
+      cancelAnimationFrame(reelFocusFrame.current);
+      window.removeEventListener("pointerup", releasePointer, true);
+      window.removeEventListener("pointercancel", releasePointer, true);
+      window.removeEventListener("blur", releasePointer);
+    };
+  }, []);
+
+  function revealReadyFilm(event: FocusEvent<HTMLDivElement>) {
+    if (reelPointerDown.current) return;
+    const target = (event.target as HTMLElement).closest<HTMLButtonElement>(".reel-frame");
+    if (!target) return;
+    const host = event.currentTarget;
+    host.dataset.keyboardReveal = "true";
+    cancelAnimationFrame(reelFocusFrame.current);
+    reelFocusFrame.current = requestAnimationFrame(() => {
+      if (host.isConnected && document.activeElement === target)
+        target.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "instant" });
+    });
+  }
+
+  function restoreReelScroll(event: FocusEvent<HTMLDivElement>) {
+    const host = event.currentTarget;
+    if (event.relatedTarget instanceof Node && host.contains(event.relatedTarget)) return;
+    cancelAnimationFrame(reelFocusFrame.current);
+    host.scrollLeft = 0;
+    delete host.dataset.keyboardReveal;
+    reelPointerDown.current = false;
+  }
   const selectedPoster = selected && isReady(selected) ? selected.posterUrl : null;
 
   useEffect(() => {
@@ -219,7 +256,7 @@ export default function ScreeningRoom({
                 ? "Select a title to explore the collection."
                 : readyFilms.length === 0
                   ? "Original films and confirmed contribution credits are needed before playback can open here."
-                  : `${readyFilms.length} films available to watch. Drive players load only after you choose Watch film.`}
+                  : `${readyFilms.length} films available to watch. Players load only after you choose Watch film.`}
             </p>
           </div>
 
@@ -258,6 +295,7 @@ export default function ScreeningRoom({
                         </span>
                         <span className="screening-row-copy">
                           <span>{film.title}</span>
+                          {film.alternateTitle && <small>{film.alternateTitle}</small>}
                           <small>{film.type}{isReady(film) ? " · Available to watch" : ""}</small>
                         </span>
                         <span
@@ -274,7 +312,12 @@ export default function ScreeningRoom({
         </div>
 
         {readyFilms.length > 0 && (
-          <div className="studio-reel-window screening-ready-films">
+          <div
+            className="studio-reel-window screening-ready-films"
+            onFocusCapture={revealReadyFilm}
+            onBlurCapture={restoreReelScroll}
+            onPointerDownCapture={() => { reelPointerDown.current = true; }}
+          >
             <div className="studio-reel">
               {readyFilms.map((film) => (
                 <button

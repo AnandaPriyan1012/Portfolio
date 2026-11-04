@@ -79,45 +79,15 @@ export const siteContent = {
     heading: "Creative Studio",
     description: "A collection of trailers, films and creative work.",
     frames: [
-      {
-        id: "cck-trailer",
-        label: "CCK trailer",
-        category: "Trailer",
-        status: "Available to watch · Public trailer export, 2:22.",
-      },
-      {
-        id: "farewell-video",
-        label: "Farewell video",
-        category: "Video",
-        status: "Available to watch · Farewell AA.",
-      },
-      {
-        id: "masquerade-trailer",
-        label: "Masquerade trailer",
-        category: "Trailer",
-        status: "Original film and exact contribution credits to be supplied.",
-      },
-      {
-        id: "vantara",
-        label: "Vantara",
-        category: "Creative work",
-        status: "Original film and exact contribution credits to be supplied.",
-      },
-      {
-        id: "ted-ed-2026",
-        label: "TED-Ed 2026",
-        category: "Creative work",
-        status: "Original film and exact contribution credits to be supplied.",
-      },
-      {
-        id: "cirsmun-2026",
-        label: "CIRSMUN 2026",
-        category: "Creative work",
-        status: "Original film and exact contribution credits to be supplied.",
-      },
+      { id: "cck-trailer", label: "CCK trailer", category: "Trailer", status: "Available to watch · Public trailer export, 2:22." },
+      { id: "farewell-video", label: "Farewell video", category: "Video", status: "Available to watch · Farewell AA, 4:18." },
+      { id: "vantara", label: "Vantara", category: "Trailer", status: "Available to watch · Masquerade trailer, 2:46." },
+      { id: "ted-ed-2026", label: "TED-Ed auditions", category: "Auditions", status: "Available to watch · Final export, 0:32." },
+      { id: "cirs-website-launch", label: "CIRS website launch", category: "Launch film", status: "Available to watch · Website launch film, 0:38." },
+      { id: "cirsmun-2026", label: "CIRSMUN 2026", category: "Creative work", status: "Original film and exact contribution credits to be supplied." },
     ],
     mediaNote:
-      "Two films available to watch. More original films and credits will follow.",
+      "Watch the available films in the collection. More project context and credits will follow.",
   },
   community: {
     eyebrow: "Volunteer work · since 2023",
@@ -182,7 +152,7 @@ export const editorialCopy = {
     label: "Creative Studio",
     title: "Stories, frame by frame.",
     description:
-      "Trailers, films and creative work. Watch CCK trailer and Farewell AA; more original work and exact contribution credits will follow.",
+      "Trailers, auditions and website launch footage. Watch the available films in Studio; exact production credits will follow.",
   },
   about: {
     label: "About me",
@@ -347,19 +317,19 @@ export const projects: Project[] = [
     title: "Creative Studio",
     subtitle: "Ideas, frame by frame.",
     description:
-      "Trailers, films and editing work. A collection of six named pieces, including two films available through Google Drive.",
+      "Trailers, auditions and website launch footage, brought together in a watchable film collection.",
     tags: ["Storytelling", "Film & editing"],
     accent: "#b69d85",
     mediaStatus:
-      "CCK trailer and Farewell AA available to watch. More films, approved stills and exact credits pending.",
+      "Verified films and genuine posters are available in Studio. CIRSMUN 2026 is awaiting a matched source.",
     story: {
       challenge:
         "Bring creative storytelling work into a collection that gives each project room to be understood. Individual project briefs are still to be supplied.",
-      role: "Creative storyteller. Exact TED-Ed, TEDx and editing contributions, collaborators and credits are awaiting verification.",
+      role: "Creative storyteller. Exact production contributions, collaborators and credits are awaiting verification.",
       process:
-        "CCK trailer and Farewell AA can be viewed through their original Google Drive players. Timelines, behind-the-scenes material and exact contribution credits are still to be supplied.",
+        "The collection brings together trailers, auditions and a website launch. Supplied source exports are preserved, with exact production details still to follow.",
       outcome:
-        "Two films are available to watch. No audience, affiliation or production results are claimed without project details.",
+        "A watchable collection of trailers, auditions and website launch footage, with further project context to follow.",
       lessons:
         "Project-specific creative decisions and personal reflections will accompany the finished media.",
     },
@@ -403,7 +373,7 @@ export const aboutLanes = [
     label: "Storyteller",
     title: "Film, editing and digital storytelling.",
     description:
-      "My film collection includes the CCK trailer and Farewell AA. Digital storytelling is also part of my voluntary work at Vallalar Sathya Dharmasalai.",
+      "My film collection includes trailers, auditions and a CIRS website launch film. Digital storytelling is also part of my voluntary work at Vallalar Sathya Dharmasalai.",
     detail: "Explore the films in Studio.",
   },
   {
@@ -457,76 +427,67 @@ export const creativeMedia: {
   id: string;
   title: string;
   type: string;
+  alternateTitle?: string;
+  legacyIds?: string[];
   videoUrl: string | null;
   embedUrl?: string | null;
   posterUrl: string | null;
   caption: string;
   credits: string | null;
+  nativePlaybackApproved?: boolean;
 }[] = [
   {
-    id: "cck-trailer",
-    title: "CCK trailer",
-    type: "Trailer",
+    id: "cck-trailer", title: "CCK trailer", type: "Trailer",
     videoUrl: null,
-    embedUrl:
-      "https://drive.google.com/file/d/1FXMI8GoosQllewx87S8_lJDXRULukrYA/preview",
-    credits: null,
-    posterUrl: "/media/cck-trailer-still.jpg",
+    embedUrl: "https://drive.google.com/file/d/1FXMI8GoosQllewx87S8_lJDXRULukrYA/preview",
+    credits: null, posterUrl: "/media/cck-trailer-still.jpg",
     caption: "Trailer · Public export, 2:22.",
   },
   {
-    id: "farewell-video",
-    title: "Farewell video",
-    type: "Video",
+    id: "farewell-video", title: "Farewell video", type: "Video",
     videoUrl: null,
-    embedUrl:
-      "https://drive.google.com/file/d/1zxuYX1UAG8FwYlfYhWP-SAnP4jaRx5MN/preview",
-    credits: null,
-    posterUrl: "/media/farewell-film-still.jpg",
+    embedUrl: "https://drive.google.com/file/d/1zxuYX1UAG8FwYlfYhWP-SAnP4jaRx5MN/preview",
+    credits: null, posterUrl: "/media/farewell-film-still.jpg",
     caption: "Farewell AA · 4:18.",
   },
   {
-    id: "masquerade-trailer",
-    title: "Masquerade trailer",
-    type: "Trailer",
-    videoUrl: null,
-    credits: null,
-    posterUrl: null,
-    caption: "Original film and exact contribution credits to be supplied.",
+    id: "vantara", title: "Vantara", type: "Trailer",
+    alternateTitle: "Masquerade trailer", legacyIds: ["masquerade-trailer"],
+    videoUrl: "/media/vantara-masquerade-web-720p.mp4",
+    posterUrl: "/media/vantara-masquerade-poster.jpg",
+    credits: null, nativePlaybackApproved: true,
+    caption: "Masquerade trailer · 2:46.",
   },
   {
-    id: "vantara",
-    title: "Vantara",
-    type: "Creative work",
-    videoUrl: null,
-    credits: null,
-    posterUrl: null,
-    caption: "Original film and exact contribution credits to be supplied.",
+    id: "ted-ed-2026", title: "TED-Ed auditions", type: "Auditions",
+    videoUrl: "/media/teded-auditions-web.mp4",
+    posterUrl: "/media/teded-auditions-poster.jpg",
+    credits: null, nativePlaybackApproved: true,
+    caption: "Final auditions export · 0:32.",
   },
   {
-    id: "ted-ed-2026",
-    title: "TED-Ed 2026",
-    type: "Creative work",
-    videoUrl: null,
-    credits: null,
-    posterUrl: null,
-    caption: "Original film and exact contribution credits to be supplied.",
+    id: "cirs-website-launch", title: "CIRS website launch", type: "Launch film",
+    videoUrl: "/media/cirs-website-launch-web.mp4",
+    posterUrl: "/media/cirs-website-launch-poster.jpg",
+    credits: null, nativePlaybackApproved: true,
+    caption: "Website launch film · 0:38.",
   },
   {
-    id: "cirsmun-2026",
-    title: "CIRSMUN 2026",
-    type: "Creative work",
-    videoUrl: null,
-    credits: null,
-    posterUrl: null,
+    id: "cirsmun-2026", title: "CIRSMUN 2026", type: "Creative work",
+    videoUrl: null, credits: null, posterUrl: null,
     caption: "Original film and exact contribution credits to be supplied.",
   },
 ];
 
+/** Aliases resolve to one catalogue record and never create another film row. */
+export function resolveCreativeMedia(id: string) {
+  return creativeMedia.find((film) => film.id === id || film.legacyIds?.includes(id));
+}
+
 export const assetChecklist = [
   "CIRS desktop and mobile screenshots, including the Admissions page; exact contribution details, collaborators, dates and process notes.",
   "AirKart’s verified description, stage, role and research; any measured figures you want to replace the conceptual comparison.",
-  "Original films or approved embed URLs for Masquerade trailer, Vantara, TED-Ed 2026 and CIRSMUN 2026; approved thumbnails, dates and exact contribution credits for the film collection.",
+  "A matched source for CIRSMUN 2026, plus dates and exact contribution credits for the film collection. Vantara/Masquerade, the TED-Ed auditions final and the CIRS website launch film have approved local files and genuine posters.",
   "Approved Vallalar Sathya Dharmasalai photographs, digital-storytelling and social-media samples, website screenshots and its verified URL when ready; specific process notes and any verified outcomes you wish to publish.",
   "AccuFlow’s verified description, intended audience, contribution, current stage, genuine visuals and personal reflections; Dhvanyartha’s verified description, status and images.",
   "Certificates and context for both academic recognitions, including the organizer details for ICSC and award dates.",
@@ -712,7 +673,7 @@ export const discoveryContent = {
         y: 67,
         title: "Giving an idea a sequence.",
         description:
-          "TED-Ed, TEDx and editing work belong to the creative-production collection. CCK trailer and Farewell AA are available to watch; exact contribution credits will follow.",
+          "Trailers, auditions and website launch footage belong to the creative-production collection. Watch the available films in Studio; exact contribution credits will follow.",
         action: "Explore creative production",
         project: "creative",
       },
@@ -781,7 +742,7 @@ export const discoveryContent = {
         label: "Create",
         title: "Give the idea a different form.",
         description:
-          "A creative-production space for TED-Ed, TEDx and editing work. Watch CCK trailer and Farewell AA; more original films and credits will follow.",
+          "A creative-production space for trailers, auditions and website launch footage. Watch the available films; further project context and credits will follow.",
         action: "Open creative production",
         project: "creative",
       },
@@ -833,7 +794,7 @@ export const interfaceCopy = {
   media: {
     first: "The frame is ready.",
     second: "Choose a film.",
-    note: "CCK trailer and Farewell AA are available to watch. More original films and exact credits will follow.",
+    note: "Trailers, auditions and the CIRS website launch film are available to watch. Exact production credits will follow.",
   },
   lab: {
     title: "What if orders arrive more often?",

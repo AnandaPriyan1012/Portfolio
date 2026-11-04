@@ -25,8 +25,8 @@ async function capablePointer(page: Page) {
 async function intentionalHover(page: Page, target: Locator) {
   await page.evaluate(() => document.fonts.ready);
   await target.scrollIntoViewIfNeeded();
-  // Finish the scroll before moving the pointer. A final scroll event should
-  // hide the glass arrow, so implicit hover scrolling is not an activation.
+  // Finish the scroll before aiming at a moving target. Stationary-pointer
+  // scrolling now resamples the surface instead of hiding the arrow.
   await target.evaluate((node) => new Promise<void>((resolve, reject) => {
     let previous = { x: Number.NaN, y: Number.NaN, scrollY: Number.NaN };
     let stableFrames = 0;
@@ -136,7 +136,7 @@ for (const viewport of [
   });
 }
 
-test("case links have one ready crystal arrow and restore native state across routes", async ({ page }) => {
+test("case links retain one crystal arrow across clicks, routes and back navigation", async ({ page }) => {
   await capablePointer(page);
   await page.goto("/projects/cirs");
   const arrow = page.locator(".glass-arrow-cursor");
@@ -149,9 +149,8 @@ test("case links have one ready crystal arrow and restore native state across ro
   await expect(admissions).toHaveCSS("cursor", "none");
   await admissions.click();
   await expect(page).toHaveURL(/#case-cirs-admissions$/);
-  await expect(arrow).toHaveAttribute("data-visible", "false");
-  await expect(page.locator("html")).not.toHaveAttribute("data-glass-pointer", "visible");
-  await expect(admissions).not.toHaveCSS("cursor", "none");
+  await expect(arrow).toHaveAttribute("data-visible", "true");
+  await expect(page.locator("html")).toHaveAttribute("data-glass-pointer", "visible");
 
   const next = page.locator(".case-next-story");
   await intentionalHover(page, next);
@@ -160,15 +159,15 @@ test("case links have one ready crystal arrow and restore native state across ro
   await next.click();
   await expect(page).toHaveURL(/\/projects\/community$/);
   await expect(arrow).toHaveCount(1);
-  await expect(arrow).toHaveAttribute("data-visible", "false");
-  await expect(page.locator("html")).not.toHaveAttribute("data-glass-pointer", "visible");
+  await expect(arrow).toHaveAttribute("data-visible", "true");
+  await expect(page.locator("html")).toHaveAttribute("data-glass-pointer", "visible");
   expect(await oldTarget!.evaluate((node) => node.classList.contains("glass-pointer-target"))).toBe(false);
-  await expect(page.locator(".glass-pointer-target")).toHaveCount(0);
+  await expect(page.locator(".glass-pointer-target")).toHaveCount(1);
 
   await page.goBack();
   await expect(page.locator(".case-page")).toHaveAttribute("data-project", "cirs");
   await expect(arrow).toHaveCount(1);
-  await expect(page.locator("html")).not.toHaveAttribute("data-glass-pointer", "visible");
+  await expect(page.locator("html")).toHaveAttribute("data-glass-pointer", "visible");
   const back = page.getByRole("button", { name: "Back to portfolio", exact: true });
   await intentionalHover(page, back);
   await expect(arrow).toHaveAttribute("data-visible", "true");
@@ -176,9 +175,9 @@ test("case links have one ready crystal arrow and restore native state across ro
   await expect(page).toHaveURL(/\/work$/);
   await expect(page.locator(".case-page")).toHaveCount(0);
   await expect(arrow).toHaveCount(1);
-  await expect(arrow).toHaveAttribute("data-visible", "false");
-  await expect(page.locator("html")).not.toHaveAttribute("data-glass-pointer", "visible");
-  await expect(page.locator(".glass-pointer-target")).toHaveCount(0);
+  await expect(arrow).toHaveAttribute("data-visible", "true");
+  await expect(page.locator("html")).toHaveAttribute("data-glass-pointer", "visible");
+  await expect(page.locator(".glass-pointer-target")).toHaveCount(1);
 });
 
 test("system reduced motion keeps case links native and clears an active arrow", async ({ page }) => {

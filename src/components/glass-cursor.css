@@ -1,9 +1,18 @@
-/* The native pointer is hidden only on a positioned, actively enhanced target. */
-.glass-cursor.glass-arrow-cursor {
+/* One persistent portal can paint inside a native modal's top layer as well. */
+.glass-cursor-layer {
   position: fixed;
+  inset: 0;
+  z-index: 1900;
+  pointer-events: none;
+  overflow: hidden;
+  overflow: clip;
+}
+/* The native pointer is hidden only after this smaller arrow is positioned. */
+.glass-cursor.glass-arrow-cursor {
+  position: absolute;
   inset: 0 auto auto 0;
-  width: 28px;
-  height: 36px;
+  width: 21px;
+  height: 27px;
   z-index: 1900;
   pointer-events: none;
   user-select: none;
@@ -19,11 +28,11 @@
 .glass-arrow-optic {
   position: absolute;
   inset: 0;
-  width: 28px;
-  height: 36px;
+  width: 21px;
+  height: 27px;
 }
 .glass-arrow-shape {
-  transform-origin: 1px 1px;
+  transform-origin: 0.75px 0.75px;
   transition: transform 100ms ease-out;
 }
 .glass-arrow-optic {
@@ -65,11 +74,6 @@
   stroke-width: 0.45;
   stroke-linecap: round;
 }
-.glass-arrow-cursor[data-mode="view"] .glass-arrow-shape,
-.glass-arrow-cursor[data-mode="visit"] .glass-arrow-shape,
-.glass-arrow-cursor[data-mode="play"] .glass-arrow-shape {
-  transform: scale(1.08);
-}
 .glass-arrow-cursor[data-mode="view"] .glass-arrow-edge,
 .glass-arrow-cursor[data-mode="visit"] .glass-arrow-edge,
 .glass-arrow-cursor[data-mode="play"] .glass-arrow-edge {
@@ -84,7 +88,7 @@
 }
 :root[data-glass-pointer="visible"]
   .glass-pointer-target
-  :is(input, textarea, select, [contenteditable], video, iframe) {
+  :is(input, textarea, select, [contenteditable], video, audio, iframe, embed, object, [data-cursor="none"], [data-cursor="native"]) {
   cursor: revert !important;
 }
 @media (pointer: coarse),
@@ -103,5 +107,14 @@
 }
 :root[data-motion="off"][data-glass-pointer="visible"] .glass-pointer-target,
 :root[data-motion="off"][data-glass-pointer="visible"] .glass-pointer-target * {
+  cursor: revert !important;
+}
+/* The opaque opening sits above the glass arrow. Native remains visible now,
+   even before its layout-effect signal and the hit-test observer have run. */
+:root[data-opening="active"] .glass-cursor-layer {
+  visibility: hidden !important;
+}
+:root[data-opening="active"] .glass-pointer-target,
+:root[data-opening="active"] .glass-pointer-target * {
   cursor: revert !important;
 }

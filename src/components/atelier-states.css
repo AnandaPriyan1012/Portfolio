@@ -1,162 +1,90 @@
-/* Original signature alpha, drawn in four beats, then handed into the page. */
+/* Every pathname gets one finite exact-signature stage over opaque black. */
 .state-opening {
   position: fixed;
   inset: 0;
-  z-index: 70;
+  z-index: 10000;
   display: grid;
   place-items: center;
-  pointer-events: none;
-  background: radial-gradient(ellipse at 50% 50%, #070d10b8, #070d1024 72%, transparent);
-  perspective: 1200px;
-  animation:
-    state-title-arrive 0.24s ease-out both,
-    state-title-leave 0.32s 2.02s ease-in forwards;
+  width: 100%;
+  height: 100%;
+  min-height: 100svh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  isolation: isolate;
+  background: #000;
+  color: #f4e8cd;
+  opacity: 1;
+  pointer-events: auto;
+  forced-color-adjust: none;
 }
 .state-opening .state-opening-pane {
   position: relative;
-  width: min(520px, 88vw);
-  min-height: 360px;
-  padding: 31px 35px 54px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
-  border: 1px solid #e7dfcb38;
-  border-radius: 3px;
-  background:
-    linear-gradient(118deg, #eef5f011, transparent 34%, #ffffff04 70%),
-    linear-gradient(170deg, #11191bd9, #0c1115e8);
-  box-shadow:
-    0 38px 110px #0000004a,
-    8px 8px 0 -7px #c8d0ca29,
-    16px 16px 0 -15px #c8d0ca1c,
-    inset 0 1px 0 #ffffff24,
-    inset 0 -1px 0 #d6e1da0c;
-  backdrop-filter: blur(20px) saturate(0.75);
-  -webkit-backdrop-filter: blur(20px) saturate(0.75);
-  transform-origin: 50% 40%;
-  animation: state-pane-handoff 0.4s 1.94s cubic-bezier(0.4, 0, 0.8, 0.5) forwards;
+  width: 100%;
+  height: 100%;
+  padding: 40px 24px;
+  background: transparent;
 }
-.state-opening-pane::before {
-  content: "";
-  position: absolute;
-  inset: 9px;
-  border: 1px solid #e2e7dd0d;
-  pointer-events: none;
-}
-.state-opening-pane::after {
-  content: "";
-  position: absolute;
-  top: -40%;
-  bottom: -40%;
-  width: 24%;
-  left: -50%;
-  background: linear-gradient(90deg, transparent, #f4eddc12, transparent);
-  transform: skewX(-23deg);
-  pointer-events: none;
-  animation: state-pane-reflection 1.1s 1.14s ease-in-out both;
-}
-.state-opening-edge {
-  position: absolute;
-  top: 0;
-  left: -35%;
-  width: 35%;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, #fff0c8e0, transparent);
-  animation: state-edge-light 1.16s 0.96s ease-in-out both;
-}
+.state-opening .state-opening-pane::before,
+.state-opening .state-opening-pane::after { content: none; }
 .state-opening-kicker {
-  position: relative;
-  color: #c3c3b7;
-  font: 400 8px/1.6 var(--font-body, sans-serif);
-  letter-spacing: 0.3em;
+  color: #d8c7a1;
+  font: 500 10px/1.6 var(--font-body, sans-serif);
+  letter-spacing: .34em;
   text-transform: uppercase;
   opacity: 0;
-  animation: state-title-arrive 0.25s 0.1s ease-out forwards;
+  animation: state-title-arrive .22s .08s ease-out forwards;
 }
 .state-opening .state-opening-mark {
   position: relative;
-  width: 320px;
-  height: 213px;
-  margin-top: 2px;
   display: grid;
   place-items: center;
+  width: min(780px, 78vw);
+  aspect-ratio: 1.5;
+  margin: -10px 0 -18px;
+  transform-origin: 50% 55%;
+  animation: state-signature-stage 1.3s cubic-bezier(.18,.65,.2,1) both;
 }
-.state-signature-drawing {
-  display: block;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
+.state-signature-drawing { display: block; width: 100%; height: 100%; overflow: visible; }
+.state-signature-stroke { stroke-dasharray: 1 1; stroke-dashoffset: 1; animation: state-signature-draw .45s cubic-bezier(.3,.1,.25,1) forwards; }
+.state-signature-ascender { animation-delay: .06s; }
+.state-signature-crossbar { animation-duration: .5s; animation-delay: .24s; }
+.state-signature-downstroke { animation-duration: .32s; animation-delay: .56s; }
+.state-signature-flourish { animation-duration: .5s; animation-delay: .68s; }
+.state-signature-settle { opacity: 0; animation: state-title-arrive .14s .99s ease-out forwards; }
+.state-signature-glint { animation: state-signature-light .32s 1.1s ease-in-out both; }
+.state-opening .state-opening-name { color: #bbac8f; font: 400 9px/1.6 var(--font-body,sans-serif); letter-spacing: .24em; text-transform: uppercase; opacity: 0; animation: state-title-arrive .22s .98s ease-out forwards; }
+.state-opening-edge { position: absolute; bottom: 14%; left: 50%; width: min(230px, 38vw); height: 1px; background: linear-gradient(90deg,transparent,#bfa16c99,transparent); opacity: 0; transform: translateX(-50%) scaleX(.25); animation: state-opening-horizon .5s .92s ease-out forwards; }
+.state-opening .state-signature-fallback { color: #f2e4c7; font: 500 clamp(29px,4vw,58px)/1.2 var(--font-display,sans-serif); letter-spacing: -.05em; white-space: nowrap; }
+.state-opening[data-logo-failed] .state-opening-name { visibility: hidden; }
+.state-opening .state-opening-skip { position: fixed; right: max(24px,env(safe-area-inset-right)); bottom: max(22px,env(safe-area-inset-bottom)); min-width: 96px; min-height: 48px; padding: 12px 15px; border: 1px solid #e3d5b739; border-radius: 2px; background: #000; color: #e8ddc4; font: 400 11px/1.4 var(--font-body,sans-serif); letter-spacing: .04em; cursor: pointer; z-index: 1; }
+.state-opening .state-opening-skip:hover { border-color: #f5e7ca99; color: #fff8e8; }
+.state-opening .state-opening-skip:focus-visible { outline: 2px solid #f3dba6; outline-offset: 4px; }
+:root[data-opening="active"] .glass-cursor { visibility: hidden !important; }
+:root[data-opening="active"] .state-opening,
+:root[data-opening="active"] .state-opening * { cursor: default !important; }
+:root[data-opening="active"] .state-opening .state-opening-skip { cursor: pointer !important; }
+.state-opening[data-mode="static"] * { animation: none !important; }
+.state-opening[data-mode="static"] .state-opening-mark { transform: none; }
+.state-opening[data-mode="static"] :is(.state-signature-settle,.state-opening-kicker,.state-opening-name) { opacity: 1; }
+.state-opening[data-mode="static"] :is(.state-signature-glint,.state-opening-edge) { display: none; }
+@keyframes state-signature-draw { to { stroke-dashoffset: 0; } }
+@keyframes state-title-arrive { from { opacity: 0; } to { opacity: 1; } }
+@keyframes state-signature-stage { 0% { transform: translateY(16px) scale(.83); } 62% { transform: translateY(0) scale(1.015); } 100% { transform: translateY(0) scale(1); } }
+@keyframes state-signature-light { from { transform: translateX(0) skewX(-12deg); opacity: 0; } 15%,80% { opacity: 1; } to { transform: translateX(1130px) skewX(-12deg); opacity: 0; } }
+@keyframes state-opening-horizon { to { transform: translateX(-50%) scaleX(1); opacity: .7; } }
+@media (max-width:767px) {
+  .state-opening .state-opening-mark { width: min(620px,90vw); margin: 4px 0 -8px; }
+  .state-opening .state-opening-kicker { font-size: 9px; letter-spacing: .26em; }
+  .state-opening .state-opening-name { font-size: 8px; letter-spacing: .18em; }
+  .state-opening-edge { bottom: 21%; }
+  .state-opening .state-opening-skip { right: max(18px,env(safe-area-inset-right)); bottom: max(18px,env(safe-area-inset-bottom)); }
 }
-.state-signature-stroke {
-  stroke-dasharray: 1 1;
-  stroke-dashoffset: 1;
-  animation: state-signature-draw 0.72s cubic-bezier(0.3, 0.1, 0.25, 1) forwards;
-}
-.state-signature-ascender {
-  animation-delay: 0.1s;
-}
-.state-signature-crossbar {
-  animation-duration: 0.64s;
-  animation-delay: 0.48s;
-}
-.state-signature-downstroke {
-  animation-duration: 0.4s;
-  animation-delay: 0.96s;
-}
-.state-signature-flourish {
-  animation-duration: 0.64s;
-  animation-delay: 1.12s;
-}
-.state-signature-settle {
-  opacity: 0;
-  animation: state-title-arrive 0.18s 1.62s ease-out forwards;
-}
-.state-signature-glint {
-  animation: state-signature-light 0.56s 1.54s ease-in-out both;
-}
-.state-opening .state-signature-fallback {
-  color: #e6dcc5;
-  font: 400 27px/1.3 var(--font-body, sans-serif);
-  letter-spacing: -0.025em;
-  white-space: nowrap;
-}
-.state-opening .state-opening-name {
-  color: #e0d5be;
-  font: 400 10px/1.6 var(--font-body, sans-serif);
-  letter-spacing: 0.2em;
-  margin-top: 4px;
-  opacity: 0;
-  animation: state-title-arrive 0.3s 1.38s ease-out forwards;
-}
-.state-opening[data-logo-failed] .state-opening-name {
-  visibility: hidden;
-}
-.state-opening .state-opening-skip {
-  position: absolute;
-  right: 15px;
-  bottom: 6px;
-  min-width: 88px;
-  min-height: 44px;
-  padding: 8px 10px;
-  color: #c3c3b7;
-  font: 400 10px/1.4 var(--font-body, sans-serif);
-  letter-spacing: 0.06em;
-  pointer-events: auto;
-  background: transparent;
-  border: 0;
-  cursor: pointer;
-  z-index: 1;
-}
-.state-opening .state-opening-skip:hover {
-  color: #fff0dc;
-}
-.state-opening .state-opening-skip:focus-visible {
-  color: #fff0dc;
-  outline: 2px solid #e6cfab;
-  outline-offset: -5px;
-}
+
 .notfound-page {
   min-height: 100svh;
   padding: 32px 6% 25px;
@@ -250,51 +178,7 @@
   font: 400 11px/1.6 var(--font-body, sans-serif);
   text-align: right;
 }
-@keyframes state-edge-light {
-  to { left: 100%; }
-}
-@keyframes state-signature-draw {
-  to { stroke-dashoffset: 0; }
-}
-@keyframes state-signature-light {
-  from { transform: translateX(0) skewX(-12deg); opacity: 0; }
-  18% { opacity: 1; }
-  85% { opacity: 1; }
-  to { transform: translateX(1130px) skewX(-12deg); opacity: 0; }
-}
-@keyframes state-pane-handoff {
-  to { transform: translateZ(90px) translateY(-8px) rotateX(-3deg); }
-}
-@keyframes state-pane-reflection {
-  to { left: 130%; }
-}
-@keyframes state-title-arrive {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-@keyframes state-title-leave {
-  to { opacity: 0; visibility: hidden; }
-}
 @media (max-width: 767px) {
-  .state-opening .state-opening-pane {
-    width: min(350px, 88vw);
-    min-height: 302px;
-    padding: 26px 22px 48px;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-  }
-  .state-opening .state-opening-mark {
-    width: 258px;
-    max-width: 100%;
-    height: 172px;
-  }
-  .state-opening .state-opening-name {
-    font-size: 9px;
-    margin-top: 5px;
-  }
-  .state-opening .state-signature-fallback {
-    font-size: 21px;
-  }
   .notfound-page {
     padding: 20px 6% max(22px, env(safe-area-inset-bottom));
   }
@@ -329,15 +213,9 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .state-opening {
-    display: none !important;
-  }
-  .notfound-page *,
-  .notfound-page *::before {
-    animation: none !important;
-    transition: none !important;
-  }
-}
-:root[data-motion="off"] .state-opening {
-  display: none !important;
+  .state-opening * { animation: none !important; }
+  .state-opening .state-opening-mark { transform: none; }
+  .state-opening :is(.state-signature-settle,.state-opening-kicker,.state-opening-name) { opacity: 1; }
+  .state-opening :is(.state-signature-glint,.state-opening-edge) { display: none; }
+  .notfound-page *, .notfound-page *::before { animation: none !important; transition: none !important; }
 }

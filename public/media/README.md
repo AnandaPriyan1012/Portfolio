@@ -33,9 +33,19 @@ The ambient film loads only on capable fine-pointer desktops with motion enabled
 
 `farewell-film-still.jpg` is the actual frame at 0:05 from the approved public Farewell AA film ([preview](https://drive.google.com/file/d/1zxuYX1UAG8FwYlfYhWP-SAnP4jaRx5MN/preview)). It preserves the original letterboxed montage, including its existing photographic crops and soft edges. No people are identified. The 640 × 360 JPEG is 46,028 bytes, SHA-256 `47c270fc2f27826901933427c3ec3b98602140a1b3dbd073625392f4e24f2d75`. The complete original's verified duration is 258.005333 seconds (4:18).
 
-Both actual frames were decoded from the approved originals, scaled to 640 pixels wide and encoded as JPEGs only. No crop, colour grading, retouching, generated material or added text was applied. Exact source filenames, canonical IDs, source hashes, timestamps, dimensions, processing and duration evidence are in `docs/film-still-sources.json`. No original movie or transient signed URL is included in the repository.
+Both actual frames were decoded from the approved originals, scaled to 640 pixels wide and encoded as JPEGs only. No crop, colour grading, retouching, generated material or added text was applied. Exact source filenames, canonical IDs, source hashes, timestamps, dimensions, processing and duration evidence are in `docs/film-still-sources.json`. The complete CCK/Farewell source movies and transient signed URLs are not included in the repository.
 
 The stills are served locally in Studio, with CCK also used in the desktop Home Studio preview. They are identified as actual film stills and displayed in full with `object-fit: contain`. They imply no final-cut status or unconfirmed production credit. Each film remains click-to-play in its approved Drive player. Loading or selecting a local still makes no background request to Google.
+
+## Approved native films
+
+The catalogue now contains six unique entries and five playable films: the two Drive films above plus three approved local native films. CIRSMUN 2026 is the only unavailable entry.
+
+- **Vantara** is also known as **Masquerade trailer**. It appears once in the programme, with the alias visible. The full approved trailer is preserved, including its original black sections; those sections have not been trimmed away.
+- **TED-Ed auditions** uses the approved **FINAL export, 0:32**. The earlier April export is not used.
+- **CIRS website launch** is the approved **0:38** film.
+
+The playback files and genuine posters for these films are recorded in `docs/approved-native-films.json`, separately from the unchanged CCK/Farewell still manifest. These three films have explicit approval to show the owner’s supplied work through `nativePlaybackApproved: true`. Exact production credits remain `null`; filenames and images are not used to infer roles or collaborators. Local native players load only after an explicit Watch action. No Google request is needed to browse or play them; the two existing Drive films retain their click-to-play preview and direct fallback.
 
 ## Editor notes: missing originals
 
@@ -43,7 +53,7 @@ The stills are served locally in Studio, with CCK also used in the desktop Home 
 
 - Vallalar documentary photographs and social-media examples remain unavailable. Its website-preview screenshot is labelled accurately.
 - AccuFlow's exact personal contribution and reflection remain unconfirmed. The actual website prototype establishes its interface and prototype stage.
-- CCK trailer and Farewell AA have approved public Drive players and genuine stills. Masquerade trailer, Vantara, TED-Ed 2026 and CIRSMUN 2026 remain unavailable for playback. Exact contribution credits are still unconfirmed; none are invented. Native video playback requires videoUrl, posterUrl and confirmed credits together.
+- CCK trailer and Farewell AA retain their approved public Drive players and genuine stills. Vantara (Masquerade trailer), TED-Ed auditions and CIRS website launch use approved local native films and real posters. CIRSMUN 2026 remains unavailable. Native playback requires an approved video, actual poster and either confirmed contribution credits or explicit approval to show the owner’s supplied film; unknown credits stay `null`.
 - No genuine before/draft images or director's montage have been supplied. Process controls and the director's action remain hidden until those originals exist.
 
 Do not substitute generated work, staged charity imagery or fictional product interfaces for missing originals.

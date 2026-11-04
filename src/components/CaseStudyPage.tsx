@@ -17,7 +17,6 @@ import {
 } from "../content";
 import "./case-study.css";
 import Signature from "./Signature";
-import GlassCursor from "./GlassCursor";
 import CirsAdmissionsTour from "./CirsAdmissionsTour";
 
 type Props = {
@@ -290,7 +289,6 @@ export default function CaseStudyPage({
       data-reader-motion={motionEnabled ? "on" : "off"}
       style={{ "--case-accent": project.accent } as CSSProperties}
     >
-      <GlassCursor key={project.id} enabled={motionEnabled} />
       <a className="case-skip" href="#case-body">
         Skip to case study
       </a>

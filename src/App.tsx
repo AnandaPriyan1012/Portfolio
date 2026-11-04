@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { X, Plus, Sun, Moon } from "lucide-react";
 import {
@@ -7,6 +7,7 @@ import {
   projectAssets,
   projectStatus,
   creativeMedia,
+  resolveCreativeMedia,
   achievements,
   experiments,
   experienceContent,
@@ -14,11 +15,11 @@ import {
   directorsCut,
   scrollStoryCopy,
 } from "./content";
+import { hasApprovedNativePlayback } from "./media-readiness";
 import type { Project } from "./content";
 import CaseStudyPage from "./components/CaseStudyPage";
 import OSExperience from "./components/OSExperience";
 import GlassMaterial from "./components/GlassMaterial";
-import AtelierLoader from "./components/AtelierLoader";
 import NotFound from "./components/NotFound";
 import useScrollStory from "./animation/useScrollStory";
 import useActiveSection from "./animation/useActiveSection";
@@ -119,7 +120,7 @@ function Dialog({
   children: ReactNode;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
-  useEffect(() => {
+  useLayoutEffect(() => {
     const previous = document.activeElement as HTMLElement | null;
     const dialog = ref.current!;
     dialog.showModal();
@@ -466,7 +467,7 @@ export default function App() {
     modal?.type === "media"
       ? modal.id === "directors-cut"
         ? directorsCut
-        : creativeMedia.find((item) => item.id === modal.id)
+        : resolveCreativeMedia(modal.id)
       : undefined;
   const airkart = projects.find((item) => item.id === "airkart")!;
   const mainRef = useRef<HTMLElement>(null);
@@ -494,6 +495,20 @@ export default function App() {
     window.addEventListener("popstate", back);
     return () => window.removeEventListener("popstate", back);
   }, [route, storyMotion.beforeNavigate]);
+  useEffect(() => {
+    const coverDialogs = (event: Event) => {
+      if (!(event as CustomEvent<{ active: boolean }>).detail?.active) return;
+      // The persistent opening can commit before App's history update. Close
+      // the native top layer in that same layout phase so no film frame leaks.
+      document.querySelectorAll<HTMLDialogElement>(".atelier-dialog[open]").forEach((dialog) => {
+        dialog.querySelectorAll<HTMLMediaElement>("video, audio").forEach((media) => media.pause());
+        dialog.close();
+      });
+      setModal(null);
+    };
+    window.addEventListener("ap:openingchange", coverDialogs);
+    return () => window.removeEventListener("ap:openingchange", coverDialogs);
+  }, []);
   useEffect(() => {
     setCut("quick");
     setQuestion(null);
@@ -543,6 +558,7 @@ export default function App() {
     setOsOpen(false);
     history.pushState({}, "", destination);
     setRoute(normalizedPath());
+    window.dispatchEvent(new Event("ap:pathnamechange"));
     requestAnimationFrame(() => {
       if (window.location.hash) storyMotion.scrollTo(window.location.hash);
       else storyMotion.restoreTo(restoreTop, next);
@@ -602,22 +618,32 @@ export default function App() {
     setLane("swimmer");
     navigate("/about#about");
   }
-  if (isNotFound) return <NotFound onHome={() => navigate("/")} />;
+  if (isNotFound)
+    return (
+      <>
+        <GlassCursor enabled={preferences.motion} />
+        <NotFound onHome={() => navigate("/")} />
+      </>
+    );
   if (currentProject)
     return (
-      <CaseStudyPage
-        project={currentProject}
-        motionEnabled={preferences.motion}
-        onBack={home}
-        onContact={() => {
-          navigate("/about#contact");
-        }}
-        onProject={(id) => navigate(`/projects/${id}`)}
-      />
+      <>
+        <GlassCursor enabled={preferences.motion} />
+        <CaseStudyPage
+          project={currentProject}
+          motionEnabled={preferences.motion}
+          onBack={home}
+          onContact={() => {
+            navigate("/about#contact");
+          }}
+          onProject={(id) => navigate(`/projects/${id}`)}
+        />
+      </>
     );
 
   return (
     <>
+      <GlassCursor enabled={preferences.motion} />
       <a className="skip-link" href="#main">
         Skip to content
       </a>
@@ -628,11 +654,6 @@ export default function App() {
         onMenuToggle={() => setMenuOpen(!menuOpen)}
         onNavigate={navigateSection}
         onHome={() => navigate("/")}
-      />
-      <AtelierLoader enabled={preferences.motion} />
-      <GlassCursor
-        key={mainPage}
-        enabled={preferences.motion && !modal && !osOpen && !tourOpen}
       />
       <main id="main" ref={mainRef} data-page={mainPage}>
         <GlassMaterial />
@@ -1085,19 +1106,22 @@ export default function App() {
             <>
               <p className="section-label">Creative Studio</p>
               <h2 className="dialog-title">{media.title}</h2>
-              {media.videoUrl && media.posterUrl && media.credits ? (
-                <video
-                  className="actual-video"
-                  aria-label={`${media.title} video player`}
-                  controls
-                  playsInline
-                  muted
-                  preload="metadata"
-                  poster={media.posterUrl ?? undefined}
-                >
-                  <source src={media.videoUrl} />
-                  Your browser does not support video playback.
-                </video>
+              {hasApprovedNativePlayback(media) ? (
+                <>
+                  <video
+                    className="actual-video"
+                    aria-label={`${media.title} video player`}
+                    controls
+                    playsInline
+                    tabIndex={0}
+                    preload="metadata"
+                    poster={media.posterUrl ?? undefined}
+                  >
+                    <source src={media.videoUrl} />
+                    Your browser does not support video playback.
+                  </video>
+                  <p className="dialog-introduction">{media.caption}</p>
+                </>
               ) : "embedUrl" in media &&
                 isApprovedDriveEmbed(media.embedUrl) ? (
                 <>
@@ -1113,7 +1137,7 @@ export default function App() {
                   <p>{media.caption}</p>
                 </div>
               )}
-              <p className="dialog-introduction">{media.credits}</p>
+              {media.credits && <p className="dialog-introduction">{media.credits}</p>}
             </>
           )}
           {modal.type === "contact" && (

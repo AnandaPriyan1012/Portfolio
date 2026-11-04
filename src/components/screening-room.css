@@ -380,6 +380,17 @@
   background: #0b1011;
   border-color: #b7c5bb35;
 }
+.screening-ready-films[data-keyboard-reveal="true"] {
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.screening-ready-films[data-keyboard-reveal="true"]::-webkit-scrollbar {
+  display: none;
+}
+.screening-ready-films[data-keyboard-reveal="true"] .studio-reel {
+  transform: none !important;
+  animation: none !important;
+}
 .screening-room .reel-frame {
   background: #11191b;
   border-color: #c9d3c43b;

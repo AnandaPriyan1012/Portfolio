@@ -28,9 +28,20 @@ test('real school work leads, confirmed contact is public, and unavailable films
   await page.goto('/studio')
   await expect(page.locator('h1')).toHaveCount(1)
   await expect(page.locator('.studio-collection-index li')).toHaveCount(6)
+  const programme = page.locator('.screening-programme [data-film-id]')
+  expect(await programme.evaluateAll(nodes => nodes.map(node => (node as HTMLElement).dataset.filmId))).toEqual([
+    'cck-trailer', 'farewell-video', 'vantara', 'ted-ed-2026', 'cirs-website-launch', 'cirsmun-2026',
+  ])
+  expect(await page.getByRole('radio').evaluateAll(nodes => nodes.map(node => node.getAttribute('aria-label')))).toEqual([
+    'CCK trailer', 'Farewell video', 'Vantara', 'TED-Ed auditions', 'CIRS website launch', 'CIRSMUN 2026',
+  ])
+  await expect(page.locator('[data-film-id="masquerade-trailer"]')).toHaveCount(0)
+  await page.getByRole('radio', { name: 'Vantara', exact: true }).check()
+  await expect(page.locator('.screening-title-card h3')).toHaveText('Vantara')
+  await expect(page.locator('.screening-film-note')).toContainText('Masquerade trailer')
   await expect(page.locator('#studio video:not(.studio-atmosphere-film), iframe, .draft-toggle, .process-reveal, .atelier-opening')).toHaveCount(0)
-  await expect(page.locator('#studio .reel-frame')).toHaveCount(2)
-  await page.getByRole('radio', { name: 'Masquerade trailer', exact: true }).check()
+  await expect(page.locator('#studio .reel-frame')).toHaveCount(5)
+  await page.getByRole('radio', { name: 'CIRSMUN 2026', exact: true }).check()
   await expect(page.locator('#studio .screening-play')).toHaveCount(0)
   await expect(page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Studio', exact: true })).toBeVisible()
   await page.goto('/about')
@@ -183,7 +194,7 @@ test('silent tour can be paused and followed to the actual community story', asy
   await expect(page.getByRole('dialog', { name: 'Vallalar Sathya Dharmasalai', exact: true })).toBeVisible()
 })
 
-test('interactive media uses a ready glass arrow and restores the native pointer on fallback', async ({ page }) => {
+test('interactive media and page surfaces share the glass arrow and restore native on fallback', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' })
   await page.goto('/')
   await page.locator('.state-opening').waitFor({ state: 'detached' })
@@ -195,13 +206,14 @@ test('interactive media uses a ready glass arrow and restores the native pointer
   expect(await arrow.evaluate(node => getComputedStyle(node).pointerEvents)).toBe('none')
   expect(await page.locator('.cirs-browser-body').evaluate(node => getComputedStyle(node).cursor)).toBe('none')
   await page.mouse.move(15, 500)
-  await expect(arrow).toHaveAttribute('data-visible', 'false')
-  expect(await page.locator('.cirs-browser-body').evaluate(node => getComputedStyle(node).cursor)).not.toBe('none')
+  await expect(arrow).toHaveAttribute('data-visible', 'true')
+  await expect(arrow).toHaveAttribute('data-mode', 'surface')
+  expect(await page.evaluate(() => getComputedStyle(document.elementFromPoint(15, 500)!).cursor)).toBe('none')
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await expect(page.locator('.glass-cursor')).toHaveCount(0)
 })
 
-test('a stationary pointer returns to native after flipping the card and resumes glass on movement', async ({ page }) => {
+test('a stationary glass pointer follows the card flip without requiring movement', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' })
   await page.goto('/about#contact')
   await page.locator('.state-opening').waitFor({ state: 'detached' })
@@ -215,11 +227,8 @@ test('a stationary pointer returns to native after flipping the card and resumes
   await expect(arrow).toHaveAttribute('data-visible', 'true')
   await page.mouse.click(point.x, point.y)
   await expect(card).toHaveAttribute('data-side', 'contact')
-  await expect(arrow).toHaveAttribute('data-visible', 'false')
-  await expect(page.locator('html')).not.toHaveAttribute('data-glass-pointer', 'visible')
   await expect.poll(() => page.evaluate(({ x, y }) => document.elementFromPoint(x, y)?.closest('button')?.getAttribute('aria-label'), point)).toBe('Show signature side')
-  expect(await page.evaluate(({ x, y }) => getComputedStyle(document.elementFromPoint(x, y)!).cursor, point)).not.toBe('none')
-  await page.mouse.move(point.x + 1, point.y + 1)
   await expect(arrow).toHaveAttribute('data-visible', 'true')
   await expect(page.locator('html')).toHaveAttribute('data-glass-pointer', 'visible')
+  expect(await page.evaluate(({ x, y }) => getComputedStyle(document.elementFromPoint(x, y)!).cursor, point)).toBe('none')
 })

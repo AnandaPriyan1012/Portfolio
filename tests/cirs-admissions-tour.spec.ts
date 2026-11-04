@@ -135,7 +135,8 @@ test("capable desktop uses a finite outline transition and one arrow on annotati
   await expect(page.locator(".glass-arrow-cursor")).toHaveAttribute("data-visible", "true");
   await process.click();
   await assertAligned(page, targets[1]);
-  await expect(page.locator("html")).not.toHaveAttribute("data-glass-pointer", "visible");
+  await expect(page.locator("html")).toHaveAttribute("data-glass-pointer", "visible");
+  await expect(page.locator(".glass-arrow-cursor")).toHaveCount(1);
   expect(await tour.evaluate((element) => element.getAnimations({ subtree: true }).some((animation) => animation.playState === "running"))).toBe(false);
 });
 

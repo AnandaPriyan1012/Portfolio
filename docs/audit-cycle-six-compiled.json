@@ -1,0 +1,613 @@
+{
+  "base": "http://127.0.0.1:5174",
+  "phase": "compiled-final",
+  "bundle": "index-C-DFhNut.js",
+  "date": "2026-11-04T16:40:57.125Z",
+  "routes": [
+    {
+      "path": "/",
+      "width": 1440,
+      "status": 200,
+      "heading": "Ananda\nPriyan",
+      "scrollWidth": 1440
+    },
+    {
+      "path": "/work",
+      "width": 1440,
+      "status": 200,
+      "heading": "Selected work.",
+      "scrollWidth": 1440
+    },
+    {
+      "path": "/studio",
+      "width": 1440,
+      "status": 200,
+      "heading": "The screening room.",
+      "scrollWidth": 1440
+    },
+    {
+      "path": "/about",
+      "width": 1440,
+      "status": 200,
+      "heading": "Ananda Priyan.",
+      "scrollWidth": 1440
+    },
+    {
+      "path": "/",
+      "width": 390,
+      "status": 200,
+      "heading": "Ananda\nPriyan",
+      "scrollWidth": 390
+    },
+    {
+      "path": "/work",
+      "width": 390,
+      "status": 200,
+      "heading": "Selected work.",
+      "scrollWidth": 390
+    },
+    {
+      "path": "/studio",
+      "width": 390,
+      "status": 200,
+      "heading": "The screening room.",
+      "scrollWidth": 390
+    },
+    {
+      "path": "/about",
+      "width": 390,
+      "status": 200,
+      "heading": "Ananda Priyan.",
+      "scrollWidth": 390
+    }
+  ],
+  "checks": [
+    {
+      "name": "Three local films and five playable entries remain MP4/Google-request-free before Watch 1440px",
+      "nativeRequestsBeforeWatch": [],
+      "googleBeforeWatch": [],
+      "canonicalVantaraRows": 1
+    },
+    {
+      "name": "All three approved real films decode and advance with native controls; close stops retained videos 1440px",
+      "plays": [
+        {
+          "film": "vantara",
+          "input": "Trusted native Space play/pause",
+          "before": {
+            "src": "/media/vantara-masquerade-web-720p.mp4",
+            "duration": 166.42,
+            "size": [
+              1280,
+              720
+            ],
+            "readyState": 4,
+            "controls": true,
+            "playsInline": true,
+            "preload": "metadata",
+            "tabIndex": 0,
+            "autoplay": false,
+            "muted": false,
+            "paused": true,
+            "time": 0,
+            "frames": 0,
+            "error": null
+          },
+          "playing": {
+            "src": "/media/vantara-masquerade-web-720p.mp4",
+            "duration": 166.42,
+            "size": [
+              1280,
+              720
+            ],
+            "readyState": 4,
+            "controls": true,
+            "playsInline": true,
+            "preload": "metadata",
+            "tabIndex": 0,
+            "autoplay": false,
+            "muted": false,
+            "paused": false,
+            "time": 0.786865,
+            "frames": 23,
+            "error": null
+          },
+          "scriptPlayCalls": 0,
+          "retainedAfterClose": {
+            "connected": false,
+            "time": 0.809763,
+            "paused": true,
+            "error": null
+          },
+          "laterTime": 0.809763
+        },
+        {
+          "film": "ted-ed-2026",
+          "input": "Trusted native Space play/pause",
+          "before": {
+            "src": "/media/teded-auditions-web.mp4",
+            "duration": 31.722667,
+            "size": [
+              1920,
+              1080
+            ],
+            "readyState": 4,
+            "controls": true,
+            "playsInline": true,
+            "preload": "metadata",
+            "tabIndex": 0,
+            "autoplay": false,
+            "muted": false,
+            "paused": true,
+            "time": 0,
+            "frames": 0,
+            "error": null
+          },
+          "playing": {
+            "src": "/media/teded-auditions-web.mp4",
+            "duration": 31.722667,
+            "size": [
+              1920,
+              1080
+            ],
+            "readyState": 4,
+            "controls": true,
+            "playsInline": true,
+            "preload": "metadata",
+            "tabIndex": 0,
+            "autoplay": false,
+            "muted": false,
+            "paused": false,
+            "time": 0.314868,
+            "frames": 11,
+            "error": null
+          },
+          "scriptPlayCalls": 0,
+          "retainedAfterClose": {
+            "connected": false,
+            "time": 0.336521,
+            "paused": true,
+            "error": null
+          },
+          "laterTime": 0.336521
+        },
+        {
+          "film": "cirs-website-launch",
+          "input": "Trusted native Space play/pause",
+          "before": {
+            "src": "/media/cirs-website-launch-web.mp4",
+            "duration": 38,
+            "size": [
+              1920,
+              1080
+            ],
+            "readyState": 4,
+            "controls": true,
+            "playsInline": true,
+            "preload": "metadata",
+            "tabIndex": 0,
+            "autoplay": false,
+            "muted": false,
+            "paused": true,
+            "time": 0,
+            "frames": 0,
+            "error": null
+          },
+          "playing": {
+            "src": "/media/cirs-website-launch-web.mp4",
+            "duration": 38,
+            "size": [
+              1920,
+              1080
+            ],
+            "readyState": 4,
+            "controls": true,
+            "playsInline": true,
+            "preload": "metadata",
+            "tabIndex": 0,
+            "autoplay": false,
+            "muted": false,
+            "paused": false,
+            "time": 0.760808,
+            "frames": 47,
+            "error": null
+          },
+          "scriptPlayCalls": 0,
+          "retainedAfterClose": {
+            "connected": false,
+            "time": 0.860692,
+            "paused": true,
+            "error": null
+          },
+          "laterTime": 0.860692
+        }
+      ],
+      "requests": [
+        {
+          "path": "/media/vantara-masquerade-web-720p.mp4",
+          "range": "bytes=0-"
+        },
+        {
+          "path": "/media/vantara-masquerade-web-720p.mp4",
+          "range": "bytes=917504-"
+        },
+        {
+          "path": "/media/teded-auditions-web.mp4",
+          "range": "bytes=0-"
+        },
+        {
+          "path": "/media/teded-auditions-web.mp4",
+          "range": "bytes=327680-"
+        },
+        {
+          "path": "/media/cirs-website-launch-web.mp4",
+          "range": "bytes=0-"
+        },
+        {
+          "path": "/media/cirs-website-launch-web.mp4",
+          "range": "bytes=327680-"
+        }
+      ],
+      "google": [],
+      "completeFilmDecodeClaim": false
+    },
+    {
+      "name": "Native reel opener remains focused and visible after close; browser Back stops detached playback before route opening",
+      "record": {
+        "focusedNativeOpener": true,
+        "visibleAfterClose": true
+      },
+      "firstHeldPaused": true,
+      "backStopped": {
+        "connected": false,
+        "paused": true,
+        "time": 0.316885
+      }
+    },
+    {
+      "name": "Six explicit About→case→return trips restore real origin link, lane and short-desktop saved Y",
+      "values": [
+        {
+          "lane": "Builder",
+          "path": "cirs",
+          "pass": 0,
+          "savedY": 589,
+          "returnedY": 589,
+          "focusedNativeLink": true
+        },
+        {
+          "lane": "Builder",
+          "path": "cirs",
+          "pass": 1,
+          "savedY": 589,
+          "returnedY": 589,
+          "focusedNativeLink": true
+        },
+        {
+          "lane": "Curious Mind",
+          "path": "accuflow",
+          "pass": 0,
+          "savedY": 564,
+          "returnedY": 564,
+          "focusedNativeLink": true
+        },
+        {
+          "lane": "Curious Mind",
+          "path": "accuflow",
+          "pass": 1,
+          "savedY": 564,
+          "returnedY": 564,
+          "focusedNativeLink": true
+        },
+        {
+          "lane": "Builder",
+          "path": "community",
+          "pass": 0,
+          "savedY": 637,
+          "returnedY": 637,
+          "focusedNativeLink": true
+        },
+        {
+          "lane": "Builder",
+          "path": "community",
+          "pass": 1,
+          "savedY": 637,
+          "returnedY": 637,
+          "focusedNativeLink": true
+        }
+      ]
+    },
+    {
+      "name": "Curious→AirKart hands keyboard to native summary with Enter and Space disclosure",
+      "passed": true
+    },
+    {
+      "name": "Contact anchor keyboard h2→email→card 1440px",
+      "passed": true
+    },
+    {
+      "name": "Preserved native contact card keyboard flip/inert and real vCard download 1440px",
+      "bytes": 126,
+      "sha256": "d3b50a3f19f04f161dfe179bf823c86e81a36adb93b399d8e98dd5195f2dd89e"
+    },
+    {
+      "name": "Three local films and five playable entries remain MP4/Google-request-free before Watch 390px",
+      "nativeRequestsBeforeWatch": [],
+      "googleBeforeWatch": [],
+      "canonicalVantaraRows": 1
+    },
+    {
+      "name": "All three approved real films decode and advance with native controls; close stops retained videos 390px",
+      "plays": [
+        {
+          "film": "vantara",
+          "input": "Trusted native-control touchscreen tap",
+          "before": {
+            "src": "/media/vantara-masquerade-web-720p.mp4",
+            "duration": 166.42,
+            "size": [
+              1280,
+              720
+            ],
+            "readyState": 4,
+            "controls": true,
+            "playsInline": true,
+            "preload": "metadata",
+            "tabIndex": 0,
+            "autoplay": false,
+            "muted": false,
+            "paused": true,
+            "time": 0,
+            "frames": 0,
+            "error": null
+          },
+          "playing": {
+            "src": "/media/vantara-masquerade-web-720p.mp4",
+            "duration": 166.42,
+            "size": [
+              1280,
+              720
+            ],
+            "readyState": 4,
+            "controls": true,
+            "playsInline": true,
+            "preload": "metadata",
+            "tabIndex": 0,
+            "autoplay": false,
+            "muted": false,
+            "paused": false,
+            "time": 0.342894,
+            "frames": 13,
+            "error": null
+          },
+          "scriptPlayCalls": 0,
+          "retainedAfterClose": {
+            "connected": false,
+            "time": 0.405803,
+            "paused": true,
+            "error": null
+          },
+          "laterTime": 0.405803
+        },
+        {
+          "film": "ted-ed-2026",
+          "input": "Trusted native-control touchscreen tap",
+          "before": {
+            "src": "/media/teded-auditions-web.mp4",
+            "duration": 31.722667,
+            "size": [
+              1920,
+              1080
+            ],
+            "readyState": 4,
+            "controls": true,
+            "playsInline": true,
+            "preload": "metadata",
+            "tabIndex": 0,
+            "autoplay": false,
+            "muted": false,
+            "paused": true,
+            "time": 0,
+            "frames": 0,
+            "error": null
+          },
+          "playing": {
+            "src": "/media/teded-auditions-web.mp4",
+            "duration": 31.722667,
+            "size": [
+              1920,
+              1080
+            ],
+            "readyState": 4,
+            "controls": true,
+            "playsInline": true,
+            "preload": "metadata",
+            "tabIndex": 0,
+            "autoplay": false,
+            "muted": false,
+            "paused": false,
+            "time": 0.321045,
+            "frames": 12,
+            "error": null
+          },
+          "scriptPlayCalls": 0,
+          "retainedAfterClose": {
+            "connected": false,
+            "time": 0.374291,
+            "paused": true,
+            "error": null
+          },
+          "laterTime": 0.374291
+        },
+        {
+          "film": "cirs-website-launch",
+          "input": "Trusted native-control touchscreen tap",
+          "before": {
+            "src": "/media/cirs-website-launch-web.mp4",
+            "duration": 38,
+            "size": [
+              1920,
+              1080
+            ],
+            "readyState": 4,
+            "controls": true,
+            "playsInline": true,
+            "preload": "metadata",
+            "tabIndex": 0,
+            "autoplay": false,
+            "muted": false,
+            "paused": true,
+            "time": 0,
+            "frames": 0,
+            "error": null
+          },
+          "playing": {
+            "src": "/media/cirs-website-launch-web.mp4",
+            "duration": 38,
+            "size": [
+              1920,
+              1080
+            ],
+            "readyState": 4,
+            "controls": true,
+            "playsInline": true,
+            "preload": "metadata",
+            "tabIndex": 0,
+            "autoplay": false,
+            "muted": false,
+            "paused": false,
+            "time": 0.30875,
+            "frames": 24,
+            "error": null
+          },
+          "scriptPlayCalls": 0,
+          "retainedAfterClose": {
+            "connected": false,
+            "time": 0.365444,
+            "paused": true,
+            "error": null
+          },
+          "laterTime": 0.365444
+        }
+      ],
+      "requests": [
+        {
+          "path": "/media/vantara-masquerade-web-720p.mp4",
+          "range": "bytes=0-"
+        },
+        {
+          "path": "/media/vantara-masquerade-web-720p.mp4",
+          "range": "bytes=1048576-"
+        },
+        {
+          "path": "/media/teded-auditions-web.mp4",
+          "range": "bytes=0-"
+        },
+        {
+          "path": "/media/teded-auditions-web.mp4",
+          "range": "bytes=65536-"
+        },
+        {
+          "path": "/media/cirs-website-launch-web.mp4",
+          "range": "bytes=0-"
+        },
+        {
+          "path": "/media/cirs-website-launch-web.mp4",
+          "range": "bytes=851968-"
+        }
+      ],
+      "google": [],
+      "completeFilmDecodeClaim": false
+    },
+    {
+      "name": "Contact anchor keyboard h2→email→card 390px",
+      "passed": true
+    },
+    {
+      "name": "Preserved native contact card keyboard flip/inert and real vCard download 390px",
+      "bytes": 126,
+      "sha256": "d3b50a3f19f04f161dfe179bf823c86e81a36adb93b399d8e98dd5195f2dd89e"
+    },
+    {
+      "name": "reduced keeps a brief static black exact-AP stage and native pointer",
+      "opening": {
+        "route": "/work",
+        "mode": "static",
+        "openedAt": 246,
+        "closedAt": 443.19999999925494,
+        "background": "rgb(0, 0, 0)",
+        "opacity": "1",
+        "box": {
+          "x": 0,
+          "y": 0,
+          "width": 1440,
+          "height": 1000
+        },
+        "covered": true,
+        "source": "/media/ap-signature.png",
+        "generation": "0",
+        "strokeMax": 1,
+        "strokeMin": 1
+      }
+    },
+    {
+      "name": "motion-off keeps a brief static black exact-AP stage and native pointer",
+      "opening": {
+        "route": "/work",
+        "mode": "static",
+        "openedAt": 221.40000000223517,
+        "closedAt": 413,
+        "background": "rgb(0, 0, 0)",
+        "opacity": "1",
+        "box": {
+          "x": 0,
+          "y": 0,
+          "width": 1440,
+          "height": 1000
+        },
+        "covered": true,
+        "source": "/media/ap-signature.png",
+        "generation": "0",
+        "strokeMax": 1,
+        "strokeMin": 1
+      }
+    },
+    {
+      "name": "forced-colors keeps a brief static black exact-AP stage and native pointer",
+      "opening": {
+        "route": "/work",
+        "mode": "static",
+        "openedAt": 265.69999999925494,
+        "closedAt": 417,
+        "background": "rgb(0, 0, 0)",
+        "opacity": "1",
+        "box": {
+          "x": 0,
+          "y": 0,
+          "width": 1440,
+          "height": 1000
+        },
+        "covered": true,
+        "source": "/media/ap-signature.png",
+        "generation": "0",
+        "strokeMax": 1,
+        "strokeMin": 1
+      }
+    }
+  ],
+  "errors": [],
+  "networkFailures": [],
+  "scope": "Final changed-Dialog lifecycle and remaining combined checks; unchanged opening/cursor/source coverage is preserved separately from the previous partial pass.",
+  "screenshots": [
+    "/workspace/combined-release-review/compiled-final-home-1440.png",
+    "/workspace/combined-release-review/compiled-final-work-1440.png",
+    "/workspace/combined-release-review/compiled-final-studio-1440.png",
+    "/workspace/combined-release-review/compiled-final-about-1440.png",
+    "/workspace/combined-release-review/compiled-final-about-return-1440x720.png",
+    "/workspace/combined-release-review/compiled-final-home-390.png",
+    "/workspace/combined-release-review/compiled-final-work-390.png",
+    "/workspace/combined-release-review/compiled-final-studio-390.png",
+    "/workspace/combined-release-review/compiled-final-about-390.png"
+  ],
+  "status": "passed"
+}

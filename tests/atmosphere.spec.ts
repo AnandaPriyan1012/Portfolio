@@ -64,7 +64,7 @@ test('Studio room atmosphere loops silently while approved films remain click-to
   expect(media.duration).toBeGreaterThan(1)
   await expect(page.locator('.studio-atmosphere-controls')).toContainText('Conceptual room')
   await expect(page.locator('dialog video, iframe')).toHaveCount(0)
-  await expect(page.locator('#studio .reel-frame')).toHaveCount(2)
+  await expect(page.locator('#studio .reel-frame')).toHaveCount(5)
   await expect(page.getByRole('button', { name: 'Play selected film: CCK trailer', exact: true })).toBeVisible()
   await expect(page.getByRole('radio')).toHaveCount(6)
 
@@ -123,10 +123,10 @@ test('the Home corridor lazily seeks actual decoded frames forward and backward 
   expect(Math.abs((await page.locator('.home-directory').boundingBox())!.height - directoryHeight)).toBeLessThan(2)
 })
 
-test('decorative corridor and room films never load for fallback devices, and failed files preserve navigation and the collection', async ({ browser }) => {
+test('decorative corridor and room films never load for fallback devices, and failed files preserve navigation and the collection', async ({ browser, baseURL }) => {
   test.setTimeout(60_000)
   for (const variant of ['phone', 'short-desktop', 'reduced', 'save-data', 'low-power', 'failed'] as const) {
-    const context = await browser.newContext({ baseURL: 'http://127.0.0.1:5173', viewport: { width: variant === 'phone' ? 390 : 1440, height: variant === 'short-desktop' ? 720 : 1000 }, reducedMotion: variant === 'reduced' ? 'reduce' : 'no-preference', ...(variant === 'phone' ? { isMobile: true, hasTouch: true } : {}) })
+    const context = await browser.newContext({ baseURL, viewport: { width: variant === 'phone' ? 390 : 1440, height: variant === 'short-desktop' ? 720 : 1000 }, reducedMotion: variant === 'reduced' ? 'reduce' : 'no-preference', ...(variant === 'phone' ? { isMobile: true, hasTouch: true } : {}) })
     try {
       const page = await context.newPage()
       const errors: string[] = [], requests: string[] = []
@@ -149,7 +149,7 @@ test('decorative corridor and room films never load for fallback devices, and fa
       await page.keyboard.press('ArrowDown')
       await expect(page.getByRole('radio', { name: 'Farewell video', exact: true })).toBeChecked()
       await expect(page.locator('#studio video, iframe')).toHaveCount(0)
-      await expect(page.locator('#studio .reel-frame')).toHaveCount(2)
+      await expect(page.locator('#studio .reel-frame')).toHaveCount(5)
       await expect(page.getByRole('button', { name: 'Play selected film: Farewell video', exact: true })).toBeVisible()
       if (variant === 'failed') {
         expect(requests.some(url => url.includes('/scroll-corridor.mp4'))).toBe(true)

@@ -1,0 +1,98 @@
+{
+  "date": "2026-11-04",
+  "scope": "Three explicitly approved owner-supplied local MP4/poster pairs. Existing CCK/Farewell Drive sources and their two-still evidence remain unchanged.",
+  "catalogue": {
+    "uniqueEntries": 6,
+    "playableEntries": 5,
+    "unmatched": [
+      "CIRSMUN 2026"
+    ]
+  },
+  "playback": "Native controls are mounted after explicit Watch only, without autoplay. Preload metadata applies only inside that open modal. Null credits remain null; a local approved-source flag permits playback without inventing a credit.",
+  "records": [
+    {
+      "id": "vantara",
+      "title": "Vantara",
+      "alternateTitle": "Masquerade trailer",
+      "provenance": "Owner-approved full trailer, supplied 720p export. All supplied black sections are preserved; no trimming or postprocessing.",
+      "approval": "Explicit owner request; exact parent-verified supplied bytes matched before integration.",
+      "credits": null,
+      "video": {
+        "url": "/media/vantara-masquerade-web-720p.mp4",
+        "sha256": "3532aa1ead37d8e5faf4297551207380bca12b8c805244d4d7743e306cfb1b65",
+        "bytes": 13442026,
+        "durationSeconds": 166.42,
+        "codec": "h264",
+        "pixelFormat": "yuv420p",
+        "width": 1280,
+        "height": 720,
+        "frameRate": "25/1",
+        "audioCodec": "aac"
+      },
+      "poster": {
+        "url": "/media/vantara-masquerade-poster.jpg",
+        "sha256": "d1529b30ef59ffcc82d8bd28300bb90c0a68db9d2e211d9c1dc969039810847b",
+        "bytes": 187986,
+        "width": 1920,
+        "height": 1080,
+        "processing": "Supplied genuine poster, unchanged and displayed with containment."
+      }
+    },
+    {
+      "id": "ted-ed-2026",
+      "title": "TED-Ed auditions",
+      "alternateTitle": null,
+      "provenance": "Latest owner-supplied FINAL auditions export, explicitly selected instead of the earlier April export. No speaker identity or production credit is inferred.",
+      "approval": "Explicit owner request; exact parent-verified supplied bytes matched before integration.",
+      "credits": null,
+      "video": {
+        "url": "/media/teded-auditions-web.mp4",
+        "sha256": "93c183e1bcf583ee8da49942a1a120698977766205fb8e2f42a15876e5fd2625",
+        "bytes": 12285688,
+        "durationSeconds": 31.722667,
+        "codec": "h264",
+        "pixelFormat": "yuv420p",
+        "width": 1920,
+        "height": 1080,
+        "frameRate": "25/1",
+        "audioCodec": "aac"
+      },
+      "poster": {
+        "url": "/media/teded-auditions-poster.jpg",
+        "sha256": "b94d62d9868a019338d9423f96165ad38fd9ef81beea5b470e59008a76a773c9",
+        "bytes": 54634,
+        "width": 1920,
+        "height": 1080,
+        "processing": "Supplied genuine poster, unchanged and displayed with containment."
+      }
+    },
+    {
+      "id": "cirs-website-launch",
+      "title": "CIRS website launch",
+      "alternateTitle": null,
+      "provenance": "Owner-approved CIRS website launch footage. The Crossroads page visible in the film/poster is not presented as a standalone project or authorship credit.",
+      "approval": "Explicit owner request; exact parent-verified supplied bytes matched before integration.",
+      "credits": null,
+      "video": {
+        "url": "/media/cirs-website-launch-web.mp4",
+        "sha256": "c232f2b3b70fdd06e4ef1c657af560c09ac115d742169f54d7b5d261ba5ecc72",
+        "bytes": 21599801,
+        "durationSeconds": 38.0,
+        "codec": "h264",
+        "pixelFormat": "yuv420p",
+        "width": 1920,
+        "height": 1080,
+        "frameRate": "60/1",
+        "audioCodec": "aac"
+      },
+      "poster": {
+        "url": "/media/cirs-website-launch-poster.jpg",
+        "sha256": "4d325af8ffc6964be9733d4835b5e8d95042d9d1dcb0af41ac2fdf1f1ffec674",
+        "bytes": 97319,
+        "width": 1920,
+        "height": 1080,
+        "processing": "Supplied genuine poster, unchanged and displayed with containment."
+      }
+    }
+  ]
+}

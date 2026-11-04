@@ -1,0 +1,69 @@
+{
+  "date": "2026-11-04",
+  "baseCommit": "60fdbdce43cc2cb96eb639213d32a638953e26d1",
+  "productionBuild": "passed",
+  "bundle": "index-C-DFhNut.js",
+  "css": "index-CIlscrSe.css",
+  "fullChromiumRun": {
+    "scenarios": 244,
+    "passed": 243,
+    "failed": 1,
+    "duration": "6.8 minutes",
+    "failure": "An old Admissions assertion expected the pointer to disappear after a click. The requested persistent pointer stayed visible; image alignment and count were correct."
+  },
+  "correctedAdmissionsRun": {
+    "passed": 10,
+    "duration": "17.1 seconds",
+    "change": "Assert persistent visible arrow and one cursor after a Process click; strict source alignment retained."
+  },
+  "finalRelatedRegressionRun": {
+    "passed": 34,
+    "duration": "1.6 minutes",
+    "scope": [
+      "native real-film playback on desktop and emulated phone",
+      "no page-load native MP4 requests and approval guards",
+      "Vantara source sections and bounded seeks",
+      "retained video stops on Close/Back",
+      "all-five-film forward/reverse Tab visibility and outside-release recovery",
+      "scroll-driven Studio and real pointer activation",
+      "cinematic scenes and fallback modes"
+    ]
+  },
+  "sourceIntegrity": {
+    "originalApSha256": "80ccec808c2b7a5323d7401d1fd235d5f37b64362247656e08b9c742f6bf34a4",
+    "nativeAssets": "all six supplied assets match approved-native-films.json",
+    "dependenciesChanged": false,
+    "gauravInPublicSource": false
+  },
+  "review": "Read-only core and focused reel review found no material blockers.",
+  "limits": [
+    "Chromium desktop and mobile emulation; physical Safari/iOS not verified.",
+    "Decoded samples and seek checks are not whole-film or audio audition.",
+    "Actual provider playback evidence for unchanged CCK/Farewell players is retained from earlier releases; current UI/privacy/fallback regressions passed."
+  ],
+  "atomicOpeningRegressionRun": {
+    "passed": 42,
+    "duration": "1.0 minute",
+    "scope": [
+      "first observed native-film Back stage has no open dialog and complete opaque coverage",
+      "Close/Back stop playback and restore usable focus",
+      "all19 opening lifecycle scenarios",
+      "keyboard/mobile navigation, history and Contact",
+      "all-five-film reel keyboard visibility and offset cleanup"
+    ]
+  },
+  "resolvedCompiledIssue": "First painted Back frame could retain the native video dialog. The opening active signal now synchronously closes that top layer, pauses native media and clears modal state in the opening layout phase; Dialog mount/cleanup also uses layout timing.",
+  "compiledFinalReview": {
+    "status": "passed",
+    "bundle": "index-C-DFhNut.js",
+    "routes": 8,
+    "finalChecks": 14,
+    "browserErrors": [],
+    "transportFailures": [],
+    "scope": "Three native films on desktop and phone, native-video cursor, visible reel focus, detached Close/Back stop, six exact C5 returns, AirKart, Contact/card downloads and motion/contrast fallbacks. Prior unchanged AP/cursor/seek slices retained separately."
+  },
+  "paintClassification": {
+    "status": "passed",
+    "scope": "No open native dialog and complete black coverage at stage mount and first/second RAF. Direct capture after first RAF is black; first new AP document frame and16 subsequent frames are black. Old independent compositor frames from the prior document are classified separately; no AP/old-dialog mixture observed."
+  }
+}

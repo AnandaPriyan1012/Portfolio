@@ -99,16 +99,16 @@ test('signature is a real transparent warm asset and the studio index has no inv
   await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Studio', exact: true }).click()
   await expect(page).toHaveURL(/\/studio$/)
   await expect(page.locator('.studio-collection-index li')).toHaveCount(6)
-  for (const title of ['CCK trailer', 'Farewell video', 'Masquerade trailer', 'Vantara', 'TED-Ed 2026', 'CIRSMUN 2026']) await expect(page.locator('#studio')).toContainText(title)
+  for (const title of ['CCK trailer', 'Farewell video', 'Vantara', 'TED-Ed auditions', 'CIRS website launch', 'CIRSMUN 2026']) await expect(page.getByRole('radio', { name: title, exact: true })).toHaveCount(1)
   await page.getByRole('radio', { name: 'CCK trailer', exact: true }).focus()
   await page.keyboard.press('ArrowDown')
   await expect(page.getByRole('radio', { name: 'Farewell video', exact: true })).toBeChecked()
   await expect(page.locator('.screening-title-card h3')).toHaveText('Farewell video')
-  await page.getByRole('radio', { name: 'Masquerade trailer', exact: true }).check()
-  await expect(page.locator('.screening-title-card h3')).toHaveText('Masquerade trailer')
+  await page.getByRole('radio', { name: 'CIRSMUN 2026', exact: true }).check()
+  await expect(page.locator('.screening-title-card h3')).toHaveText('CIRSMUN 2026')
   await expect(page.locator('#studio .screening-still')).toHaveCount(0)
   await expect(page.locator('#studio .screening-play, #studio video:not(.studio-atmosphere-film), iframe')).toHaveCount(0)
-  await expect(page.locator('#studio .reel-frame')).toHaveCount(2)
+  await expect(page.locator('#studio .reel-frame')).toHaveCount(5)
   await expect(page.locator('body')).not.toContainText('Crossroads')
   await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Contact', exact: true }).click()
   await expect(page).toHaveURL(/\/about#contact$/)
@@ -197,7 +197,7 @@ test('portrait phones keep native scroll, full glass, and a lightweight changing
   await context.close()
 })
 
-test('reduced motion and low-power devices keep the sculpture but remove pins and loader', async ({ page, browser }) => {
+test('reduced motion and low-power devices keep the sculpture with static scroll after the brief opening', async ({ page, browser }) => {
   await ready(page)
   await expect(page.locator('main')).toHaveAttribute('data-scroll-engine', 'static')
   await expect(page.locator('.pin-spacer')).toHaveCount(0)
@@ -217,32 +217,31 @@ test('reduced motion and low-power devices keep the sculpture but remove pins an
   await context.close()
 })
 
-test('the brief nonblocking opening is skippable by keyboard and only runs once per session', async ({ page }) => {
+test('the black opening is skippable by keyboard and replays on reload', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' })
   await page.addInitScript(() => { Object.defineProperty(navigator, 'hardwareConcurrency', { value: 8, configurable: true }) })
   await page.goto('/', { waitUntil: 'domcontentloaded' })
   const skip = page.getByRole('button', { name: 'Skip intro', exact: true })
   await expect(skip).toBeVisible()
-  await expect(page.getByRole('navigation', { name: 'Main navigation' })).toBeVisible()
+  const heading = page.locator('h1')
+  await heading.evaluate(node => { (node as HTMLElement).tabIndex = -1; (node as HTMLElement).focus({ preventScroll: true }) })
   await skip.focus(); await page.keyboard.press('Enter')
   await expect(page.locator('.state-opening')).toHaveCount(0)
-  await expect(page.locator('.site-header .wordmark')).toBeFocused()
-  await page.reload()
+  await expect(heading).toBeFocused()
+  await page.reload({ waitUntil: 'domcontentloaded' })
+  await expect(page.locator('.state-opening')).toBeVisible()
+  await page.keyboard.press('Escape')
   await expect(page.locator('.state-opening')).toHaveCount(0)
-  await expect(page.locator('h1')).toContainText('Ananda')
+  await expect(heading).toContainText('Ananda')
 })
 
-test('the original signature draws in stages and Escape skips without stealing page focus', async ({ page }) => {
+test('the exact signature title accepts Escape without stealing page focus', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' })
   await page.addInitScript(() => Object.defineProperty(navigator, 'hardwareConcurrency', { value: 8, configurable: true }))
   await page.goto('/', { waitUntil: 'domcontentloaded' })
   const drawing = page.locator('.state-signature-drawing')
   await expect(drawing).toBeVisible()
   await expect(drawing.locator('mask image')).toHaveAttribute('href', '/media/ap-signature.png')
-  const firstStroke = drawing.locator('.state-signature-ascender')
-  const initial = await firstStroke.evaluate(node => Number.parseFloat(getComputedStyle(node).strokeDashoffset))
-  expect(initial).toBeGreaterThan(0)
-  await expect.poll(() => firstStroke.evaluate(node => Number.parseFloat(getComputedStyle(node).strokeDashoffset))).toBeLessThan(initial)
   const home = page.locator('.site-header .wordmark')
   await home.focus()
   await page.keyboard.press('Escape')
@@ -276,15 +275,19 @@ test('the signature opening never waits on an unresolved image request', async (
   await expect(page.locator('h1')).toContainText('Ananda')
 })
 
-test('Save Data bypasses the signature opening without a session or media wait', async ({ page }) => {
+test('Save Data receives a brief static opening without a session or media wait', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' })
   await page.addInitScript(() => {
     Object.defineProperty(navigator, 'hardwareConcurrency', { value: 8, configurable: true })
     Object.defineProperty(navigator, 'connection', { value: { saveData: true }, configurable: true })
+    new MutationObserver(() => {
+      if (document.querySelector('.state-opening[data-mode="static"]')) document.documentElement.dataset.testStaticOpening = 'seen'
+    }).observe(document, { childList: true, subtree: true })
   })
   await page.goto('/', { waitUntil: 'domcontentloaded' })
+  await expect(page.locator('html')).toHaveAttribute('data-test-static-opening', 'seen')
   await expect(page.locator('h1')).toContainText('Ananda')
-  await expect(page.locator('.state-opening')).toHaveCount(0)
+  await expect(page.locator('.state-opening')).toHaveCount(0, { timeout: 900 })
 })
 
 for (const path of ['/nothing-here', '/projects/not-a-project']) test(`branded 404 at ${path} returns Home without leaving scroll triggers`, async ({ page }) => {

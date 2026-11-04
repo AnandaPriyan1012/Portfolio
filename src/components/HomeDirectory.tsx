@@ -141,7 +141,7 @@ export default function HomeDirectory({
             className="home-directory-row home-directory-studio"
             href="/studio"
             onClick={(event) => navigate(event, "/studio")}
-            aria-label="Explore Studio, a six-title creative work index"
+            aria-label="Explore Studio: films, trailers and editing work"
           >
             <div className="home-directory-copy">
               <span className="home-directory-number">02 / Creative work</span>
@@ -149,8 +149,8 @@ export default function HomeDirectory({
                 Studio<span className="home-directory-period">.</span>
               </h3>
               <p>
-                Trailers, video and event work. Watch CCK trailer and Farewell AA
-                in the collection.
+                Trailers, auditions and a website launch. Watch the films in
+                the collection.
               </p>
               <span className="home-directory-action">
                 Enter the Studio <ArrowRight size={19} aria-hidden="true" />

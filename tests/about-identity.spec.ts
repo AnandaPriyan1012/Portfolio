@@ -100,6 +100,7 @@ test('normal About case links preserve the lane and return position, and browser
   const link = identity.getByRole('link', { name: 'Read the CIRS project', exact: true })
   await link.scrollIntoViewIfNeeded()
   const before = await page.evaluate(() => scrollY)
+  await page.locator('.state-opening').waitFor({ state: 'detached' })
   await link.click()
   await expect(page).toHaveURL(/\/projects\/cirs$/)
   await expect(page.locator('h1')).toBeFocused()
@@ -147,6 +148,9 @@ for (const motion of ['reduce', 'no-preference'] as const) test(`${motion} short
     await page.waitForTimeout(1100)
     expect(await page.evaluate(y => Math.abs(scrollY - y), saved)).toBeLessThan(4)
   }
+  // A real pointer cannot activate a link behind the page-opening mask.
+  // Wait for that mask rather than letting automation retry/scroll the link.
+  await page.locator('.state-opening').waitFor({ state: 'detached' })
   await link.click()
   await expect(page).toHaveURL(/\/projects\/cirs$/)
   await page.goBack()
