@@ -41,6 +41,11 @@
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 24px 18px;
 }
+.case-film-collection-film {
+  display: grid;
+  min-width: 0;
+  color: inherit;
+}
 .case-film-collection-grid figure {
   display: grid;
   grid-template-rows: minmax(0, 1fr) auto;
@@ -86,6 +91,12 @@
 .case-film-collection-grid figcaption > span {
   font-size: 12px;
 }
+.case-film-collection-open {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #f0dfb9;
+}
 @media (max-width: 767px) {
   .case-film-collection-heading { align-items: start; flex-direction: column; gap: 18px; }
   .case-film-collection-link { width: 100%; }
@@ -95,5 +106,5 @@
 }
 @media (forced-colors: active) {
   .case-film-collection, .case-film-collection-grid picture { border: 1px solid CanvasText; }
-  .case-film-collection-link { color: LinkText; border-color: LinkText; }
+  .case-film-collection-link, .case-film-collection-open { color: LinkText; border-color: LinkText; }
 }

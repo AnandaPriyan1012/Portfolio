@@ -33,13 +33,14 @@ import HomeDirectory from "./components/HomeDirectory";
 import AboutIdentity from "./components/AboutIdentity";
 import GlassCursor from "./components/GlassCursor";
 import IdentityCard from "./components/IdentityCard";
+import NativeFilmPlayer from "./components/NativeFilmPlayer";
 import DriveFilmPlayer, {
   isApprovedDriveEmbed,
 } from "./components/DriveFilmPlayer";
 
 type ModalState =
   | { type: "project"; id: Project["id"] }
-  | { type: "media"; id: string }
+  | { type: "media"; id: string; startAt?: number }
   | { type: "contact" }
   | null;
 
@@ -788,6 +789,19 @@ export default function App() {
   function navigateSection(id: string) {
     navigate(id === "contact" ? "/about#contact" : `/${id}`);
   }
+  function selectStudioFilm(id: string) {
+    if (route !== "/studio" || location.pathname.replace(/\/+$/, "") !== "/studio") return;
+    const film = creativeMedia.find((item) => item.id === id);
+    if (!film || (!hasApprovedNativePlayback(film) && !isApprovedDriveEmbed(film.embedUrl))) return;
+    const fragment = `#${encodeURIComponent(film.id)}`;
+    const destination = `${location.pathname}${location.search}${fragment}`;
+    const position = { ...activeHistory.current, url: `${location.pathname}${fragment}`, top: scrollY, focus: historyFocus() };
+    // A deliberate film choice updates this entry without moving the reader
+    // or adding a history entry. Preserve other framework metadata and its key.
+    history.replaceState({ ...history.state, [historyStateKey]: position }, "", destination);
+    activeHistory.current = position;
+    saveHistoryPosition(false);
+  }
   function page(id: Project["id"], aboutHref?: string, originToken?: string) {
     const focused = document.activeElement;
     const workHref = route === "/work" && focused instanceof HTMLAnchorElement &&
@@ -978,7 +992,8 @@ export default function App() {
             motionEnabled={preferences.motion}
             asPage
             onContact={() => navigate("/about#contact")}
-            onPlay={(id) => setModal({ type: "media", id })}
+            onSelectFilm={selectStudioFilm}
+            onPlay={(id, startAt) => setModal({ type: "media", id, startAt })}
           />
         )}
         {mainPage === "about" && (
@@ -1316,18 +1331,9 @@ export default function App() {
               <h2 className="dialog-title">{media.title}</h2>
               {hasApprovedNativePlayback(media) ? (
                 <>
-                  <video
-                    className="actual-video"
-                    aria-label={`${media.title} video player`}
-                    controls
-                    playsInline
-                    tabIndex={0}
-                    preload="metadata"
-                    poster={media.posterUrl ?? undefined}
-                  >
-                    <source src={media.videoUrl} />
-                    Your browser does not support video playback.
-                  </video>
+                  <NativeFilmPlayer key={modal.type === "media" ? modal.id : media.videoUrl}
+                    film={{ ...media, id: modal.type === "media" ? modal.id : "" }}
+                    startAt={modal.type === "media" ? modal.startAt : undefined} />
                   <p className="dialog-introduction">{media.caption}</p>
                 </>
               ) : "embedUrl" in media &&

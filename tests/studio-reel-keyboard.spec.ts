@@ -17,7 +17,12 @@ test('advanced Studio reel reveals every keyboard-focused film forwards and back
   await window.evaluate(node => node.scrollIntoView({ block: 'center', behavior: 'instant' }))
   await expect.poll(() => reel.evaluate(node => new DOMMatrixReadOnly(getComputedStyle(node).transform).m41)).toBeLessThan(-100)
   const initialHeight = (await window.boundingBox())!.height
-  await page.locator('.screening-choice:checked').focus()
+  async function focusPreviousAction() {
+    const moments = page.locator('.film-moments button')
+    if (await moments.count()) await moments.last().focus()
+    else await page.getByRole('button', { name: 'Watch CIRS website launch', exact: true }).focus()
+  }
+  await focusPreviousAction()
   const titles = ['CCK trailer', 'Farewell video', 'Vantara', 'TED-Ed auditions', 'CIRS website launch']
   const samples: unknown[] = []
   async function visible(button: Locator) {
@@ -55,7 +60,7 @@ test('advanced Studio reel reveals every keyboard-focused film forwards and back
   await expect(window).toHaveAttribute('data-test-pressed', 'true')
   await page.mouse.move(10, 10)
   await page.mouse.up()
-  await page.locator('.screening-choice:checked').focus()
+  await focusPreviousAction()
   await page.keyboard.press('Tab')
   await visible(window.getByRole('button', { name: 'Play CCK trailer', exact: true }))
   await page.keyboard.press('Shift+Tab')

@@ -571,22 +571,22 @@ export default function useScrollStory({ root, enabled, route }: Options) {
     };
     const coordinator = { route, refresh };
     restoreCoordinator.current = coordinator;
-    // Interest selection and the native disclosure can move Contact without a
-    // route change or an image load. Observe layout height only: pane transforms
-    // do not change offsetHeight and must not create a refresh feedback loop.
-    const about = element.querySelector<HTMLElement>("#about");
-    let aboutHeight = about?.offsetHeight ?? 0;
-    const aboutResize =
-      about && typeof ResizeObserver !== "undefined"
+    // Interest selection, disclosures and the selected film's frame index can
+    // move later content without a route change. Observe layout height only:
+    // pane transforms must not create a refresh feedback loop.
+    const changingSection = element.querySelector<HTMLElement>("#about, .screening-room");
+    let sectionHeight = changingSection?.offsetHeight ?? 0;
+    const contentResize =
+      changingSection && typeof ResizeObserver !== "undefined"
         ? new ResizeObserver(() => {
             if (!alive) return;
-            const height = about.offsetHeight;
-            if (height === aboutHeight) return;
-            aboutHeight = height;
+            const height = changingSection.offsetHeight;
+            if (height === sectionHeight) return;
+            sectionHeight = height;
             refresh();
           })
         : null;
-    if (about) aboutResize?.observe(about);
+    if (changingSection) contentResize?.observe(changingSection);
     const readinessCleanups: (() => void)[] = [];
     const images = [...element.querySelectorAll("img")];
     images.forEach((image) => {
@@ -1012,7 +1012,7 @@ export default function useScrollStory({ root, enabled, route }: Options) {
       window.removeEventListener("pointerdown", markInteraction);
       window.removeEventListener("keydown", markInteraction);
       window.removeEventListener("hashchange", hashChange);
-      aboutResize?.disconnect();
+      contentResize?.disconnect();
       readinessCleanups.forEach((cleanup) => cleanup());
       images.forEach((image) => {
         image.removeEventListener("load", refresh);

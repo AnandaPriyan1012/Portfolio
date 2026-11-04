@@ -1,0 +1,214 @@
+{
+  "date": "2026-11-04T20:22:35.658Z",
+  "scope": "Nine genuine timestamped stills extracted from three already-approved local films. Nothing was transferred from Library or Drive, and no original media was edited.",
+  "processing": "Complete decoded frames, proportional resize to480×270, WebP encoding only. No cropping, retouching, added text/graphics or color treatment. Existing black bars, graphics and dark sections belong to the original films.",
+  "visuallyInspected": true,
+  "exactSourcePTSVerified": true,
+  "sourceHashesVerifiedBeforeAndAfter": true,
+  "proposedDirectory": "/media/film-moments/",
+  "films": [
+    {
+      "id": "vantara",
+      "title": "Vantara",
+      "source": {
+        "url": "/media/vantara-masquerade-web-720p.mp4",
+        "sha256": "3532aa1ead37d8e5faf4297551207380bca12b8c805244d4d7743e306cfb1b65",
+        "bytes": 13442026,
+        "durationSeconds": 166.42,
+        "codec": "h264",
+        "pixelFormat": "yuv420p",
+        "width": 1280,
+        "height": 720,
+        "frameRate": "25/1",
+        "audioCodec": "aac",
+        "timeBase": "1/12800",
+        "startTimeSeconds": 0
+      },
+      "webpQuality": 80,
+      "webpCompressionLevel": 6,
+      "frames": [
+        {
+          "seconds": 24,
+          "alt": "Birds on a branch in front of a pink building.",
+          "timecode": "00:24",
+          "filename": "vantara-0024.webp",
+          "proposedUrl": "/media/film-moments/vantara-0024.webp",
+          "width": 480,
+          "height": 270,
+          "bytes": 42758,
+          "sha256": "abf7a8cb53d527cf86f7831413683accfd8de59e240f2758ffa5f340579bed3e",
+          "sourcePTS": 307200,
+          "sourcePTSTimeSeconds": 24,
+          "sourceTimeBase": "1/12800"
+        },
+        {
+          "seconds": 76,
+          "alt": "A person with blue and white face paint beneath tree branches.",
+          "timecode": "01:16",
+          "filename": "vantara-0076.webp",
+          "proposedUrl": "/media/film-moments/vantara-0076.webp",
+          "width": 480,
+          "height": 270,
+          "bytes": 22132,
+          "sha256": "e9b569ba9dd8b2379fafa3399124e58ce0c0fb5c53dc5d56154c4715b14fddb2",
+          "sourcePTS": 972800,
+          "sourcePTSTimeSeconds": 76,
+          "sourceTimeBase": "1/12800"
+        },
+        {
+          "seconds": 124,
+          "alt": "A small flame beside a person’s profile in darkness.",
+          "timecode": "02:04",
+          "filename": "vantara-0124.webp",
+          "proposedUrl": "/media/film-moments/vantara-0124.webp",
+          "width": 480,
+          "height": 270,
+          "bytes": 1914,
+          "sha256": "cbf46e79b3fc61573db4c2f86d6d576ea0ed331f88c14a3ab2f8bb9750d36879",
+          "sourcePTS": 1587200,
+          "sourcePTSTimeSeconds": 124,
+          "sourceTimeBase": "1/12800"
+        }
+      ],
+      "totalBytes": 66804
+    },
+    {
+      "id": "ted-ed-2026",
+      "title": "TED-Ed auditions",
+      "source": {
+        "url": "/media/teded-auditions-web.mp4",
+        "sha256": "93c183e1bcf583ee8da49942a1a120698977766205fb8e2f42a15876e5fd2625",
+        "bytes": 12285688,
+        "durationSeconds": 31.722667,
+        "codec": "h264",
+        "pixelFormat": "yuv420p",
+        "width": 1920,
+        "height": 1080,
+        "frameRate": "25/1",
+        "audioCodec": "aac",
+        "timeBase": "1/12800",
+        "startTimeSeconds": 0
+      },
+      "webpQuality": 78,
+      "webpCompressionLevel": "ffmpeg default",
+      "frames": [
+        {
+          "seconds": 2,
+          "alt": "A speaker wearing glasses and a headset microphone in front of a projected backdrop.",
+          "timecode": "00:02",
+          "filename": "ted-ed-2026-0002.webp",
+          "proposedUrl": "/media/film-moments/ted-ed-2026-0002.webp",
+          "width": 480,
+          "height": 270,
+          "bytes": 5100,
+          "sha256": "896fd95aa5d444e8873274e2ab6c4a42a63cbb96430dde109bf9d73abf0228e6",
+          "sourcePTS": 25600,
+          "sourcePTSTimeSeconds": 2,
+          "sourceTimeBase": "1/12800"
+        },
+        {
+          "seconds": 14,
+          "alt": "A close view of a speaker wearing a headset microphone, within the film’s black frame and white cross graphics.",
+          "timecode": "00:14",
+          "filename": "ted-ed-2026-0014.webp",
+          "proposedUrl": "/media/film-moments/ted-ed-2026-0014.webp",
+          "width": 480,
+          "height": 270,
+          "bytes": 3074,
+          "sha256": "dbbb237f8390be52d0a438f2de2836c660f06aeb3cfa9057be61c1eb7c556b43",
+          "sourcePTS": 179200,
+          "sourcePTSTimeSeconds": 14,
+          "sourceTimeBase": "1/12800"
+        },
+        {
+          "seconds": 19,
+          "alt": "A speaker in pale clothing stands before a projected slide, with the film’s white cross graphics over the image.",
+          "timecode": "00:19",
+          "filename": "ted-ed-2026-0019.webp",
+          "proposedUrl": "/media/film-moments/ted-ed-2026-0019.webp",
+          "width": 480,
+          "height": 270,
+          "bytes": 8154,
+          "sha256": "6709965039db6fbd9399cdb0fa014cbcb37ea054df4cc5c551257c89a605a811",
+          "sourcePTS": 243200,
+          "sourcePTSTimeSeconds": 19,
+          "sourceTimeBase": "1/12800"
+        }
+      ],
+      "totalBytes": 16328
+    },
+    {
+      "id": "cirs-website-launch",
+      "title": "CIRS website launch",
+      "source": {
+        "url": "/media/cirs-website-launch-web.mp4",
+        "sha256": "c232f2b3b70fdd06e4ef1c657af560c09ac115d742169f54d7b5d261ba5ecc72",
+        "bytes": 21599801,
+        "durationSeconds": 38,
+        "codec": "h264",
+        "pixelFormat": "yuv420p",
+        "width": 1920,
+        "height": 1080,
+        "frameRate": "60/1",
+        "audioCodec": "aac",
+        "timeBase": "1/15360",
+        "startTimeSeconds": 0
+      },
+      "webpQuality": 80,
+      "webpCompressionLevel": 6,
+      "frames": [
+        {
+          "seconds": 5,
+          "alt": "The CIRS website showing a group running beneath the title The CIRS Experience.",
+          "timecode": "00:05",
+          "filename": "cirs-website-launch-0005.webp",
+          "proposedUrl": "/media/film-moments/cirs-website-launch-0005.webp",
+          "width": 480,
+          "height": 270,
+          "bytes": 24606,
+          "sha256": "21b20692cb2a2306d4aa7ccd7e9c0996190a17dc46069c0a8976be125fa2146b",
+          "sourcePTS": 76800,
+          "sourcePTSTimeSeconds": 5,
+          "sourceTimeBase": "1/15360"
+        },
+        {
+          "seconds": 17,
+          "alt": "A website page titled Words become worlds with paper and a quill illustration.",
+          "timecode": "00:17",
+          "filename": "cirs-website-launch-0017.webp",
+          "proposedUrl": "/media/film-moments/cirs-website-launch-0017.webp",
+          "width": 480,
+          "height": 270,
+          "bytes": 13042,
+          "sha256": "b588fd0f4d015fd5f72f9c840da8976d4bb9f4213ae133d3cdc2fc26da0121dc",
+          "sourcePTS": 261120,
+          "sourcePTSTimeSeconds": 17,
+          "sourceTimeBase": "1/15360"
+        },
+        {
+          "seconds": 26,
+          "alt": "The Admissions Guide page with application portal and process links.",
+          "timecode": "00:26",
+          "filename": "cirs-website-launch-0026.webp",
+          "proposedUrl": "/media/film-moments/cirs-website-launch-0026.webp",
+          "width": 480,
+          "height": 270,
+          "bytes": 12508,
+          "sha256": "cd93921d00f5307e3439b2bd98b5206751aa83f3b9c8801463cb44c205ce097d",
+          "sourcePTS": 399360,
+          "sourcePTSTimeSeconds": 26,
+          "sourceTimeBase": "1/15360"
+        }
+      ],
+      "totalBytes": 50156
+    }
+  ],
+  "totalBytes": 133288,
+  "totalFrames": 9,
+  "integration": "Nine derivative frame files integrated into public/media/film-moments; original video files unchanged. Preparation metadata records the extraction stage before repository integration.",
+  "preparation": {
+    "repositoryWrites": 0,
+    "originalVideoWrites": 0,
+    "externalRequests": 0
+  }
+}

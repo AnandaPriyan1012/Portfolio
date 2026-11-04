@@ -1,0 +1,39 @@
+.film-moments { margin-block: 56px 24px; padding-top: 30px; border-top: 1px solid var(--line); min-width: 0; }
+.film-moments > header { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 24px; }
+.film-moments-kicker { margin: 0 0 12px; color: var(--accent); font-size: 10px; letter-spacing: .06em; }
+.film-moments h2 { margin: 0; font: 500 clamp(26px,3vw,40px)/1.2 var(--font-display); letter-spacing: -.04em; }
+.film-moments > header > p, .film-moments-source { color: var(--muted); font-size: 11px; line-height: 1.8; }
+.film-moments-track { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 18px; list-style: none; padding: 0; margin: 0; }
+.film-moments-track > li { min-width: 0; }
+.film-moment { display: block; width: 100%; padding: 0; text-align: left; color: var(--text); border: 1px solid var(--line); border-radius: 3px; overflow: hidden; background: linear-gradient(130deg,#e8d4a411,transparent 60%),#0a1010; }
+.film-moment-image { display: block; position: relative; aspect-ratio: 16/9; overflow: hidden; background: #050807; }
+.film-moment-image img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.film-moment-play { position: absolute; right: 12px; bottom: 12px; display: grid; place-items: center; width: 36px; height: 36px; color: #f8ecd5; border: 1px solid #f8ecd580; border-radius: 50%; background: #060a0cdd; }
+.film-moment-caption { display: flex; align-items: center; justify-content: space-between; min-height: 64px; padding: 12px 16px; gap: 12px; border-top: 1px solid var(--line); }
+.film-moment-caption > span { display: flex; align-items: center; gap: 12px; }
+.film-moment-caption small { color: var(--subtle); font-size: 9px; }
+.film-moment-caption strong { color: var(--text); font: 400 15px/1.5 var(--font-mono,monospace); font-variant-numeric: tabular-nums; }
+.film-moment-caption > span:last-child { color: var(--accent); font-size: 10px; }
+.film-moment:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+.film-moment:hover { border-color: var(--accent); }
+.film-moments-source { margin: 14px 0 0; }
+:root[data-theme="light"] .film-moment { background: linear-gradient(130deg,#fff9e650,transparent 60%),#e1e8e1; }
+:root[data-theme="light"] .film-moments-kicker { color: #c6b394; }
+:root[data-theme="light"] :is(.film-moments > header > p,.film-moments-source) { color: #a9afaa; }
+@media (hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference) and (forced-colors:none) {
+  :root[data-motion="on"] .film-moment-image img { transition: transform .35s ease; }
+  :root[data-motion="on"] .film-moment:hover .film-moment-image img { transform: scale(1.025); }
+}
+@media (max-width:767px) {
+  .film-moments { margin-top: 40px; padding-top: 24px; }
+  .film-moments > header { display: block; }
+  .film-moments > header > p { margin-top: 16px; }
+  .film-moments-track { display: flex; gap: 12px; overflow-x: auto; padding: 6px 4px 16px; margin-inline: -4px; scroll-snap-type: x proximity; scroll-padding-inline: 4px; }
+  .film-moments-track > li { flex: 0 0 min(76vw,320px); scroll-snap-align: start; }
+  .film-moment-caption { padding-inline: 12px; }
+}
+@media (forced-colors:active) {
+  .film-moments, .film-moment, .film-moment-caption { background: Canvas; color: CanvasText; border-color: CanvasText; box-shadow: none; }
+  .film-moment-play { background: Canvas; color: CanvasText; border-color: CanvasText; }
+  .film-moment:focus-visible { outline-color: Highlight; }
+}

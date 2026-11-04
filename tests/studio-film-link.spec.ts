@@ -159,7 +159,7 @@ test('the linked launch stays click-only, then its real native file plays and cl
 test('the existing generic Creative case handoff still opens the ordinary Studio programme', async ({ page, traffic }) => {
   await page.goto('/projects/creative')
   await settled(page)
-  const studio = page.getByRole('link', { name: 'Watch the films', exact: true })
+  const studio = page.getByRole('link', { name: 'Browse Studio', exact: true })
   await studio.focus()
   await page.keyboard.press('Enter')
   await expect(page).toHaveURL(/\/studio$/)

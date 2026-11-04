@@ -32,7 +32,7 @@ for (const width of [320, 390, 1440]) {
       })).toBe(true);
     }
     expect(prematureMedia).toEqual([]);
-    const link = collection.getByRole("link", { name: "Watch the films", exact: true });
+    const link = collection.getByRole("link", { name: "Browse Studio", exact: true });
     await link.focus();
     await page.keyboard.press("Enter");
     await expect(page).toHaveURL(/\/studio$/);
@@ -47,7 +47,7 @@ test("modified creative collection links keep the case open and use a real Studi
   await page.goto("/projects/creative");
   await expect(page.locator(".state-opening")).toHaveCount(0);
   const popup = context.waitForEvent("page");
-  await page.getByRole("link", { name: "Watch the films", exact: true }).click({ modifiers: ["Control"] });
+  await page.getByRole("link", { name: "Browse Studio", exact: true }).click({ modifiers: ["Control"] });
   const opened = await popup;
   await expect(opened).toHaveURL(/\/studio$/);
   await expect(page).toHaveURL(/\/projects\/creative$/);
@@ -72,7 +72,7 @@ test("the desktop's real Film app reaches its full collection and then playable 
   await expect(page).toHaveURL(/\/projects\/creative$/);
   await expect(desktop).toHaveCount(0);
   await expect(page.locator(".state-opening")).toHaveCount(0);
-  await page.getByRole("link", { name: "Watch the films", exact: true }).click();
+  await page.getByRole("link", { name: "Browse Studio", exact: true }).click();
   await expect(page).toHaveURL(/\/studio$/);
   await expect(page.locator(".state-opening")).toHaveCount(0);
   expect(prematureMedia).toEqual([]);

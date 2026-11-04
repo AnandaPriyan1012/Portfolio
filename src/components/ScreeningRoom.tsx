@@ -5,6 +5,7 @@ import type { creativeMedia } from "../content";
 import StudioAtmosphere from "./StudioAtmosphere";
 import { isApprovedDriveEmbed } from "./DriveFilmPlayer";
 import { hasApprovedNativePlayback } from "../media-readiness";
+import FilmMoments from "./FilmMoments";
 
 type Film = (typeof creativeMedia)[number];
 
@@ -30,12 +31,14 @@ export default function ScreeningRoom({
   motionEnabled = false,
   asPage = false,
   onContact,
+  onSelectFilm,
 }: {
   films: Film[];
-  onPlay: (id: string) => void;
+  onPlay: (id: string, startAt?: number) => void;
   motionEnabled?: boolean;
   asPage?: boolean;
   onContact?: () => void;
+  onSelectFilm?: (id: string) => void;
 }) {
   const choiceGroup = useId();
   const Heading = asPage ? "h1" : "h2";
@@ -114,6 +117,12 @@ export default function ScreeningRoom({
     reelPointerDown.current = false;
   }
   const selectedPoster = selected && isReady(selected) ? selected.posterUrl : null;
+
+  function selectFilm(film: Film) {
+    if (!isReady(film)) return;
+    setSelectedId(film.id);
+    if (asPage) onSelectFilm?.(film.id);
+  }
 
   useEffect(() => {
     const desktop = matchMedia(
@@ -328,7 +337,7 @@ export default function ScreeningRoom({
                         name={choiceGroup}
                         checked={film.id === selected?.id}
                         disabled={!isReady(film)}
-                        onChange={() => { if (isReady(film)) setSelectedId(film.id); }}
+                        onChange={() => selectFilm(film)}
                         aria-label={film.title}
                       />
                       <span className="screening-row">
@@ -349,12 +358,22 @@ export default function ScreeningRoom({
                         />
                       </span>
                     </label>
+                    {isReady(film) && (
+                      <button type="button" className="screening-programme-watch" data-cursor="play"
+                        aria-label={`Watch ${film.title}`}
+                        onClick={() => { selectFilm(film); onPlay(film.id); }}>
+                        <Play size={12} aria-hidden="true" /> Watch
+                      </button>
+                    )}
                   </li>
                 ))}
               </ol>
             </fieldset>
           </div>
         </div>
+
+        {selected && <FilmMoments key={selected.id} film={selected}
+          onOpen={(seconds) => { selectFilm(selected); onPlay(selected.id, seconds); }} />}
 
         {readyFilms.length > 0 && (
           <div

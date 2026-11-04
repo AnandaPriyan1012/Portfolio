@@ -1,0 +1,68 @@
+[
+  {
+    "id": "vantara",
+    "source": "/media/vantara-masquerade-web-720p.mp4",
+    "duration": 166.42,
+    "frames": [
+      {
+        "seconds": 24,
+        "image": "/media/film-moments/vantara-0024.webp",
+        "alt": "Birds on a branch in front of a pink building."
+      },
+      {
+        "seconds": 76,
+        "image": "/media/film-moments/vantara-0076.webp",
+        "alt": "A person with blue and white face paint beneath tree branches."
+      },
+      {
+        "seconds": 124,
+        "image": "/media/film-moments/vantara-0124.webp",
+        "alt": "A small flame beside a person’s profile in darkness."
+      }
+    ]
+  },
+  {
+    "id": "ted-ed-2026",
+    "source": "/media/teded-auditions-web.mp4",
+    "duration": 31.722667,
+    "frames": [
+      {
+        "seconds": 2,
+        "image": "/media/film-moments/ted-ed-2026-0002.webp",
+        "alt": "A speaker wearing glasses and a headset microphone in front of a projected backdrop."
+      },
+      {
+        "seconds": 14,
+        "image": "/media/film-moments/ted-ed-2026-0014.webp",
+        "alt": "A close view of a speaker wearing a headset microphone, within the film’s black frame and white cross graphics."
+      },
+      {
+        "seconds": 19,
+        "image": "/media/film-moments/ted-ed-2026-0019.webp",
+        "alt": "A speaker in pale clothing stands before a projected slide, with the film’s white cross graphics over the image."
+      }
+    ]
+  },
+  {
+    "id": "cirs-website-launch",
+    "source": "/media/cirs-website-launch-web.mp4",
+    "duration": 38,
+    "frames": [
+      {
+        "seconds": 5,
+        "image": "/media/film-moments/cirs-website-launch-0005.webp",
+        "alt": "The CIRS website showing a group running beneath the title The CIRS Experience."
+      },
+      {
+        "seconds": 17,
+        "image": "/media/film-moments/cirs-website-launch-0017.webp",
+        "alt": "A website page titled Words become worlds with paper and a quill illustration."
+      },
+      {
+        "seconds": 26,
+        "image": "/media/film-moments/cirs-website-launch-0026.webp",
+        "alt": "The Admissions Guide page with application portal and process links."
+      }
+    ]
+  }
+]
