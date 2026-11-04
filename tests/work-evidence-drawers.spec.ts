@@ -24,7 +24,9 @@ for (const width of [320, 390, 1440]) test(`${width}px Work keeps real evidence 
   await expect(page.locator('.community-purpose')).toContainText('After helping prepare and distribute meals')
   await expect(page.locator('.community-purpose')).toContainText('request for a stronger online presence')
   await expect(page.locator('[data-editor-note]')).toHaveCount(0)
-  expect(initialViewerRequests).toEqual([])
+  // The visible route deck may load its selected Guide proof; hidden detailed
+  // viewers still mount no other Atlas/language capture before disclosure.
+  expect(initialViewerRequests.filter(url => !/atlas-accuflow-guide-(?:desktop|mobile)\.webp/.test(url))).toEqual([])
   page.off('request', observe)
   const collapsedHeight = await page.evaluate(() => document.documentElement.scrollHeight)
 

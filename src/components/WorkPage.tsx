@@ -12,6 +12,7 @@ import type { Project } from "../content";
 import InterfaceAtlas from "./InterfaceAtlas";
 import CirsConceptStudy from "./CirsConceptStudy";
 import CommunityLanguageStudy from "./CommunityLanguageStudy";
+import AccuFlowRouteDeck from "./AccuFlowRouteDeck";
 import "./work-evidence-drawers.css";
 
 type WorkPageProps = {
@@ -412,12 +413,14 @@ function Feature({
   messy,
   onQuick,
   onPage,
+  motionEnabled,
 }: {
   project: Project;
   index: number;
   messy: boolean;
   onQuick: () => void;
   onPage: () => void;
+  motionEnabled: boolean;
 }) {
   return (
     <article
@@ -502,32 +505,7 @@ function Feature({
             </div>
           </div>
         ) : (
-          <div className="accuflow-assembly">
-            <ol
-              className="flow-interface-map"
-              aria-label="Pages in the AccuFlow prototype"
-            >
-              {[
-                "Home",
-                "Product",
-                "How it works",
-                "Try it",
-                "Business",
-                "About",
-              ].map((title, i) => (
-                <li key={title}>
-                  <span>0{i + 1}</span>
-                  {title}
-                </li>
-              ))}
-            </ol>
-            <div className="project-window-label">
-              <span>AccuFlow / Try interface</span>
-              <span>Actual prototype capture</span>
-            </div>
-            <ProcessMedia project={project} messy={messy} onOpen={onQuick} />
-            <span className="accuflow-scroll-meter" aria-hidden="true" />
-          </div>
+          <AccuFlowRouteDeck motionEnabled={motionEnabled} />
         )}
         {project.id === "accuflow" && (
           <div className="accuflow-stage-info">
@@ -725,6 +703,7 @@ export default function WorkPage({
       <div className="story-projects">
         <Feature
           project={community}
+          motionEnabled={motionEnabled}
           index={1}
           messy={false}
           onQuick={() => onQuick("community")}
@@ -741,6 +720,7 @@ export default function WorkPage({
         </WorkEvidenceDrawer>
         <Feature
           project={accuflow}
+          motionEnabled={motionEnabled}
           index={2}
           messy={false}
           onQuick={() => onQuick("accuflow")}

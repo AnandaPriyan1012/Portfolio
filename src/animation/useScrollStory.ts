@@ -339,9 +339,9 @@ function coordinateChapterScenes(element: HTMLElement) {
 
   const assembly = find(".accuflow-assembly");
   const flowMedia = assembly?.querySelector<HTMLElement>(".feature-media");
-  const route = assembly?.querySelectorAll<HTMLElement>(
-    ".flow-interface-map li",
-  );
+  // The route deck's native choices stay stationary while the proof assembles.
+  const route = assembly?.classList.contains("accu-route-deck") ? [] :
+    assembly?.querySelectorAll<HTMLElement>(".flow-interface-map li");
   const flowMeter = find(".accuflow-scroll-meter");
   if (assembly && flowMedia) {
     const scene = gsap.timeline({
