@@ -13,7 +13,6 @@ import {
   experienceContent,
   interfaceCopy,
   directorsCut,
-  scrollStoryCopy,
 } from "./content";
 import { hasApprovedNativePlayback } from "./media-readiness";
 import type { Project } from "./content";
@@ -27,8 +26,7 @@ import useVisitTrail from "./hooks/useVisitTrail";
 import { GuidedTour } from "./components/Discovery";
 import AtelierNavigation from "./components/AtelierNavigation";
 import ScreeningRoom from "./components/ScreeningRoom";
-import HeroFilm from "./components/HeroFilm";
-import HomeCirsProof from "./components/HomeCirsProof";
+import ProjectOpening from "./components/ProjectOpening";
 import WorkPage from "./components/WorkPage";
 import BatchDispatchStudy from "./components/BatchDispatchStudy";
 import HomeDirectory from "./components/HomeDirectory";
@@ -211,91 +209,6 @@ function Dialog({
         {children}
       </div>
     </dialog>
-  );
-}
-
-function ScrollOpening({
-  onWork,
-  onCaseStudy,
-  onImageError,
-  onDirector,
-  motionEnabled,
-}: {
-  onWork: () => void;
-  onCaseStudy?: () => void;
-  onImageError: () => void;
-  onDirector: () => void;
-  motionEnabled: boolean;
-}) {
-  const [filmActive, setFilmActive] = useState(false);
-  return (
-    <section
-      className="scroll-opening"
-      data-hero-film={filmActive ? "active" : undefined}
-      aria-label="Introduction and CIRS project scene"
-    >
-      <div className="hero-room" aria-hidden="true">
-        <picture>
-          <source
-            media="(max-width:767px)"
-            srcSet="/media/atelier-room-portrait.webp"
-          />
-          <source
-            media="(max-width:1023px)"
-            srcSet="/media/atelier-room-tablet.webp"
-          />
-          <img
-            src="/media/atelier-room-wide.webp"
-            alt=""
-            fetchPriority="high"
-            decoding="async"
-          />
-        </picture>
-        <span className="hero-material-light" />
-      </div>
-      <HeroFilm enabled={motionEnabled} onAvailability={setFilmActive} />
-      <div className="hero-optical-pane" aria-hidden="true" />
-      <div className="hero-story-copy">
-        <p className="hero-eyebrow">Ananda Priyan · Selected work</p>
-        <h1 aria-label="Ananda Priyan">
-          <span>Ananda</span> <span>Priyan</span>
-        </h1>
-        <p className="hero-factual-intro">{scrollStoryCopy.introduction}</p>
-        <button className="view-work-button" onClick={onWork}>
-          View Work
-        </button>
-        {directorsCut.videoUrl && directorsCut.credits && (
-          <button
-            className="director-film-link"
-            data-cursor="play"
-            onClick={onDirector}
-          >
-            Play Director’s Cut
-          </button>
-        )}
-      </div>
-      <div className="opening-edition" aria-hidden="true">
-        <span>Web / Film / Community</span>
-        <span className="opening-scroll-cue">
-          Scroll to enter <i />
-        </span>
-      </div>
-      <div className="cirs-scene-title">
-        <span>CIRS Website</span>
-        <a href="https://cirschool.org" target="_blank" rel="noreferrer">
-          Visit the live website
-        </a>
-      </div>
-      <HomeCirsProof onCaseStudy={onCaseStudy} onImagesUnavailable={onImageError} />
-      <div className="cirs-scene-captions">
-        {scrollStoryCopy.captions.map((caption) => (
-          <p key={caption.label}>
-            <span>{caption.label}</span>
-            {caption.text}
-          </p>
-        ))}
-      </div>
-    </section>
   );
 }
 
@@ -856,9 +769,10 @@ export default function App() {
         <GlassMaterial />
         {mainPage === "home" && (
           <>
-            <ScrollOpening
+            <ProjectOpening
               motionEnabled={preferences.motion}
               onWork={() => navigate("/work")}
+              onStudio={() => navigate("/studio")}
               onCaseStudy={() => page("cirs", undefined, "cirs-scene")}
               onImageError={() => setCirsImageFailed(true)}
               onDirector={() =>

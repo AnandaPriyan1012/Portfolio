@@ -488,25 +488,27 @@ export default function useScrollStory({ root, enabled, route }: Options) {
     let layoutReady = false;
     let interacted = false;
     const initialHash = window.location.hash;
-    const homeProof = route === "/" ? element.querySelector<HTMLElement>(".home-cirs-proof") : null;
-    const initialProofFocus = document.activeElement;
-    let proofFocus: HTMLElement | null = initialProofFocus instanceof HTMLElement && homeProof?.contains(initialProofFocus)
-      ? initialProofFocus : null;
-    const rememberProofFocus = (event: FocusEvent) => {
+    // The pin contains the genuine proof and the introductory native actions.
+    // Remember only actual focus inside this Home scene; outside input clears it.
+    const homeOpening = route === "/" ? element.querySelector<HTMLElement>(".scroll-opening") : null;
+    const initialOpeningFocus = document.activeElement;
+    let openingFocus: HTMLElement | null = initialOpeningFocus instanceof HTMLElement && homeOpening?.contains(initialOpeningFocus)
+      ? initialOpeningFocus : null;
+    const rememberOpeningFocus = (event: FocusEvent) => {
       const target = event.target;
-      proofFocus = target instanceof HTMLElement && homeProof?.contains(target) ? target : null;
+      openingFocus = target instanceof HTMLElement && homeOpening?.contains(target) ? target : null;
     };
-    const restoreProofFocus = () => {
+    const restoreOpeningFocus = () => {
       // Pin refresh/reparenting can drop a native control to BODY. Restore only
       // that same connected control, synchronously, while this page owns focus.
       if (alive && document.hasFocus() && document.activeElement === document.body &&
-          proofFocus?.isConnected && homeProof?.contains(proofFocus))
-        proofFocus.focus({ preventScroll: true });
+          openingFocus?.isConnected && homeOpening?.contains(openingFocus))
+        openingFocus.focus({ preventScroll: true });
     };
-    if (homeProof) {
-      window.addEventListener("focusin", rememberProofFocus);
-      ScrollTrigger.addEventListener("refresh", restoreProofFocus);
-      ScrollTrigger.addEventListener("matchMedia", restoreProofFocus);
+    if (homeOpening) {
+      window.addEventListener("focusin", rememberOpeningFocus);
+      ScrollTrigger.addEventListener("refresh", restoreOpeningFocus);
+      ScrollTrigger.addEventListener("matchMedia", restoreOpeningFocus);
     }
 
     // Native hash positioning happens before ScrollTrigger adds pin spacing.
@@ -550,7 +552,7 @@ export default function useScrollStory({ root, enabled, route }: Options) {
         placeAnchor(initialHash, true);
     };
     const markInteraction = (event: Event) => {
-      if (event.target instanceof Node && !homeProof?.contains(event.target)) proofFocus = null;
+      if (event.target instanceof Node && !homeOpening?.contains(event.target)) openingFocus = null;
       interacted = true;
       initialHashPending = false;
       pendingRestore.current = null;
@@ -676,6 +678,7 @@ export default function useScrollStory({ root, enabled, route }: Options) {
           desktop: "(min-width: 1024px)",
           mobileOrTablet: "(max-width: 1023px)",
           capablePointer: "(hover: hover) and (pointer: fine)",
+          openingFits: route === "/" ? "(min-width: 1100px) and (min-height: 760px)" : "all",
           reduced: "(prefers-reduced-motion: reduce)",
           forced: route === "/" ? "(forced-colors: active)" : "not all",
         },
@@ -709,7 +712,7 @@ export default function useScrollStory({ root, enabled, route }: Options) {
           }
 
           const desktop = Boolean(
-            conditions.desktop && conditions.capablePointer,
+            conditions.desktop && conditions.capablePointer && conditions.openingFits,
           );
           element.dataset.scrollEngine = desktop ? "gsap-lenis" : "gsap-native";
           const select = <T extends Element = HTMLElement>(selector: string) =>
@@ -803,6 +806,8 @@ export default function useScrollStory({ root, enabled, route }: Options) {
             const heroName = select(".hero-story-copy > h1");
             const heroSupportingCopy = selectAll(".hero-story-copy > :not(h1)");
             const room = select(".hero-room");
+            const communitySpecimen = select(".opening-specimen-community");
+            const prototypeSpecimen = select(".opening-specimen-accuflow");
             const heroFilm = select(".hero-film-stage");
             const opticalPane = select(".hero-optical-pane");
             const title = select(".cirs-scene-title");
@@ -885,6 +890,16 @@ export default function useScrollStory({ root, enabled, route }: Options) {
                 opening.to(heroName, { y: -160, duration: 0.24 }, 0.16);
               if (hero)
                 opening.to(hero, { autoAlpha: 0, y: -12, duration: 0.24 }, 0.2);
+              // Real project plates unfold within the existing opening. They
+              // share its scroll owner and give way to the readable CIRS proof.
+              if (communitySpecimen)
+                opening.fromTo(communitySpecimen,
+                  { xPercent: 0, yPercent: 0, rotation: -5, rotationY: 10, transformPerspective: 1000 },
+                  { xPercent: -18, yPercent: -14, rotation: -1, rotationY: -8, duration: 0.42 }, 0.02);
+              if (prototypeSpecimen)
+                opening.fromTo(prototypeSpecimen,
+                  { xPercent: 0, yPercent: 0, rotation: 5, rotationY: -10, transformPerspective: 1000 },
+                  { xPercent: 18, yPercent: -22, rotation: 1, rotationY: 8, duration: 0.42 }, 0.02);
               if (room)
                 opening.fromTo(
                   room,
@@ -930,7 +945,7 @@ export default function useScrollStory({ root, enabled, route }: Options) {
                 {
                   ...initialFrame,
                   clipPath: "inset(0% 0% 0% 0% round 12px)",
-                  autoAlpha: 0.62,
+                  autoAlpha: 1,
                 },
                 {
                   left: "6%",
@@ -1077,10 +1092,10 @@ export default function useScrollStory({ root, enabled, route }: Options) {
       window.removeEventListener("pointerdown", markInteraction);
       window.removeEventListener("keydown", markInteraction);
       window.removeEventListener("hashchange", hashChange);
-      if (homeProof) {
-        window.removeEventListener("focusin", rememberProofFocus);
-        ScrollTrigger.removeEventListener("refresh", restoreProofFocus);
-        ScrollTrigger.removeEventListener("matchMedia", restoreProofFocus);
+      if (homeOpening) {
+        window.removeEventListener("focusin", rememberOpeningFocus);
+        ScrollTrigger.removeEventListener("refresh", restoreOpeningFocus);
+        ScrollTrigger.removeEventListener("matchMedia", restoreOpeningFocus);
       }
       contentResize?.disconnect();
       readinessCleanups.forEach((cleanup) => cleanup());

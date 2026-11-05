@@ -16,8 +16,8 @@ async function ready(page: Page, path = '/') {
   await page.evaluate(() => document.fonts.ready)
   await page.locator('header .ap-signature').evaluate(node => (node as HTMLImageElement).decode())
   if (path === '/') {
-    await page.locator('.hero-room img').evaluate(node => (node as HTMLImageElement).decode())
-    await page.locator('.cirs-browser-image').evaluate(node => (node as HTMLImageElement).decode())
+    await page.locator('.opening-specimen-community img').evaluate(node => (node as HTMLImageElement).decode())
+    await page.locator('.cirs-browser-image').first().evaluate(node => (node as HTMLImageElement).decode())
   }
   await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))))
 }
@@ -43,8 +43,8 @@ for (const width of [320, 375, 390, 768, 1024, 1440]) {
     await ready(page)
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width)
     const mobile = width < 768
-    const source = await page.locator('.hero-room img').evaluate(node => (node as HTMLImageElement).currentSrc)
-    expect(source).toContain(mobile ? 'atelier-room-portrait.webp' : width < 1024 ? 'atelier-room-tablet.webp' : 'atelier-room-wide.webp')
+    const source = await page.locator('.opening-specimen-community img').evaluate(node => (node as HTMLImageElement).currentSrc)
+    expect(source).toContain('vallalar-language-en-desktop.webp')
     await expect(page.locator('h1')).toHaveCount(1)
     await expect(page.locator('h1')).toContainText('Ananda')
     for (const selector of ['.hero-story-copy h1', '.hero-factual-intro', '.view-work-button', '.cirs-visual-frame']) {
@@ -74,9 +74,9 @@ for (const width of [320, 375, 390, 768, 1024, 1440]) {
     await expect(page).toHaveURL(/\/work$/)
     await expect(page.locator('h1')).toHaveText(/Selected\s*work\./)
     await page.getByRole('navigation', { name: 'Explore selected projects' }).locator('a[href="#cirs"]').click()
-    const headerHeight = await page.locator('.site-header').evaluate(node => node.getBoundingClientRect().height)
-    await expect.poll(async () => (await page.locator('#cirs').boundingBox())!.y - headerHeight).toBeGreaterThanOrEqual(16)
-    await expect.poll(async () => (await page.locator('#cirs').boundingBox())!.y - headerHeight).toBeLessThanOrEqual(40)
+    const navigationClearance = await page.evaluate(() => document.querySelector('.site-header')!.getBoundingClientRect().bottom + document.querySelector('.work-chapter-rail')!.getBoundingClientRect().height)
+    await expect.poll(async () => (await page.locator('#cirs').boundingBox())!.y - navigationClearance).toBeGreaterThanOrEqual(16)
+    await expect.poll(async () => (await page.locator('#cirs').boundingBox())!.y - navigationClearance).toBeLessThanOrEqual(40)
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width)
   })
 }
@@ -185,7 +185,7 @@ test('portrait phones keep native scroll, full glass, and a lightweight changing
   await expect(page.locator('main')).toHaveAttribute('data-scroll-engine', 'gsap-native')
   await expect(page.locator('.pin-spacer')).toHaveCount(0)
   await expect(page.locator('.glass-cursor')).toHaveCount(0)
-  await expect(page.locator('.hero-room')).toBeVisible()
+  await expect(page.locator('.project-opening-stage')).toBeVisible()
   await page.locator('.state-opening').waitFor({ state: 'detached' })
   await page.screenshot({ path: 'docs/refinement-mobile-start.png' })
   await ready(page, '/work')
@@ -204,7 +204,7 @@ test('reduced motion and low-power devices keep the sculpture with static scroll
   await expect(page.locator('.pin-spacer')).toHaveCount(0)
   await expect(page.locator('.glass-material')).toBeHidden()
   await expect(page.locator('.state-opening')).toHaveCount(0)
-  await expect(page.locator('.hero-room')).toBeVisible()
+  await expect(page.locator('.project-opening-stage')).toBeVisible()
   const before = (await page.locator('.cirs-visual-frame').boundingBox())!
   await page.mouse.wheel(0, 650)
   await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(600)

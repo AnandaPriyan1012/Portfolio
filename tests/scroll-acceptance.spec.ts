@@ -15,9 +15,9 @@ async function ready(page: Page, path = '/') {
   await page.goto(path)
   await page.evaluate(() => document.fonts.ready)
   if (path === '/') {
-    await page.locator('.hero-room img').evaluate(node => (node as HTMLImageElement).decode())
-    await page.locator('.cirs-browser-image').evaluate(node => (node as HTMLImageElement).decode())
-    expect(await page.locator('.cirs-browser-image').evaluate(node => (node as HTMLImageElement).naturalWidth)).toBeGreaterThan(0)
+    await page.locator('.opening-specimen-community img').evaluate(node => (node as HTMLImageElement).decode())
+    await page.locator('.cirs-browser-image').first().evaluate(node => (node as HTMLImageElement).decode())
+    expect(await page.locator('.cirs-browser-image').first().evaluate(node => (node as HTMLImageElement).naturalWidth)).toBeGreaterThan(0)
   }
 }
 
@@ -37,7 +37,7 @@ for (const width of [320, 375, 390, 768, 1024, 1440]) test(`scroll story fits ${
   await ready(page)
   const mobile = width < 768
   await expect(page.locator('main')).toHaveAttribute('data-scroll-engine', 'static')
-  const source = await page.locator('.cirs-browser-image').evaluate(node => (node as HTMLImageElement).currentSrc)
+  const source = await page.locator('.cirs-browser-image').first().evaluate(node => (node as HTMLImageElement).currentSrc)
   expect(source).toContain(mobile ? 'atlas-cirs-admissions-mobile.webp' : 'atlas-cirs-admissions-desktop.webp')
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width)
   for (const selector of ['.hero-story-copy h1', '.hero-factual-intro', '.view-work-button', '.cirs-visual-frame']) {
@@ -127,7 +127,7 @@ test('mobile retains native scrolling and captures school, community and AccuFlo
   await expect(page.locator('.pin-spacer')).toHaveCount(0)
   expect(await page.locator('.cirs-visual-frame').evaluate(node => getComputedStyle(node).position)).toBe('relative')
   expect((await page.locator('.cirs-visual-frame').boundingBox())!.width).toBeGreaterThan(300)
-  expect(await page.locator('.hero-room img').evaluate(node => (node as HTMLImageElement).currentSrc)).toContain('atelier-room-portrait.webp')
+  expect(await page.locator('.opening-specimen-community img').evaluate(node => (node as HTMLImageElement).currentSrc)).toContain('vallalar-language-en-desktop.webp')
   const prefix = browserName === 'chromium' ? 'refinement-regression-scroll-mobile' : `refinement-regression-scroll-${browserName}-mobile`
   await page.screenshot({ path: `docs/${prefix}-start.png` })
   await ready(page, '/work')
