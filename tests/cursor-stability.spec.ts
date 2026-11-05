@@ -10,7 +10,7 @@ test.beforeEach(async({page})=>{
 })
 test.afterEach(async({page})=>{expect(errors.get(page)||[]).toEqual([])})
 async function ready(page:Page,path='/work'){
-  await page.goto(path);await page.locator('.state-opening').waitFor({state:'detached'});await page.evaluate(()=>document.fonts.ready)
+  await page.goto(path);await expect(page.locator('.state-opening')).toHaveCount(0,{timeout:2100});await expect(page.locator('html')).not.toHaveAttribute('data-opening','active');await page.evaluate(()=>document.fonts.ready)
   if(process.env.AP_EXPECT_BUNDLE)await expect(page.locator('script[type="module"]').first()).toHaveAttribute('src',`/assets/${process.env.AP_EXPECT_BUNDLE}`)
 }
 async function glass(page:Page,x?:number,y?:number){
@@ -77,7 +77,7 @@ test('editing, specialized inputs, native media and disabled controls retain nat
   await testInfo.attach('native-exceptions-fixture',{body:JSON.stringify(records),contentType:'application/json'})
 })
 
-test('native modal content keeps glass, its browser backdrop yields native, and quiet routes preserve the stationary pointer',async({page},testInfo)=>{
+test('native modal content keeps glass, its browser backdrop yields native, and the restored route opening preserves the stationary pointer',async({page},testInfo)=>{
   await ready(page);await page.locator('#cirs').getByRole('button',{name:'Quick view',exact:true}).click()
   const dialog=page.getByRole('dialog',{name:'CIRS Website',exact:true}),close=dialog.getByRole('button',{name:'Close dialog',exact:true})
   await close.hover();const box=(await close.boundingBox())!,point={x:box.x+box.width/2,y:box.y+box.height/2};await glass(page,point.x,point.y)
@@ -86,6 +86,8 @@ test('native modal content keeps glass, its browser backdrop yields native, and 
   await page.mouse.move(5,500);await native(page)
   await close.hover();await glass(page,point.x,point.y);await page.keyboard.press('Escape');await expect(dialog).toHaveCount(0);await glass(page,point.x,point.y)
   const films=page.locator('a[href="/studio"]:visible').first();await expect(films).toHaveCount(1);await films.focus();await page.keyboard.press('Enter')
-  await expect(page).toHaveURL(/\/studio$/);await expect(page.locator('.state-opening')).toHaveCount(0);await glass(page,point.x,point.y)
+  await expect(page).toHaveURL(/\/studio$/)
+  const stage=page.locator('.state-opening');await expect(stage).toHaveAttribute('data-route','/studio',{timeout:1200});await expect(stage).toHaveCSS('background-color','rgb(0, 0, 0)');await expect(stage).toHaveCSS('opacity','1');await native(page)
+  await page.keyboard.press('Escape');await expect(stage).toHaveCount(0,{timeout:2100});await expect(page.locator('html')).not.toHaveAttribute('data-opening','active');await glass(page,point.x,point.y)
   await testInfo.attach('top-layer-stationary-point',{body:JSON.stringify(point),contentType:'application/json'})
 })

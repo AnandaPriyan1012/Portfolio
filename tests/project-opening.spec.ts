@@ -9,7 +9,16 @@ test.use({reducedMotion:'no-preference'})
 test.beforeEach(async({page})=>monitor(page));test.afterEach(async({page})=>expect(errors.get(page)||[]).toEqual([]))
 async function capable(context:BrowserContext){await context.addInitScript(()=>{Object.defineProperty(navigator,'hardwareConcurrency',{get:()=>8});Object.defineProperty(navigator,'deviceMemory',{get:()=>8})})}
 async function entry(page:Page){if(process.env.AP_EXPECT_BUNDLE)await expect(page.locator('script[type="module"]').first()).toHaveAttribute('src',`/assets/${process.env.AP_EXPECT_BUNDLE}`)}
-async function ready(page:Page){monitor(page);await page.goto('/');await page.evaluate(()=>document.fonts.ready);await entry(page);await page.locator('.desk-cirs img').evaluate(node=>(node as HTMLImageElement).decode())}
+async function openingFinished(page:Page,mode:'wait'|'animated'|'dismiss'='wait'){
+  const stage=page.locator('.state-opening')
+  if(mode==='animated')await expect(stage).toHaveAttribute('data-mode','animated',{timeout:1200})
+  if(mode==='dismiss')await expect(stage).toHaveAttribute('data-route',new URL(page.url()).pathname,{timeout:1200})
+  const visible=await page.evaluate(()=>{const node=document.querySelector<HTMLElement>('.state-opening');if(!node)return null;const style=getComputedStyle(node);return{background:style.backgroundColor,opacity:style.opacity,source:node.querySelector('mask image')?.getAttribute('href')}})
+  if(visible){expect(visible.background).toBe('rgb(0, 0, 0)');expect(visible.opacity).toBe('1');expect(visible.source).toBe('/media/ap-signature.png')}
+  if(mode==='dismiss')await page.keyboard.press('Escape')
+  await expect(stage).toHaveCount(0,{timeout:2100});await expect(page.locator('html')).not.toHaveAttribute('data-opening','active')
+}
+async function ready(page:Page,animated=false){monitor(page);await page.goto('/',{waitUntil:'domcontentloaded'});await openingFinished(page,animated?'animated':'wait');await page.evaluate(()=>document.fonts.ready);await entry(page);await page.locator('.desk-cirs img').evaluate(node=>(node as HTMLImageElement).decode())}
 async function imageSource(page:Page,selector:string,path:string,natural:number[]){
   const image=page.locator(selector);await image.scrollIntoViewIfNeeded();await image.evaluate(node=>(node as HTMLImageElement).decode())
   const result=await image.evaluate(node=>{const img=node as HTMLImageElement;return{path:new URL(img.currentSrc).pathname,natural:[img.naturalWidth,img.naturalHeight],size:[img.clientWidth,img.clientHeight],clip:getComputedStyle(img).clipPath,alt:img.alt}})
@@ -25,7 +34,7 @@ async function geometry(page:Page){
 }
 
 test('the illustrated desk uses only genuine work, one identity and two licensed self-hosted fonts',async({page,context},testInfo)=>{
-  await capable(context);const generated:string[]=[];page.on('request',r=>{if(/\.mp4(?:[?#]|$)|atelier-room|amber-architecture|glass-corridor|screening-room-loop|ap-pixelify/.test(r.url()))generated.push(r.url())});await ready(page)
+  await capable(context);const generated:string[]=[];page.on('request',r=>{if(/\.mp4(?:[?#]|$)|atelier-room|amber-architecture|glass-corridor|screening-room-loop|ap-pixelify/.test(r.url()))generated.push(r.url())});await ready(page,true)
   await expect(page.getByRole('heading',{level:1,name:/Web work for my school\.\s*Stories for the screen\./})).toBeInViewport()
   await expect(page.locator('.site-header[data-desk] .navigation-caption')).toHaveText('Ananda Priyan');await expect(page.locator('.site-header nav,.site-header .menu-button,.site-footer nav,.site-footer .wordmark')).toHaveCount(0)
   await expect(page.locator('.desk-opening')).not.toContainText('Ananda Priyan');await expect(page.locator('.desk-surface > a')).toHaveCount(5)
@@ -66,8 +75,8 @@ test('all three case objects return to their exact native desk origin and readin
   const results=[]
   for(const[selector,path]of projectObjects){
     await ready(page);const object=page.locator(selector);await object.scrollIntoViewIfNeeded();await object.focus();await object.evaluate(node=>node.addEventListener('click',event=>window.__deskDeparture={top:scrollY,trusted:event.isTrusted},{once:true,capture:true}))
-    await page.keyboard.press('Enter');const departure=await page.evaluate(()=>window.__deskDeparture!);expect(departure.trusted).toBe(true);await expect(page).toHaveURL(new RegExp(`${path}$`))
-    await page.getByRole('button',{name:'Back to portfolio',exact:true}).click();await expect(page).toHaveURL(/\/$/);await expect(object).toBeFocused();await expect.poll(async()=>Math.abs(await page.evaluate(()=>scrollY)-departure.top)).toBeLessThan(4)
+    await page.keyboard.press('Enter');const departure=await page.evaluate(()=>window.__deskDeparture!);expect(departure.trusted).toBe(true);await expect(page).toHaveURL(new RegExp(`${path}$`));await openingFinished(page,'dismiss')
+    await page.getByRole('button',{name:'Back to portfolio',exact:true}).click();await expect(page).toHaveURL(/\/$/);await openingFinished(page,'dismiss');await expect(object).toBeFocused();await expect.poll(async()=>Math.abs(await page.evaluate(()=>scrollY)-departure.top)).toBeLessThan(4)
     results.push({selector,departure,returned:await page.evaluate(()=>scrollY)})
   }
   await testInfo.attach('three-native-desk-origins',{body:JSON.stringify(results),contentType:'application/json'})
@@ -82,17 +91,17 @@ test('film and contact objects keep their real destinations, native modifier con
   const returns=[]
   for(const[selector,path]of[['.desk-films','/studio'],['.desk-contact','/about#contact']]as const){
     const link=page.locator(selector);await link.scrollIntoViewIfNeeded();await link.focus();await link.evaluate(node=>node.addEventListener('click',event=>window.__deskDeparture={top:scrollY,trusted:event.isTrusted},{once:true,capture:true}));await page.keyboard.press('Enter');const departure=await page.evaluate(()=>window.__deskDeparture!)
-    await expect(page).toHaveURL(new RegExp(`${path}$`));if(path==='/studio')await expect(page.getByRole('heading',{level:1})).toHaveText(/The screening\s+room\./);else await expect(page.locator('#contact h2')).toBeInViewport()
-    await expect(page.locator('.state-opening,#studio video,#studio iframe')).toHaveCount(0);await page.goBack();await expect(page).toHaveURL(/\/$/);await expect(link).toBeFocused();await expect.poll(async()=>Math.abs(await page.evaluate(()=>scrollY)-departure.top)).toBeLessThan(4);returns.push({selector,departure,returned:await page.evaluate(()=>scrollY)})
+    await expect(page).toHaveURL(new RegExp(`${path}$`));await openingFinished(page,'dismiss');if(path==='/studio')await expect(page.getByRole('heading',{level:1})).toHaveText(/The screening\s+room\./);else await expect(page.locator('#contact h2')).toBeInViewport()
+    await expect(page.locator('.state-opening,#studio video,#studio iframe')).toHaveCount(0);await page.goBack();await expect(page).toHaveURL(/\/$/);await openingFinished(page,'dismiss');await expect(link).toBeFocused();await expect.poll(async()=>Math.abs(await page.evaluate(()=>scrollY)-departure.top)).toBeLessThan(4);returns.push({selector,departure,returned:await page.evaluate(()=>scrollY)})
   }
   await testInfo.attach('desk-destination-history',{body:JSON.stringify({modified,returns}),contentType:'application/json'})
 })
 
 test('one failed genuine capture leaves an honest object and all destination links usable',async({page})=>{
-  await page.route('**/atlas-cirs-home-desktop.webp',route=>route.abort());await page.goto('/');await entry(page);await expect(page.locator('.desk-cirs .desk-image-fallback')).toContainText('Website capture unavailable. Project details are still available through this link.')
+  await page.route('**/atlas-cirs-home-desktop.webp',route=>route.abort());await page.goto('/');await openingFinished(page);await entry(page);await expect(page.locator('.desk-cirs .desk-image-fallback')).toContainText('Website capture unavailable. Project details are still available through this link.')
   await expect(page.locator('.desk-object')).toHaveCount(5);await expect(page.locator('.desk-vallalar img')).toHaveCount(1);await expect(page.locator('.desk-contact')).toHaveAttribute('href','/about#contact')
   await expect(page.locator('.desk-opening')).not.toContainText(/available for work|open to work|accepting projects|process hotspot/i)
-  await page.locator('.desk-cirs').click();await expect(page).toHaveURL(/\/projects\/cirs$/)
+  await page.locator('.desk-cirs').click();await expect(page).toHaveURL(/\/projects\/cirs$/);await openingFinished(page,'dismiss')
 })
 
 test('quiet preferences keep real work and keyboard focus without ambient media or a camera sequence',async({browser,baseURL})=>{

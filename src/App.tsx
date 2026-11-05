@@ -1065,7 +1065,7 @@ export default function App() {
             aria-pressed={preferences.motion}
             disabled={preferences.reduced}
           >
-            Glass cursor {preferences.motion ? "on" : "off"}
+            Motion {preferences.motion ? "on" : "off"}
           </button>
           <a
             href="#"

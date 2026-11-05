@@ -14,6 +14,9 @@ type OpeningRecord = {
   source: string | null
   strokeMax: number
   strokeMin: number
+  paneOpacityMin: number
+  paneFractionalFrames: number
+  blackSamples: number
 }
 declare global {
   interface Window { __routeOpeningProbe: { records: OpeningRecord[] } }
@@ -33,8 +36,9 @@ async function boot(page: Page, path = '/', options: {
   reducedMotion?: 'reduce' | 'no-preference'
   saveData?: boolean
   cores?: number
+  forcedColors?: 'active' | 'none'
 } = {}) {
-  await page.emulateMedia({ reducedMotion: options.reducedMotion ?? 'no-preference' })
+  await page.emulateMedia({ reducedMotion: options.reducedMotion ?? 'no-preference', forcedColors: options.forcedColors ?? 'none' })
   await page.addInitScript(({ motion, saveData, cores }) => {
     // Deliberately mark the old intro as seen: user requested every pathname.
     sessionStorage.setItem('ap-atelier-loader-v4', 'seen')
@@ -69,12 +73,19 @@ async function boot(page: Page, path = '/', options: {
         blackThroughout: true,
         source: opening.querySelector('mask image')?.getAttribute('href') ?? null,
         strokeMax: 0,
-        strokeMin: 1,
+        strokeMin: 1, paneOpacityMin: 1, paneFractionalFrames: 0, blackSamples: 0,
       }
       records.push(record)
       const sample = () => {
         if (!opening.isConnected || record.closedAt !== null) return
         const frame = getComputedStyle(opening)
+        record.blackSamples++
+        const pane = opening.querySelector('.state-opening-pane')
+        if (pane) {
+          const opacity = Number(getComputedStyle(pane).opacity)
+          record.paneOpacityMin = Math.min(record.paneOpacityMin, opacity)
+          if (opacity > 0 && opacity < .99) record.paneFractionalFrames++
+        }
         if (frame.backgroundColor !== 'rgb(0, 0, 0)' || frame.opacity !== '1') record.blackThroughout = false
         const stroke = opening.querySelector('.state-signature-ascender')
         if (stroke) {
@@ -93,6 +104,7 @@ async function boot(page: Page, path = '/', options: {
     snapshot()
   }, { motion: options.motion ?? 'on', saveData: options.saveData ?? false, cores: options.cores ?? 8 })
   await page.goto(path, { waitUntil: 'domcontentloaded' })
+  if (process.env.AP_EXPECT_BUNDLE) await expect(page.locator('script[type="module"]').first()).toHaveAttribute('src', `/assets/${process.env.AP_EXPECT_BUNDLE}`)
 }
 
 const opening = (page: Page) => page.locator('.state-opening')
@@ -135,21 +147,24 @@ test('each main pathname replays on clicks, Back/Forward and reload despite the 
   await expectOpening(page, '/')
   await dismiss(page)
   const navigation = page.getByRole('navigation', { name: 'Main navigation' })
-  await navigation.getByRole('link', { name: 'Work', exact: true }).click()
+  await page.locator('.desk-work-link').click()
   await expectOpening(page, '/work')
   await dismiss(page)
-  await navigation.getByRole('link', { name: 'Studio', exact: true }).click()
+  await page.locator('a[href="/studio"]:visible').first().click()
   await expectOpening(page, '/studio')
+  await dismiss(page)
+  await navigation.getByRole('link', { name: 'About', exact: true }).click()
+  await expectOpening(page, '/about')
   await dismiss(page)
   await page.goBack()
-  await expectOpening(page, '/work')
+  await expectOpening(page, '/studio')
   await dismiss(page)
   await page.goForward()
-  await expectOpening(page, '/studio')
+  await expectOpening(page, '/about')
   await dismiss(page)
-  expect((await records(page)).map(record => record.route)).toEqual(['/', '/work', '/studio', '/work', '/studio'])
+  expect((await records(page)).map(record => record.route)).toEqual(['/', '/work', '/studio', '/about', '/studio', '/about'])
   await page.reload({ waitUntil: 'domcontentloaded' })
-  await expectOpening(page, '/studio')
+  await expectOpening(page, '/about')
   expect(await page.evaluate(() => sessionStorage.getItem('ap-atelier-loader-v4'))).toBe('seen')
   await dismiss(page)
 })
@@ -181,7 +196,12 @@ test('the full black stage covers corners and header, retains a native Skip poin
   await skip(page).hover()
   expect(await skip(page).evaluate(node => getComputedStyle(node).cursor)).not.toBe('none')
   await expect(opening(page)).toHaveCount(0, { timeout: 2100 })
-  expect((await records(page)).find(record => record.route === '/about')?.blackThroughout).toBe(true)
+  const record = (await records(page)).find(record => record.route === '/about')!
+  expect(record.blackThroughout).toBe(true)
+  expect(record.blackSamples).toBeGreaterThan(10)
+  expect(record.paneFractionalFrames, 'Only the inner signature pane fades while the cover remains black').toBeGreaterThan(0)
+  expect(record.paneOpacityMin).toBeLessThan(.99)
+  await test.info().attach('opaque-cover-and-inner-fade', { body: JSON.stringify(record), contentType: 'application/json' })
 })
 
 test('the exact PNG alpha draws progressively and closes within a short bound without a media gate', async ({ page }) => {
@@ -226,7 +246,7 @@ test('Escape and keyboard Skip preserve the normal-motion About case origin and 
   await expectOpening(page, '/about')
   await dismiss(page)
   await page.evaluate(() => document.fonts.ready)
-  await expect(page.locator('main')).toHaveAttribute('data-scroll-engine', 'gsap-lenis')
+  await expect(page.locator('main')).toHaveAttribute('data-scroll-engine', 'static')
   const origin = page.getByRole('link', { name: 'Read the CIRS project', exact: true })
   await origin.scrollIntoViewIfNeeded()
   await origin.focus()
@@ -273,7 +293,7 @@ test('Tab dismisses the stage and preserves the native page focus order without 
 test('a real desktop wheel gesture dismisses the stage immediately and scrolls the revealed page', async ({ page }) => {
   await boot(page, '/work')
   await expectOpening(page, '/work')
-  await expect(page.locator('main')).toHaveAttribute('data-scroll-engine', 'gsap-lenis')
+  await expect(page.locator('main')).toHaveAttribute('data-scroll-engine', 'static')
   const before = await page.evaluate(() => scrollY)
   await page.mouse.move(30, 500)
   await page.mouse.wheel(0, 420)
@@ -359,8 +379,7 @@ test('phone menu changes and Back/Forward show fitting black stages while same-p
       expect(box.height).toBeGreaterThanOrEqual(44)
       await skip(page).tap()
       await expect(opening(page)).toHaveCount(0)
-      await page.getByRole('button', { name: 'Open menu', exact: true }).tap()
-      await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Studio', exact: true }).tap()
+      await page.locator('.desk-films').tap()
       await expectOpening(page, '/studio')
       const mark = (await opening(page).locator('.state-opening-mark').boundingBox())!
       expect(mark.x).toBeGreaterThanOrEqual(0)
@@ -390,7 +409,7 @@ test('phone menu changes and Back/Forward show fitting black stages while same-p
   }
 })
 
-for (const mode of ['reduced', 'motion-off', 'save-data', 'low-power'] as const) {
+for (const mode of ['reduced', 'forced-colors', 'motion-off', 'save-data', 'low-power'] as const) {
   test(`${mode} receives a brief opaque static opening instead of animation or a session bypass`, async ({ page }) => {
     // Static timing is a JavaScript budget, not a machine-load benchmark. Freeze
     // before navigation, then exercise the actual 120ms dismissal deterministically.
@@ -398,6 +417,7 @@ for (const mode of ['reduced', 'motion-off', 'save-data', 'low-power'] as const)
     await page.clock.pauseAt(new Date('2026-11-04T00:00:10Z'))
     await boot(page, '/work', {
       reducedMotion: mode === 'reduced' ? 'reduce' : 'no-preference',
+      forcedColors: mode === 'forced-colors' ? 'active' : 'none',
       motion: mode === 'motion-off' ? 'off' : 'on', saveData: mode === 'save-data', cores: mode === 'low-power' ? 2 : 8,
     })
     await expect.poll(async () => (await records(page)).some(item => item.route === '/work' && item.mode === 'static')).toBe(true)
@@ -443,4 +463,49 @@ test('synthetic persisted-pageshow replays the BFCache event branch and invalida
   await dismiss(page)
   await page.evaluate(() => window.dispatchEvent(new PageTransitionEvent('pageshow', { persisted: false })))
   await expect(opening(page)).toHaveCount(0)
+})
+
+
+test('changing to reduced motion during the drawing switches to a short opaque static opening', async ({ page }) => {
+  await page.clock.install({ time: new Date('2026-11-05T00:00:00Z') })
+  await page.clock.pauseAt(new Date('2026-11-05T00:00:10Z'))
+  await boot(page, '/work')
+  await expectOpening(page, '/work')
+  await expect(opening(page)).toHaveAttribute('data-mode', 'animated')
+  await page.clock.runFor(300)
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await expect(opening(page)).toHaveAttribute('data-mode', 'static')
+  await expectOpaqueTopLayerCoverage(page)
+  expect(await opening(page).evaluate(node => node.getAnimations({ subtree: true }).filter(animation => animation.playState === 'running').length)).toBe(0)
+  await page.clock.runFor(119)
+  await expect(opening(page)).toBeVisible()
+  await page.clock.runFor(1)
+  await expect(opening(page)).toHaveCount(0)
+  const staticRecord = (await records(page)).find(record => record.route === '/work' && record.mode === 'static')!
+  expect(staticRecord.blackThroughout).toBe(true)
+  expect(staticRecord.closedAt! - staticRecord.openedAt).toBeLessThan(650)
+})
+
+test('the actual Motion setting persists and changes the next route opening without a session bypass', async ({ page }) => {
+  await boot(page, '/work')
+  await expectOpening(page, '/work')
+  await dismiss(page)
+  await page.getByRole('button', { name: 'Motion on', exact: true }).click()
+  await expect(page.getByRole('button', { name: 'Motion off', exact: true })).toBeVisible()
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ap-motion'))).toBe('off')
+  await page.clock.install({ time: new Date('2026-11-05T00:00:00Z') })
+  await page.clock.pauseAt(new Date('2026-11-05T00:00:10Z'))
+  await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'About', exact: true }).click()
+  await expect(opening(page)).toHaveAttribute('data-mode', 'static')
+  await expectOpaqueTopLayerCoverage(page)
+  await page.clock.runFor(119)
+  await expect(opening(page)).toBeVisible()
+  await page.clock.runFor(1)
+  await expect(opening(page)).toHaveCount(0)
+  await page.getByRole('button', { name: 'Motion off', exact: true }).click()
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ap-motion'))).toBe('on')
+  await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Work', exact: true }).click()
+  await expectOpening(page, '/work')
+  await expect(opening(page)).toHaveAttribute('data-mode', 'animated')
+  await dismiss(page)
 })

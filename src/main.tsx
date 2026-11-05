@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
+import AtelierLoader from "./components/AtelierLoader";
 import "./styles.css";
 import "./atelier-preview.css";
 import "./glass-finish.css";
@@ -26,5 +27,6 @@ import "./proof-led.css";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <App />
+    <AtelierLoader />
   </React.StrictMode>,
 );

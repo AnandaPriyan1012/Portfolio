@@ -64,7 +64,7 @@
 .state-opening .state-opening-skip { position: fixed; right: max(24px,env(safe-area-inset-right)); bottom: max(22px,env(safe-area-inset-bottom)); min-width: 96px; min-height: 48px; padding: 12px 15px; border: 1px solid #e3d5b739; border-radius: 2px; background: #000; color: #e8ddc4; font: 400 11px/1.4 var(--font-body,sans-serif); letter-spacing: .04em; cursor: pointer; z-index: 1; }
 .state-opening .state-opening-skip:hover { border-color: #f5e7ca99; color: #fff8e8; }
 .state-opening .state-opening-skip:focus-visible { outline: 2px solid #f3dba6; outline-offset: 4px; }
-.state-opening[data-mode="animated"] { animation: state-opening-dismiss .22s linear 1.38s both; }
+.state-opening[data-mode="animated"] .state-opening-pane { animation: state-opening-dismiss .22s linear 1.38s both; }
 @keyframes state-opening-dismiss { from { opacity: 1; } to { opacity: 0; } }
 :root[data-opening="active"] .glass-cursor { visibility: hidden !important; }
 :root[data-opening="active"] .state-opening,
