@@ -978,7 +978,7 @@ export default function App() {
                 {contactReady && copy.contact.email && (
                   <IdentityCard
                     email={copy.contact.email}
-                    motionEnabled={false}
+                    motionEnabled={preferences.motion}
                   />
                 )}
               </div>

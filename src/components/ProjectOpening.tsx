@@ -95,7 +95,6 @@ export default function ProjectOpening({ onNavigate }: { onNavigate: (path: Dest
         </header>
         <div className="scene-visual" data-scene-art="original-cinematic-illustration">
           {!failed ? <picture className="scene-background">
-            <source media="(max-width:767px)" srcSet="/media/cinematic-desk-compact.webp" />
             <img src="/media/cinematic-desk-wide.webp" width={1672} height={941} alt="A warm cinematic workspace with an open laptop, a booklet, a glass tablet, a film reel and a black personal card on a walnut desk." fetchPriority="high" decoding="async" onLoad={()=>setLoaded(true)} onError={()=>{setFailed(true);setLoaded(false);}} />
           </picture> : <p className="scene-art-unavailable" role="status">The desk artwork could not load. All project links are available below.</p>}
           {!failed && <DeskSurfaces loaded={loaded} />}
@@ -108,7 +107,6 @@ export default function ProjectOpening({ onNavigate }: { onNavigate: (path: Dest
           </a>)}
         </nav>
       </div>
-      <p className="desk-source-note page-width">Original desk artwork. The screens and printed insert show genuine project captures.</p>
     </section>
   );
 }

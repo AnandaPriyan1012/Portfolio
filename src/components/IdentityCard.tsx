@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState, type MouseEvent } from "react";
+import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type MouseEvent } from "react";
 import { ArrowDownToLine, ArrowRight } from "lucide-react";
 
 type Device = Navigator & {
@@ -18,21 +18,53 @@ export default function IdentityCard({
   const stage = useRef<HTMLDivElement>(null);
   const signatureButton = useRef<HTMLButtonElement>(null);
   const contactButton = useRef<HTMLButtonElement>(null);
-  const focusAfterTurn = useRef(false);
+  const focusAfterTurn = useRef<HTMLButtonElement | null>(null);
+  const restoreTurnFocus = useRef(false);
   const [contactSide, setContactSide] = useState(false);
+  const [settledSide, setSettledSide] = useState(false);
+  const [turning, setTurning] = useState(false);
+  const [animated, setAnimated] = useState(false);
   const faceId = useId();
 
   const turnCard = (event: MouseEvent<HTMLButtonElement>) => {
-    focusAfterTurn.current = event.detail === 0;
-    setContactSide((side) => !side);
+    if (turning) return;
+    focusAfterTurn.current = event.detail === 0 ? event.currentTarget : null;
+    const next = !contactSide;
+    setContactSide(next);
+    if (animated) setTurning(true);
+    else {
+      restoreTurnFocus.current = Boolean(focusAfterTurn.current);
+      setSettledSide(next);
+    }
   };
 
-  useEffect(() => {
-    if (!focusAfterTurn.current) return;
-    focusAfterTurn.current = false;
-    const nextButton = contactSide ? contactButton : signatureButton;
-    nextButton.current?.focus({ preventScroll: true });
+  const finishTurn = useCallback(() => {
+    const trigger = focusAfterTurn.current;
+    // Let Tab, a click elsewhere or another deliberate focus move keep control.
+    restoreTurnFocus.current = Boolean(trigger &&
+      (document.activeElement === trigger || document.activeElement === document.body));
+    setSettledSide(contactSide);
+    setTurning(false);
   }, [contactSide]);
+
+  useLayoutEffect(() => {
+    if (turning || !restoreTurnFocus.current) return;
+    restoreTurnFocus.current = false;
+    focusAfterTurn.current = null;
+    const nextButton = settledSide ? contactButton : signatureButton;
+    nextButton.current?.focus({ preventScroll: true });
+  }, [settledSide, turning]);
+
+  useEffect(() => {
+    if (!turning) return;
+    if (!animated) {
+      finishTurn();
+      return;
+    }
+    // A background tab or a motion preference change can cancel transitionend.
+    const fallback = window.setTimeout(finishTurn, 900);
+    return () => window.clearTimeout(fallback);
+  }, [turning, animated, finishTurn]);
 
   useEffect(() => {
     const host = root.current;
@@ -60,13 +92,10 @@ export default function IdentityCard({
         device.connection?.saveData ||
         (device.hardwareConcurrency > 0 && device.hardwareConcurrency <= 2) ||
         (device.deviceMemory && device.deviceMemory <= 2);
-      capable = Boolean(
-        motionEnabled &&
-          fine.matches &&
-          !reduced.matches &&
-          !contrast.matches &&
-          !lowPower,
-      );
+      const allowTurn = Boolean(motionEnabled && !reduced.matches &&
+        !contrast.matches && !lowPower);
+      setAnimated(allowTurn);
+      capable = allowTurn && fine.matches;
       host.dataset.tilt = capable ? "enabled" : "disabled";
       if (!capable) reset();
     };
@@ -126,16 +155,19 @@ export default function IdentityCard({
       ref={root}
       aria-label="Ananda Priyan personal card"
       data-side={contactSide ? "contact" : "signature"}
-      data-motion={motionEnabled ? "on" : "off"}
+      data-motion={animated ? "on" : "off"}
+      data-turning={turning ? "true" : "false"}
     >
       <div className="identity-card-stage" ref={stage}>
         <div className="identity-card-motion">
-          <div className="identity-card-turn">
+          <div className="identity-card-turn" onTransitionEnd={event => {
+            if (turning && event.target === event.currentTarget && event.propertyName === "transform") finishTurn();
+          }}>
             <div
               id={`${faceId}-signature`}
               className="identity-card-face identity-card-front"
-              aria-hidden={contactSide}
-              inert={contactSide}
+              aria-hidden={settledSide}
+              inert={settledSide}
             >
               <button
                 ref={signatureButton}
@@ -170,8 +202,8 @@ export default function IdentityCard({
             <div
               id={`${faceId}-contact`}
               className="identity-card-face identity-card-back"
-              aria-hidden={!contactSide}
-              inert={!contactSide}
+              aria-hidden={!settledSide}
+              inert={!settledSide}
             >
               <button
                 ref={contactButton}
@@ -203,7 +235,7 @@ export default function IdentityCard({
       </div>
       <figcaption className="identity-card-caption">
         <span className="identity-card-side-note" aria-live="polite">
-          Personal card / {contactSide ? "Contact" : "Signature"}
+          Personal card / {settledSide ? "Contact" : "Signature"}
         </span>
         <div className="identity-card-controls">
           <a

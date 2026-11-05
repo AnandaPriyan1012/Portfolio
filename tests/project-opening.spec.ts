@@ -42,10 +42,11 @@ async function capable(context: BrowserContext) {
 async function entry(page: Page) {
   if (process.env.AP_EXPECT_BUNDLE) await expect(page.locator('script[type="module"]').first()).toHaveAttribute('src', `/assets/${process.env.AP_EXPECT_BUNDLE}`)
 }
-async function openingFinished(page: Page, mode: 'wait' | 'animated' | 'dismiss' = 'wait') {
+type OpeningMode = 'wait' | 'animated' | 'dismiss' | 'skip-pointer' | 'skip-keyboard'
+async function openingFinished(page: Page, mode: OpeningMode = 'wait') {
   const stage = page.locator('.state-opening')
   if (mode === 'animated') await expect(stage).toHaveAttribute('data-mode', 'animated', { timeout: 1200 })
-  if (mode === 'dismiss') await expect(stage).toHaveAttribute('data-route', new URL(page.url()).pathname, { timeout: 1200 })
+  if (mode === 'dismiss' || mode.startsWith('skip-')) await expect(stage).toHaveAttribute('data-route', new URL(page.url()).pathname, { timeout: 1200 })
   const visible = await page.evaluate(() => {
     const node = document.querySelector<HTMLElement>('.state-opening')
     if (!node) return null
@@ -58,6 +59,8 @@ async function openingFinished(page: Page, mode: 'wait' | 'animated' | 'dismiss'
     expect(visible.source).toBe('/media/ap-signature.png')
   }
   if (mode === 'dismiss') await page.keyboard.press('Escape')
+  if (mode === 'skip-pointer') await stage.getByRole('button', { name: 'Skip intro', exact: true }).click()
+  if (mode === 'skip-keyboard') await stage.getByRole('button', { name: 'Skip intro', exact: true }).press('Enter')
   await expect(stage).toHaveCount(0, { timeout: 2100 })
   await expect(page.locator('html')).not.toHaveAttribute('data-opening', 'active')
 }
@@ -108,7 +111,7 @@ async function geometry(page: Page) {
 }
 async function projectedCorners(page: Page) {
   return page.locator('.scene-visual').evaluate((visual, definitions) => {
-    const scale = visual.clientWidth / 1672
+    const scale = visual.getBoundingClientRect().width / 1672
     return Object.entries(definitions).map(([name, definition]) => {
       const node = visual.querySelector<HTMLElement>(`[data-scene-plane="${name}"]`)!
       const local = [[0, 0], [definition.width, 0], [definition.width, definition.height], [0, definition.height]]
@@ -124,7 +127,7 @@ async function projectedCorners(page: Page) {
         point.remove()
         return [r.x - origin.x, r.y - origin.y]
       })
-      const expected = definition.quad.map(([x, y]) => [x * scale, y * visual.clientHeight / 941])
+      const expected = definition.quad.map(([x, y]) => [x * scale, y * scale])
       const error = Math.max(...measured.map(([x, y], index) => Math.hypot(x - expected[index][0], y - expected[index][1])))
       return { name, measured, expected, error, transform: getComputedStyle(node).transform }
     })
@@ -159,10 +162,10 @@ async function captureDeparture(page: Page, selector: string) {
     window.__deskDeparture = { top: scrollY, trusted: event.isTrusted }
   }, { once: true, capture: true }))
 }
-async function assertReturned(page: Page, selector: string, departure: { top: number; trusted: boolean }) {
+async function assertReturned(page: Page, selector: string, departure: { top: number; trusted: boolean }, dismissal: 'dismiss' | 'skip-pointer' | 'skip-keyboard' = 'dismiss') {
   expect(departure.trusted).toBe(true)
   await expect(page).toHaveURL(/\/$/)
-  await openingFinished(page, 'dismiss')
+  await openingFinished(page, dismissal)
   await expect(page.locator(selector)).toBeFocused()
   await expect.poll(async () => Math.abs(await page.evaluate(() => scrollY) - departure.top)).toBeLessThan(4)
   const top = await page.evaluate(() => scrollY)
@@ -187,7 +190,7 @@ test('genuine scene sources remain truthful, aligned after resizing and idle wit
   await expect(page.locator('.desk-opening canvas,.desk-opening video,.desk-opening iframe,.hero-room,.hero-ambient-film,.pin-spacer')).toHaveCount(0)
   const images = await sources(page)
   expect(images).toEqual([
-    { path: '/media/cinematic-desk-wide.webp', natural: [1672, 941], project: null, fit: 'fill' },
+    { path: '/media/cinematic-desk-wide.webp', natural: [1672, 941], project: null, fit: 'contain' },
     { path: '/media/desk-cirs-home-1600.webp', natural: [1600, 1000], project: 'CIRS', fit: 'contain' },
     { path: '/media/vallalar-language-en-desktop.webp', natural: [1440, 500], project: 'Vallalar', fit: 'contain' },
     { path: '/media/atlas-accuflow-guide-desktop.webp', natural: [1440, 1000], project: 'AccuFlow', fit: 'contain' },
@@ -223,9 +226,9 @@ test('genuine scene sources remain truthful, aligned after resizing and idle wit
   await testInfo.attach('projected-corners-and-idle', { body: JSON.stringify({ observations, idle }), contentType: 'application/json' })
 })
 
-const fitDimensions = [[1366, 768], [1280, 720], [1440, 900], [1920, 1080], [1200, 800], [1101, 621], [1101, 650], [1024, 1000], [320, 568], [375, 667], [390, 844], [414, 896], [768, 1024], [844, 390], [1024, 600]] as const
-for (const [width, height] of fitDimensions) test(`${width}x${height} keeps the full desk, Work and all five native destinations on the initial screen`, async ({ browser, baseURL }, testInfo) => {
-  const touch = width <= 900
+const fitDimensions = [[1366, 768], [1280, 720], [1440, 900], [1920, 1080], [1200, 800], [1101, 621], [1101, 650], [1101, 1000], [2560, 1080], [1024, 1000], [320, 568], [375, 667], [390, 844], [414, 896], [768, 1024], [844, 390], [1024, 600]] as const
+for (const [width, height] of fitDimensions) test(`${width}x${height} preserves the original desk proportions and five reachable native destinations`, async ({ browser, baseURL }, testInfo) => {
+  const touch = width <= 900, compact = width <= 1100 || height <= 620
   const context = await browser.newContext({ baseURL, viewport: { width, height }, isMobile: touch, hasTouch: touch, reducedMotion: width === 320 ? 'reduce' : 'no-preference' })
   if (width === 320) await context.addInitScript(() => sessionStorage.setItem('ap-desk-explored', JSON.stringify(['cirs', 'community', 'accuflow', 'films', 'contact'])))
   const page = await context.newPage()
@@ -235,15 +238,18 @@ for (const [width, height] of fitDimensions) test(`${width}x${height} keeps the 
   await expect(page.locator('.site-header[data-desk] .navigation-caption')).toHaveCount(1)
   await expect(page.locator('.site-header[data-desk] .navigation-caption')).toBeVisible()
   const images = await sources(page), layout = await geometry(page)
-  expect(images[0].path).toBe(width <= 767 ? '/media/cinematic-desk-compact.webp' : '/media/cinematic-desk-wide.webp')
-  expect(images[0].natural).toEqual(width <= 767 ? [960, 540] : [1672, 941])
+  expect(images[0]).toEqual({ path: '/media/cinematic-desk-wide.webp', natural: [1672, 941], project: null, fit: 'contain' })
   expect(images.slice(1).map(image => image.natural)).toEqual([[1600, 1000], [1440, 500], [1440, 1000], [768, 512]])
-  if (width > 1100 && height > 620) {
+  // CSS layout rounds to fractional pixels. The scene always keeps the exact
+  // source ratio; a viewport's height must never stretch its objects.
+  expect(Math.abs(layout.visual.height - layout.visual.width * 941 / 1672)).toBeLessThan(.03)
+  if (!compact) {
     expect(layout.visual.x).toBe(0)
     expect(layout.visual.width).toBe(width)
-    expect(layout.visual.bottom).toBe(height)
-  } else expect(Math.abs(layout.visual.height / layout.visual.width - 941 / 1672)).toBeLessThan(.002)
+  }
   expect(layout.objects.map(object => object.href)).toEqual(destinations)
+  // Keep a half-CSS-pixel allowance only at 2560px for browser matrix precision.
+  await expect.poll(async () => Math.max(...(await projectedCorners(page)).map(result => result.error))).toBeLessThan(width > 1920 ? .5 : .3)
   const fit = await page.evaluate(() => {
     const header = document.querySelector('.site-header')!.getBoundingClientRect()
     const viewport = { left: visualViewport?.offsetLeft || 0, top: visualViewport?.offsetTop || 0, width: visualViewport?.width || innerWidth, height: visualViewport?.height || innerHeight }
@@ -251,18 +257,18 @@ for (const [width, height] of fitDimensions) test(`${width}x${height} keeps the 
     return { headerBottom: header.bottom, viewport, visual: rect(document.querySelector('.scene-visual')!), discovery: rect(document.querySelector('.desk-discovery-button')!), controls: [document.querySelector('.desk-work-link')!, ...document.querySelectorAll('.scene-callout')].map(node => ({ text: node.textContent, font: parseFloat(getComputedStyle(node.querySelector('strong') || node).fontSize), ...rect(node) })) }
   })
   expect(fit.visual.y).toBeGreaterThanOrEqual(fit.headerBottom)
-  expect(fit.visual.bottom).toBeLessThanOrEqual(fit.viewport.top + fit.viewport.height)
+  if (compact) expect(fit.visual.bottom).toBeLessThanOrEqual(fit.viewport.top + fit.viewport.height)
   expect(fit.discovery.x).toBeGreaterThanOrEqual(fit.viewport.left)
   expect(fit.discovery.y).toBeGreaterThanOrEqual(fit.headerBottom)
   expect(fit.discovery.right).toBeLessThanOrEqual(fit.viewport.left + fit.viewport.width)
   expect(fit.discovery.bottom).toBeLessThanOrEqual(fit.viewport.top + fit.viewport.height)
   expect(fit.discovery.width).toBeGreaterThanOrEqual(44)
   expect(fit.discovery.height).toBeGreaterThanOrEqual(44)
-  for (const control of fit.controls) {
+  for (const [index, control] of fit.controls.entries()) {
     expect(control.x).toBeGreaterThanOrEqual(fit.viewport.left)
     expect(control.y).toBeGreaterThanOrEqual(fit.headerBottom)
     expect(control.right).toBeLessThanOrEqual(fit.viewport.left + fit.viewport.width)
-    expect(control.bottom).toBeLessThanOrEqual(fit.viewport.top + fit.viewport.height)
+    if (compact || index === 0) expect(control.bottom).toBeLessThanOrEqual(fit.viewport.top + fit.viewport.height)
     expect(control.width).toBeGreaterThanOrEqual(44)
     expect(control.height).toBeGreaterThanOrEqual(44)
     expect(control.font).toBeGreaterThanOrEqual(14)
@@ -275,10 +281,9 @@ for (const [width, height] of fitDimensions) test(`${width}x${height} keeps the 
   for (const object of objects) {
     await page.keyboard.press('Tab')
     await expect(page.locator(object.selector)).toBeFocused()
-    // A focused marker may reveal its project-specific action. Check its final
-    // size as well as the resting size so expanded captions remain reachable.
+    // Verify the final expanded caption after native focus has revealed it.
     await page.waitForTimeout(240)
-    expect(await page.evaluate(() => scrollY), 'All native object labels fit without focus-triggered scroll').toBe(0)
+    if (compact) expect(await page.evaluate(() => scrollY), 'The compact native index fits without focus-triggered scroll').toBe(0)
     expect(await page.locator(`${object.selector} .scene-callout`).evaluate(node => parseFloat(getComputedStyle(node).outlineWidth))).toBeGreaterThanOrEqual(2)
     const focused = await page.locator(`${object.selector} .scene-callout`).evaluate(node => {
       const r = node.getBoundingClientRect()
@@ -295,13 +300,13 @@ for (const [width, height] of fitDimensions) test(`${width}x${height} keeps the 
   for (const object of [...objects].reverse().slice(1)) {
     await page.keyboard.press('Shift+Tab')
     await expect(page.locator(object.selector)).toBeFocused()
-    expect(await page.evaluate(() => scrollY)).toBe(0)
+    if (compact) expect(await page.evaluate(() => scrollY)).toBe(0)
   }
   await page.keyboard.press('Shift+Tab')
   await expect(page.getByRole('button', { name: 'Pick a project', exact: true })).toBeFocused()
   await page.keyboard.press('Shift+Tab')
   await expect(page.locator('.desk-work-link')).toBeFocused()
-  expect(await page.evaluate(() => scrollY)).toBe(0)
+  if (compact) expect(await page.evaluate(() => scrollY)).toBe(0)
   if (touch) {
     await page.locator('.desk-cirs .scene-callout').tap()
     await expect(page).toHaveURL(/\/projects\/cirs$/)
@@ -309,39 +314,73 @@ for (const [width, height] of fitDimensions) test(`${width}x${height} keeps the 
     await openingFinished(page, width === 320 ? 'wait' : 'dismiss')
   }
   expect(errors.get(page)).toEqual([])
-  await testInfo.attach('initial-screen-fit', { body: JSON.stringify({ width, height, images, layout, fit, keyboard }), contentType: 'application/json' })
+  await testInfo.attach('native-proportions-and-reachability', { body: JSON.stringify({ width, height, images, layout, fit, keyboard }), contentType: 'application/json' })
   await context.close()
 })
 
-for (const [width, height] of [[2560, 1080], [1101, 1000]]) test(`${width}x${height} desks keep bounded proportions and aligned, reachable native links`, async ({ page }, testInfo) => {
-  await page.setViewportSize({ width, height })
+test('native wheel scrolling preserves the artwork, uniform projections and all five destinations', async ({ page }, testInfo) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
   await ready(page)
-  const layout = await geometry(page)
-  expect(layout.visual.x).toBe(0)
-  expect(layout.visual.width).toBe(width)
-  expect(layout.visual.width / layout.visual.height).toBeLessThanOrEqual(2.151)
-  expect(layout.visual.width / layout.visual.height).toBeGreaterThanOrEqual(1.499)
-  // CSS matrix coefficient precision remains within half a CSS pixel even at
-  // 2560px; the ordinary viewport matrix retains the tighter 0.3px budget.
-  await expect.poll(async () => Math.max(...(await projectedCorners(page)).map(result => result.error))).toBeLessThan(width > 1920 ? .5 : .3)
-  const links = []
-  for (const object of objects) {
-    const label = page.locator(`${object.selector} .scene-callout`)
-    await label.scrollIntoViewIfNeeded()
-    await page.locator(object.selector).focus()
-    await label.click({ trial: true })
-    const hit = await label.evaluate(node => {
-      const r = node.getBoundingClientRect()
-      return { href: document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2)?.closest('a')?.getAttribute('href'), top: r.top, bottom: r.bottom, header: document.querySelector('.site-header')!.getBoundingClientRect().bottom }
-    })
-    expect(hit.href).toBe(object.path)
-    expect(hit.top).toBeGreaterThanOrEqual(hit.header)
-    expect(hit.bottom).toBeLessThanOrEqual(height)
-    if (width === 1101) expect(await page.evaluate(() => scrollY)).toBe(0)
-    links.push(hit)
-  }
+  const art = () => page.locator('.scene-background img').evaluate(node => {
+    const r = node.getBoundingClientRect()
+    return { x: r.x, y: r.y + scrollY, width: r.width, height: r.height, transform: getComputedStyle(node).transform }
+  })
+  const before = { layout: await geometry(page), art: await art(), corners: await projectedCorners(page), sources: await sources(page) }
+  await nativeReadingScroll(page)
+  const after = { layout: await geometry(page), art: await art(), corners: await projectedCorners(page), sources: await sources(page) }
+  expect(after.layout.visual).toEqual(before.layout.visual)
+  expect(before.art.transform).toBe('none')
+  expect(after.art).toEqual(before.art)
+  expect(after.corners.map(plane => plane.transform)).toEqual(before.corners.map(plane => plane.transform))
+  expect(Math.max(...after.corners.map(plane => plane.error))).toBeLessThan(.3)
+  expect(after.sources).toEqual(before.sources)
+  expect(after.layout.objects.map(object => object.href)).toEqual(destinations)
+  expect(Math.abs(after.layout.visual.height - after.layout.visual.width * 941 / 1672)).toBeLessThan(.03)
+  await expect(page.locator('.scene-map > a')).toHaveCount(5)
   await expect(page).toHaveURL(/\/$/)
-  await testInfo.attach('bounded-desk-fit', { body: JSON.stringify({ layout, links, corners: await projectedCorners(page) }), contentType: 'application/json' })
+  await testInfo.attach('native-scroll-invariants', { body: JSON.stringify({ before, after }), contentType: 'application/json' })
+})
+
+test('the desk flows into its project evidence without pinning, scroll jumps or moving captures', async ({ page }, testInfo) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await ready(page)
+  const proof = page.locator('.home-work-proof[data-desk-handoff="continuous"]')
+  await expect(proof).toHaveCount(1)
+  await expect(proof.locator('.home-proof-intro .desk-source-note')).toContainText('genuine project captures')
+  const measure = () => page.evaluate(() => {
+    const desk = document.querySelector('.desk-opening')!, proof = document.querySelector('.home-work-proof')!, capture = proof.querySelector('.home-proof-cirs .home-proof-source')!
+    const r = capture.getBoundingClientRect()
+    return {
+      deskBottom: desk.getBoundingClientRect().bottom + scrollY,
+      proofTop: proof.getBoundingClientRect().top + scrollY,
+      deskPosition: getComputedStyle(desk).position,
+      proofPosition: getComputedStyle(proof).position,
+      capture: { x: r.x, y: r.y + scrollY, width: r.width, height: r.height, transform: getComputedStyle(capture).transform },
+      htmlOverflow: getComputedStyle(document.documentElement).overflowY,
+      bodyOverflow: getComputedStyle(document.body).overflowY,
+    }
+  })
+  const before = await measure()
+  expect(Math.abs(before.proofTop - before.deskBottom)).toBeLessThan(1)
+  expect(['static', 'relative']).toContain(before.deskPosition)
+  expect(['static', 'relative']).toContain(before.proofPosition)
+  expect(['hidden', 'clip']).not.toContain(before.htmlOverflow)
+  expect(['hidden', 'clip']).not.toContain(before.bodyOverflow)
+  expect(before.capture.transform).toBe('none')
+  await expect(page.locator('.pin-spacer')).toHaveCount(0)
+  const delta = Math.round(before.proofTop - 240)
+  await page.mouse.move(1100, 600)
+  await page.mouse.wheel(0, delta)
+  await expect.poll(async () => Math.abs(await page.evaluate(() => scrollY) - delta)).toBeLessThan(2)
+  await expect(proof.locator('#home-work-proof-title')).toBeInViewport()
+  const after = await measure()
+  expect(after).toEqual(before)
+  const top = await page.evaluate(() => scrollY)
+  await page.mouse.wheel(0, 120)
+  await expect.poll(async () => Math.abs(await page.evaluate(() => scrollY) - top - 120)).toBeLessThan(2)
+  expect(await measure()).toEqual(before)
+  await expect(page).toHaveURL(/\/$/)
+  await testInfo.attach('continuous-desk-handoff', { body: JSON.stringify({ before, after, scroll: await page.evaluate(() => scrollY) }), contentType: 'application/json' })
 })
 
 test('native keyboard focus and actual polygon hits agree with the five physical objects', async ({ page }, testInfo) => {
@@ -357,7 +396,7 @@ test('native keyboard focus and actual polygon hits agree with the five physical
     const sample = await anchor.evaluate((node, points) => {
       const visual = document.querySelector('.scene-visual')!.getBoundingClientRect(), scale = visual.width / 1672
       const hit = (point: readonly number[]) => {
-        const x = visual.left + point[0] * scale, y = visual.top + point[1] * visual.height / 941
+        const x = visual.left + point[0] * scale, y = visual.top + point[1] * scale
         const element = document.elementFromPoint(x, y)
         return { x, y, href: element?.closest('a')?.getAttribute('href') || null }
       }
@@ -529,6 +568,25 @@ test('film and contact objects retain native modifiers, actual destinations and 
     returns.push({ selector: object.selector, departure, returned })
   }
   await testInfo.attach('scene-destination-history', { body: JSON.stringify({ modified, returns }), contentType: 'application/json' })
+})
+
+for (const dismissal of ['skip-pointer', 'skip-keyboard'] as const) test(`Back preserves the film origin and saved scroll when the opening is dismissed with ${dismissal}`, async ({ page, context }, testInfo) => {
+  await capable(context)
+  await page.setViewportSize({ width: 1440, height: 844 })
+  await ready(page, true)
+  await nativeReadingScroll(page)
+  const origin = '.desk-films'
+  await page.locator(`${origin} .scene-callout`).scrollIntoViewIfNeeded()
+  await page.locator(origin).focus()
+  await captureDeparture(page, origin)
+  await page.keyboard.press('Enter')
+  const departure = await page.evaluate(() => window.__deskDeparture!)
+  expect(departure.top).toBeGreaterThan(40)
+  await expect(page).toHaveURL(/\/studio$/)
+  await openingFinished(page, 'dismiss')
+  await page.goBack()
+  const returned = await assertReturned(page, origin, departure, dismissal)
+  await testInfo.attach('opening-dismissal-history-origin', { body: JSON.stringify({ dismissal, departure, returned }), contentType: 'application/json' })
 })
 
 test('controlled capture and artwork failures preserve honest native scene navigation', async ({ page }, testInfo) => {

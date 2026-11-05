@@ -107,6 +107,9 @@ export default function AtelierLoader() {
     const key = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         event.preventDefault();
+        // Dismissing the cover preserves the pending page return. Reading
+        // keys and native scrolling below still cancel an obsolete restore.
+        event.stopPropagation();
         dismiss();
       } else if (event.key === "Tab") {
         // Reveal the page and let native Tab continue from its existing focus
@@ -268,6 +271,11 @@ export default function AtelierLoader() {
           type="button"
           className="state-opening-skip"
           aria-keyshortcuts="Escape"
+          onPointerDown={(event) => event.stopPropagation()}
+          onTouchStart={(event) => event.stopPropagation()}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" || event.key === " ") event.stopPropagation();
+          }}
           onFocus={(event) => {
             if (event.relatedTarget instanceof HTMLElement && !opening.current?.contains(event.relatedTarget))
               beforeSkip.current = event.relatedTarget;

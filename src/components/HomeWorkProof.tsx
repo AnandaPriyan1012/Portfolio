@@ -50,12 +50,13 @@ export default function HomeWorkProof({ onProject, onNavigate }: HomeWorkProofPr
     onNavigate(path);
   }
   return (
-    <section className="home-work-proof" aria-labelledby="home-work-proof-title">
+    <section className="home-work-proof" aria-labelledby="home-work-proof-title" data-desk-handoff="continuous">
       <div className="home-proof-inner">
         <header className="home-proof-intro">
           <p className="home-proof-kicker">Selected work</p>
           <h2 id="home-work-proof-title">The work behind the desk.</h2>
-          <p>A school website, ongoing community work and an interface prototype. The pages, their purpose and what exists today.</p>
+          <p className="home-proof-description">A school website, ongoing community work and an interface prototype. The pages, their purpose and what exists today.</p>
+          <p className="desk-source-note">Original desk artwork. The screens and printed insert show genuine project captures.</p>
         </header>
 
         <article className="home-proof-project home-proof-cirs" data-home-proof-project="cirs" aria-labelledby="home-proof-cirs-title">

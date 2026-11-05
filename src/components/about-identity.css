@@ -150,3 +150,79 @@
 @media (forced-colors: active) {
   :root[data-theme] .about-identity .about-identity-swim-notes :is(dt, dd, dd>span) { color: CanvasText; }
 }
+
+/* Carry the page's warm paper and brass into the calling-card scene. The
+   illustration fades at both edges, so scrolling never crosses a framed panel. */
+main[data-page="about"] .recognition-section {
+  padding-bottom: clamp(48px, 5.5vw, 80px);
+}
+main[data-page="about"] .contact-section {
+  padding-block: clamp(76px, 8vw, 116px) clamp(64px, 7vw, 100px);
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+main[data-page="about"] .contact-section::before {
+  inset: 0;
+  width: auto;
+  border: 0;
+  transform: none;
+  background:
+    linear-gradient(90deg, #181610ee, #181610b8 55%, #18161059),
+    url("/media/atelier-room-wide.webp") center 56% / cover no-repeat;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 25%, #000 72%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 25%, #000 72%, transparent);
+}
+main[data-page="about"] .contact-section::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 72% 53%, #c5a06b0d, transparent 65%);
+}
+main[data-page="about"] .contact-section .contact-identity-layout {
+  gap: clamp(40px, 6vw, 88px);
+}
+main[data-page="about"] .contact-section .contact-identity-copy h2 {
+  margin-block: 22px;
+  font-size: clamp(43px, 5vw, 72px);
+}
+main[data-page="about"] .contact-section em { color: #d0ba8d; }
+main[data-page="about"] .contact-section .contact-invitation { color: #c5bdac; }
+main[data-page="about"] .contact-section .contact-action {
+  color: #eddfc6;
+  border-color: #d0ba8d70;
+}
+@media (max-width:1050px) {
+  main[data-page="about"] .contact-section .contact-identity-layout { gap: 40px; }
+  main[data-page="about"] .contact-section::before {
+    background-position: center, 62% center;
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 32%, #000 78%, transparent);
+    mask-image: linear-gradient(to bottom, transparent, #000 32%, #000 78%, transparent);
+  }
+}
+@media (max-width:767px) {
+  main[data-page="about"] .recognition-section { padding-bottom: 42px; }
+  main[data-page="about"] .contact-section { padding-block: 60px 44px; }
+  main[data-page="about"] .contact-section .contact-identity-layout { gap: 34px; }
+  main[data-page="about"] .contact-section .contact-identity-copy h2 {
+    margin-block: 18px;
+    font-size: clamp(39px, 10vw, 58px);
+  }
+}
+:root[data-theme="light"] main[data-page="about"] .contact-section::before {
+  background-image:
+    linear-gradient(90deg, #f1ecdfed, #f1ecdfcc 55%, #f1ecdf9c),
+    url("/media/atelier-room-wide.webp");
+}
+:root[data-theme="light"] main[data-page="about"] .contact-section .contact-identity-copy h2 { color: var(--text); }
+:root[data-theme="light"] main[data-page="about"] .contact-section em { color: #79603b; }
+:root[data-theme="light"] main[data-page="about"] .contact-section .contact-invitation { color: var(--muted); }
+:root[data-theme="light"] main[data-page="about"] .contact-section .contact-action { color: var(--text); border-color: #79603b70; }
+@media (forced-colors:active) {
+  main[data-page="about"] .contact-section { color: CanvasText; background: Canvas; }
+  main[data-page="about"] .contact-section::before,
+  main[data-page="about"] .contact-section::after { display: none; }
+  :root[data-theme] main[data-page="about"] .contact-section :is(h2,em,.contact-invitation,.contact-action) { color: CanvasText; }
+}

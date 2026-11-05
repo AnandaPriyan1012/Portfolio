@@ -520,38 +520,75 @@ const selectedProjects = [
   {
     id: "cirs",
     title: "CIRS",
-    discipline: "Campus life & Admissions",
+    discipline: "Campus life → Admissions",
     note: "Official school website · Live",
-    artifact: "CIRS / Homepage · Live website",
+    label: "School website",
+    roleLabel: "My part",
+    role: "Page design and web development with the school’s team, including Admissions and phone layouts.",
     anchor: "cirs",
   },
   {
     id: "community",
     title: "Vallalar",
-    discipline: "Website & digital storytelling",
+    discipline: "Service → Digital storytelling",
     note: "Voluntary since 2023 · Website review preview",
-    artifact: "Vallalar / About · Website review preview",
+    label: "Community work",
+    roleLabel: "My part",
+    role: "Voluntary Social Media & Technology Head: digital storytelling, social media and website work.",
     anchor: "community",
   },
   {
     id: "accuflow",
     title: "AccuFlow",
-    discipline: "Six-page website & conversational guide",
+    discipline: "Product story → Conversational guide",
     note: "Exploratory prototype",
-    artifact: "AccuFlow / Try interface · Prototype",
+    label: "Interface prototype",
+    roleLabel: "The scope",
+    role: "A six-page product website and conversational-interface prototype for pressure-point information.",
     anchor: "accuflow",
   },
 ] as const;
 
+function WorkFileCapture({ src, alt, width, height }: { src: string; alt: string; width: number; height: number }) {
+  const [failed, setFailed] = useState(false);
+  return <div className="work-file-capture" style={{ aspectRatio: `${width}/${height}` }}>
+    {failed ? <p className="work-file-unavailable">Capture unavailable. The project chapter is still available below.</p> :
+      <img src={src} alt={alt} width={width} height={height} decoding="async" onError={() => setFailed(true)} />}
+  </div>;
+}
+
+function WorkFileArtifact({ project }: { project: typeof selectedProjects[number]["id"] }) {
+  return <figure className={`work-file-artifact work-file-artifact-${project}`}>
+    <div className="work-file-sources">
+      {project === "cirs" ? <>
+        <div className="work-file-browser" aria-hidden="true"><i /><i /><i /><span>CIRS / Admissions Guide</span></div>
+        <WorkFileCapture src="/media/atlas-cirs-admissions-desktop.webp" width={1440} height={1000} alt="Actual CIRS Admissions Guide, showing its portal login, application process and enquiry information." />
+      </> : project === "community" ? <>
+        <div className="work-file-language-sheet"><span lang="en">English</span><WorkFileCapture src="/media/vallalar-language-en-desktop.webp" width={1440} height={500} alt="Complete English About-page opening from the Vallalar website review preview." /></div>
+        <div className="work-file-language-sheet"><span lang="ta">தமிழ்</span><WorkFileCapture src="/media/vallalar-language-ta-desktop.webp" width={1440} height={400} alt="Complete Tamil About-page opening from the same Vallalar website review preview." /></div>
+      </> : <>
+        <div className="work-file-route-strip" aria-hidden="true"><span>Home</span><span>Product</span><span>How it works</span><span>Guide <i /></span></div>
+        <WorkFileCapture src="/media/atlas-accuflow-guide-desktop.webp" width={1440} height={1000} alt="Actual initial AccuFlow conversational guide interface, including its original prototype notice." />
+      </>}
+    </div>
+    <figcaption>{project === "cirs" ? "From the live school website" : project === "community" ? "Two languages. The same community." : "The initial guide, before any message"}</figcaption>
+  </figure>;
+}
+
 function WorkProjectIndex() {
   return (
-    <nav className="work-project-index simple-project-index" aria-label="Explore selected projects">
+    <nav className="work-project-index work-project-files" aria-label="Explore selected projects">
       {selectedProjects.map((item, index) => (
-        <a key={item.id} className={`work-index-entry work-index-${item.id}`} href={`#${item.anchor}`}>
-          <span className="work-index-number">0{index + 1}</span>
-          <span className="work-index-name"><strong>{item.title}</strong><span>{item.discipline}</span></span>
-          <span className="work-index-note">{item.note}</span>
-          <ArrowRight className="work-index-arrow" size={20} aria-hidden="true" />
+        <a key={item.id} className={`work-index-entry work-index-${item.id} work-file-link`} href={`#${item.anchor}`}>
+          <span className="work-file-tab"><span>FILE / 0{index + 1}</span><span>{item.label}</span></span>
+          <WorkFileArtifact project={item.id} />
+          <div className="work-file-account">
+            <span className="work-file-discipline">{item.discipline}</span>
+            <h2>{item.title}</h2>
+            <p className="work-file-status"><span aria-hidden="true" />{item.note}</p>
+            <dl className="work-file-role"><dt>{item.roleLabel}</dt><dd>{item.role}</dd></dl>
+          </div>
+          <span className="work-file-open">Open the project chapter <ArrowRight size={17} aria-hidden="true" /></span>
         </a>
       ))}
     </nav>
@@ -570,20 +607,14 @@ export default function WorkPage({
 
   return (
     <div className="work-page">
-      <header className="work-page-opening page-width">
+      <header className="work-page-opening work-files-opening page-width">
         <div className="work-page-edition">
-          <p className="section-label">Selected projects / 01—03</p>
-          <span>Websites, community & interaction</span>
+          <p className="section-label">Selected work / The project files</p>
+          <span>01—03 · Actual project captures</span>
         </div>
-        <h1>
-          Selected <em>work.</em>
-        </h1>
-        <div className="work-page-introduction">
-          <p>
-            A digital home for my school. An ongoing commitment to my community.
-            A product idea taking shape.
-          </p>
-          <span>Three projects. Different purposes.</span>
+        <div className="work-files-heading">
+          <h1>Open the <em>project files.</em></h1>
+          <p>The school pages, bilingual stories and guide interface. A closer look at the work, the contributions and where each project stands.</p>
         </div>
         <WorkProjectIndex />
         <div className="work-page-scroll-note" aria-hidden="true">

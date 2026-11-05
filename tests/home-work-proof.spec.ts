@@ -177,7 +177,7 @@ test('200 percent text growth keeps the expanded Home story readable and normall
     expect(layout.height).toBeGreaterThan(layout.viewportHeight)
     expect(['hidden', 'clip']).not.toContain(layout.bodyOverflow)
     expect(['hidden', 'clip']).not.toContain(layout.rootOverflow)
-    const copy = await page.locator('.home-proof-account h3,.home-proof-account dd,.home-proof-intro > p:last-child').evaluateAll(nodes => nodes.map(node => {
+    const copy = await page.locator('.home-proof-account h3,.home-proof-account dd,.home-proof-description').evaluateAll(nodes => nodes.map(node => {
       const element = node as HTMLElement, r = element.getBoundingClientRect(), style = getComputedStyle(element)
       const range = document.createRange()
       range.selectNodeContents(element)
