@@ -10,6 +10,7 @@ import {
 import type { Project } from "../content";
 import InterfaceAtlas from "./InterfaceAtlas";
 import CirsConceptStudy from "./CirsConceptStudy";
+import CirsAdmissionsTour from "./CirsAdmissionsTour";
 import CommunityLanguageStudy from "./CommunityLanguageStudy";
 import AccuFlowRouteDeck from "./AccuFlowRouteDeck";
 import WorkChapterRail from "./WorkChapterRail";
@@ -250,9 +251,11 @@ function ProjectMedia({
 function CirsStory({
   onQuick,
   onPage,
+  motionEnabled,
 }: {
   onQuick: () => void;
   onPage: () => void;
+  motionEnabled: boolean;
 }) {
   return (
     <section id="cirs" className="cirs-details page-width">
@@ -300,37 +303,8 @@ function CirsStory({
           <span>Live website</span>
         </div>
         {projectAssets.cirs.admissionsUrl && (
-          <figure className="admissions-detail">
-            <img
-              src={projectAssets.cirs.admissionsUrl}
-              alt="The real CIRS Admissions page"
-              loading="lazy"
-            />
-            <figcaption>
-              The Admissions page · cirschool.org/admissions.html
-            </figcaption>
-          </figure>
+          <CirsAdmissionsTour src={projectAssets.cirs.admissionsUrl} motionEnabled={motionEnabled} presentation="work" />
         )}
-        <ol
-          className="cirs-interface-map"
-          aria-label="Admissions page structure"
-        >
-          <li>
-            <span>01</span>
-            <strong>Application portal</strong>
-            <small>A route for registered families.</small>
-          </li>
-          <li>
-            <span>02</span>
-            <strong>Admissions process</strong>
-            <small>Entry and application information.</small>
-          </li>
-          <li>
-            <span>03</span>
-            <strong>School enquiries</strong>
-            <small>Dates and assessment arrangements.</small>
-          </li>
-        </ol>
       </div>
     </section>
   );
@@ -659,6 +633,7 @@ export default function WorkPage({
         <CirsStory
           onQuick={() => onQuick("cirs")}
           onPage={() => onPage("cirs")}
+          motionEnabled={motionEnabled}
         />
         <WorkEvidenceDrawer
           project="cirs"

@@ -99,7 +99,47 @@
   line-height: 1.7;
 }
 
-@media (min-width: 768px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+/* Work retains its full figure and three structure cells as real image notes. */
+.work-page .cirs-tour[data-presentation="work"] { --case-light: 190 202 185; --case-ink: #eee9de; --case-muted: #bbc2bc; --case-accent: #d6c08e; }
+.work-page .cirs-tour[data-presentation="work"] .cirs-tour-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  object-fit: contain;
+}
+.work-page .cirs-tour[data-presentation="work"] .cirs-interface-map { gap: 10px; padding-top: 18px; }
+.work-page .cirs-tour[data-presentation="work"] .cirs-interface-map li { display: block; }
+.work-page .cirs-tour[data-presentation="work"] .cirs-interface-map button {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 9px;
+  width: 100%;
+  min-height: 112px;
+  padding: 10px;
+  border: 1px solid #c4d7c92b;
+  color: #dbe5da;
+  background: #cfddcf04;
+  text-align: left;
+}
+.work-page .cirs-tour[data-presentation="work"] .cirs-interface-map button > span { color: #d2bd8d; font: 400 17px/1 "AP Pixelify",monospace; }
+.work-page .cirs-tour[data-presentation="work"] .cirs-interface-map button strong { color: #e4e9dc; font-size: 12px; line-height: 1.5; }
+.work-page .cirs-tour[data-presentation="work"] .cirs-interface-map button small { color: #b8c6b9; font-size: 11px; line-height: 1.6; }
+.work-page .cirs-tour[data-presentation="work"] .cirs-interface-map button[aria-pressed="true"] { border-color: #dcc793; background: #d4bc7d12; }
+.work-page .cirs-tour[data-presentation="work"] .cirs-interface-map button:focus-visible { outline: 2px solid #e8d3a0; outline-offset: -4px; }
+.work-page .cirs-tour[data-presentation="work"] .cirs-tour-note { min-height: 5.1em; margin: 15px 2px 0; color: #bac8bb; font: 400 12px/1.7 var(--font-body,sans-serif); }
+:root[data-theme="light"] .work-page .cirs-tour[data-presentation="work"] .cirs-interface-map button { background: #f4f1e8; border-color: #5c69414d; }
+:root[data-theme="light"] .work-page .cirs-tour[data-presentation="work"] .cirs-interface-map button strong { color: #30382b; }
+:root[data-theme="light"] .work-page .cirs-tour[data-presentation="work"] .cirs-interface-map button small,
+:root[data-theme="light"] .work-page .cirs-tour[data-presentation="work"] .cirs-tour-note { color: #4a5847; }
+:root[data-theme="light"] .work-page .cirs-tour[data-presentation="work"] .cirs-interface-map button > span { color: #735820; }
+:root[data-theme="light"] .work-page .cirs-tour[data-presentation="work"] .cirs-interface-map button[aria-pressed="true"] { border-color: #735820; background: #e9e0c8; }
+:root[data-theme="light"] .work-page .cirs-tour[data-presentation="work"] .cirs-interface-map button:focus-visible { outline-color: #735820; }
+
+@media (min-width: 768px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) and (forced-colors: none) {
   .cirs-tour[data-motion="on"] .cirs-tour-frame {
     transition: left 340ms ease-out, top 340ms ease-out, width 340ms ease-out,
       height 340ms ease-out, opacity 180ms ease-out;
@@ -115,6 +155,11 @@
     width: 100%;
     margin: 0 0 10px;
   }
+  .work-page .cirs-tour[data-presentation="work"] .cirs-interface-map { gap: 7px; padding-top: 16px; }
+  .work-page .cirs-tour[data-presentation="work"] .cirs-interface-map button { min-height: 123px; padding: 8px 6px; }
+  .work-page .cirs-tour[data-presentation="work"] .cirs-interface-map button strong { font-size: 10px; }
+  .work-page .cirs-tour[data-presentation="work"] .cirs-interface-map button small { font-size: 10px; }
+  .work-page .cirs-tour[data-presentation="work"] .cirs-tour-note { min-height: 6.8em; }
 }
 
 @media (max-width: 700px) {
@@ -153,4 +198,14 @@
     border-color: Highlight;
     outline-color: Highlight;
   }
+  .work-page .cirs-tour[data-presentation="work"] .cirs-interface-map button,
+  :root[data-theme="light"] .work-page .cirs-tour[data-presentation="work"] .cirs-interface-map button { color: ButtonText; background: ButtonFace; border-color: ButtonText; }
+  .work-page .cirs-tour[data-presentation="work"] .cirs-interface-map button :is(span,strong,small),
+  .work-page .cirs-tour[data-presentation="work"] .cirs-tour-note,
+  :root[data-theme="light"] .work-page .cirs-tour[data-presentation="work"] .cirs-interface-map button :is(span,strong,small),
+  :root[data-theme="light"] .work-page .cirs-tour[data-presentation="work"] .cirs-tour-note { color: CanvasText; }
+  .work-page .cirs-tour[data-presentation="work"] .cirs-interface-map button[aria-pressed="true"],
+  .work-page .cirs-tour[data-presentation="work"] .cirs-interface-map button:focus-visible,
+  :root[data-theme="light"] .work-page .cirs-tour[data-presentation="work"] .cirs-interface-map button[aria-pressed="true"],
+  :root[data-theme="light"] .work-page .cirs-tour[data-presentation="work"] .cirs-interface-map button:focus-visible { border-color: Highlight; outline: 2px solid Highlight; outline-offset: -4px; }
 }
