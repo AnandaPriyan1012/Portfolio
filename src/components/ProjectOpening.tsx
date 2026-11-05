@@ -1,97 +1,69 @@
-import { useState, type MouseEvent } from "react";
+import { useState, type CSSProperties, type FocusEvent, type MouseEvent } from "react";
 import { ArrowRight } from "lucide-react";
+import DeskSurfaces from "./DeskSurfaces";
 import "./project-opening.css";
 
 type Destination = "/work" | "/projects/cirs" | "/projects/community" | "/projects/accuflow" | "/studio" | "/about#contact";
-function DeskCapture({ desktop, mobile, width, height, alt, priority = false }: {
-  desktop: string; mobile?: string; width: number; height: number; alt: string; priority?: boolean;
-}) {
-  const [failed, setFailed] = useState(false);
-  return failed ? <span className="desk-image-fallback">Website capture unavailable. Project details are still available through this link.</span> : (
-    <picture>
-      {mobile && <source media="(max-width:767px)" srcSet={mobile} width={390} height={1000} />}
-      <img src={desktop} alt={alt} width={width} height={height} loading={priority ? "eager" : "lazy"} fetchPriority={priority ? "high" : "auto"} decoding="async" onError={() => setFailed(true)} />
-    </picture>
-  );
+type Rectangle = readonly [number, number, number, number];
+type Point = readonly [number, number];
+const width=1672, height=941;
+const objects: { id: string; className: string; href: Destination; origin?: string; title: string; context: string; rectangle: Rectangle; label: Point; shape: readonly Point[] }[] = [
+  { id:"cirs", className:"desk-cirs", href:"/projects/cirs", origin:"desk-cirs", title:"CIRS website", context:"School-team web work · Live website", rectangle:[380,110,915,640], label:[586,758], shape:[[384,117],[1064,116],[1076,534],[1133,537],[1289,669],[1288,694],[514,745],[405,579]] },
+  { id:"community", className:"desk-vallalar", href:"/projects/community", origin:"desk-community", title:"Vallalar", context:"Voluntary digital work · Website preview", rectangle:[47,540,337,144], label:[58,478], shape:[[50,561],[274,544],[381,641],[381,659],[90,679],[51,582]] },
+  { id:"accuflow", className:"desk-accuflow", href:"/projects/accuflow", origin:"desk-accuflow", title:"AccuFlow", context:"Website & guide prototype", rectangle:[1200,290,430,320], label:[1278,611], shape:[[1270,295],[1608,315],[1625,337],[1586,580],[1538,605],[1204,567],[1204,536],[1255,314]] },
+  { id:"films", className:"desk-films", href:"/studio", title:"Films & trailers", context:"Vantara · TED-Ed · CIRS launch", rectangle:[43,689,540,185], label:[60,853], shape:[[47,715],[100,690],[309,688],[359,715],[364,798],[407,781],[495,777],[578,811],[581,866],[487,868],[349,847],[91,846],[45,810]] },
+  { id:"contact", className:"desk-contact", href:"/about#contact", title:"About & contact", context:"The person behind the work", rectangle:[1182,710,282,110], label:[1187,838], shape:[[1186,739],[1411,713],[1462,785],[1230,815]] },
+];
+function position(object: (typeof objects)[number]): CSSProperties {
+  const [x,y,w,h]=object.rectangle;
+  return {
+    "--object-left":`${x/width*100}%`, "--object-top":`${y/height*100}%`,
+    "--object-width":`${w/width*100}%`, "--object-height":`${h/height*100}%`,
+    "--label-left":`${(object.label[0]-x)/w*100}%`, "--label-top":`${(object.label[1]-y)/h*100}%`,
+    "--hit-shape":`polygon(${object.shape.map(([px,py])=>`${(px-x)/w*100}% ${(py-y)/h*100}%`).join(",")})`,
+  } as CSSProperties;
 }
 
-/** An illustrated desk. Every object contains genuine work and is a native link. */
-export default function ProjectOpening({ onNavigate }: {
-  onNavigate: (path: Destination, origin?: string) => void;
-}) {
+function revealFocusedCaption(event: FocusEvent<HTMLAnchorElement>) {
+  if (!event.currentTarget.matches(":focus-visible") || !window.matchMedia("(min-width:901px)").matches) return;
+  const caption=event.currentTarget.querySelector<HTMLElement>(".scene-callout");
+  if (!caption) return;
+  const bounds=caption.getBoundingClientRect();
+  const header=document.querySelector<HTMLElement>(".site-header")?.getBoundingClientRect().bottom ?? 0;
+  if (bounds.bottom>window.innerHeight-12 || bounds.top<header+12)
+    caption.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "instant" });
+}
+
+/** A complete fixed-camera desk illustration, with genuine work in its surfaces. */
+export default function ProjectOpening({ onNavigate }: { onNavigate: (path: Destination, origin?: string) => void }) {
+  const [loaded,setLoaded]=useState(false);
+  const [failed,setFailed]=useState(false);
   function follow(event: MouseEvent<HTMLAnchorElement>, path: Destination, origin?: string) {
-    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-    event.preventDefault();
-    onNavigate(path, origin);
+    if(event.defaultPrevented||event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
+    event.preventDefault();onNavigate(path,origin);
   }
   return (
-    <section className="desk-opening" aria-labelledby="desk-title">
-      <header className="desk-intro page-width">
-        <h1 id="desk-title">Web work for my school.<br /><span>Stories for the screen.</span></h1>
-        <a className="desk-work-link" href="/work" onClick={(event) => follow(event, "/work")}>View all projects <ArrowRight size={16} aria-hidden="true" /></a>
-      </header>
-      <nav className="desk-surface" aria-label="Explore the work on the desk">
-        <div className="desk-light" aria-hidden="true" />
-        <a className="desk-object desk-cirs" aria-label="CIRS website — read the case study" data-home-origin="desk-cirs" href="/projects/cirs" onClick={(event) => follow(event, "/projects/cirs", "desk-cirs")}>
-          <div className="desk-object-caption">
-            <span className="desk-object-kind">CIRS / Official school website</span>
-            <h2>CIRS website <ArrowRight size={17} aria-hidden="true" /></h2>
-            <p>Page design & development with the school’s team.</p>
-            <span className="desk-object-status">Live website · Read the case study</span>
-          </div>
-          <div className="desk-artifact desk-school-folio">
-            <DeskCapture desktop="/media/atlas-cirs-home-desktop.webp" width={1440} height={1000} alt="Actual CIRS homepage capture, showing the campus, mountains and school website headline." priority />
-          </div>
-
-        </a>
-        <a className="desk-object desk-vallalar" aria-label="Vallalar — explore voluntary digital work" data-home-origin="desk-community" href="/projects/community" onClick={(event) => follow(event, "/projects/community", "desk-community")}>
-          <div className="desk-object-caption">
-            <span className="desk-object-kind">Vallalar / Community</span>
-            <h2>Digital work, in service. <ArrowRight size={16} aria-hidden="true" /></h2>
-            <p>Voluntary digital storytelling & website work since 2023.</p>
-            <span className="desk-object-status">Website review preview · Explore the work</span>
-          </div>
-          <div className="desk-artifact desk-community-booklet">
-            <DeskCapture desktop="/media/vallalar-language-en-desktop.webp" width={1440} height={500} alt="English About-page opening from the Vallalar website review preview." />
-            <span className="desk-booklet-edge" aria-hidden="true" />
-          </div>
-
-        </a>
-        <a className="desk-object desk-accuflow" aria-label="AccuFlow — view the website prototype" data-home-origin="desk-accuflow" href="/projects/accuflow" onClick={(event) => follow(event, "/projects/accuflow", "desk-accuflow")}>
-          <div className="desk-object-caption">
-            <span className="desk-object-kind">AccuFlow / Interaction prototype</span>
-            <h2>From page to conversation. <ArrowRight size={16} aria-hidden="true" /></h2>
-            <p>A product website and initial guide interface.</p>
-            <span className="desk-object-status">Website prototype · View the project</span>
-          </div>
-          <div className="desk-artifact desk-interface-slate">
-            <DeskCapture desktop="/media/atlas-accuflow-guide-desktop.webp" width={1440} height={1000} alt="Actual initial AccuFlow guide interface, before any message has been submitted." />
-          </div>
-
-        </a>
-        <a className="desk-object desk-films" aria-label="Films and trailers — open the screening room" href="/studio" onClick={(event) => follow(event, "/studio")}>
-          <div className="desk-object-caption">
-            <span className="desk-object-kind">Original work / Film collection</span>
-            <h2>Films & trailers <ArrowRight size={17} aria-hidden="true" /></h2>
-            <p>Vantara, TED-Ed auditions, the CIRS launch and more.</p>
-            <span className="desk-object-status">Open the screening room</span>
-          </div>
-          <div className="desk-artifact desk-contact-sheet">
-            <div><img src="/media/film-thumbnails/vantara-masquerade-poster-320.webp" width={320} height={180} alt="" loading="lazy" decoding="async" /><span>Vantara</span></div>
-            <div><img src="/media/film-thumbnails/teded-auditions-poster-320.webp" width={320} height={180} alt="" loading="lazy" decoding="async" /><span>TED-Ed auditions</span></div>
-            <div><img src="/media/film-thumbnails/cirs-website-launch-poster-320.webp" width={320} height={180} alt="" loading="lazy" decoding="async" /><span>CIRS launch</span></div>
-          </div>
-
-        </a>
-        <a className="desk-object desk-contact" aria-label="About and contact" href="/about#contact" onClick={(event) => follow(event, "/about#contact")}>
-          <div className="desk-artifact desk-calling-card">
-            <img src="/media/ap-signature.png" width={768} height={512} alt="" decoding="async" />
-            <span>About & contact <ArrowRight size={16} aria-hidden="true" /></span>
-          </div>
-          <div className="desk-object-caption"><p>The person behind the work. Get in touch.</p></div>
-        </a>
-      </nav>
-      <p className="desk-source-note page-width">An illustrated desk of real work. Website surfaces show genuine desktop captures; films use original posters.</p>
+    <section className="desk-opening cinematic-desk" aria-labelledby="desk-title">
+      <div className="scene-shell" data-scene-failed={failed||undefined} data-scene-loaded={loaded||undefined}>
+        <header className="scene-intro">
+          <h1 id="desk-title">Web work for my school.<br /> <span>Stories for the screen.</span></h1>
+          <a className="desk-work-link" href="/work" onClick={event=>follow(event,"/work")}>View all projects <ArrowRight size={15} aria-hidden="true" /></a>
+        </header>
+        <div className="scene-visual" data-scene-art="original-cinematic-illustration">
+          {!failed ? <picture className="scene-background">
+            <source media="(max-width:767px)" srcSet="/media/cinematic-desk-compact.webp" />
+            <img src="/media/cinematic-desk-wide.webp" width={1672} height={941} alt="A warm cinematic workspace with an open laptop, a booklet, a glass tablet, a film reel and a black personal card on a walnut desk." fetchPriority="high" decoding="async" onLoad={()=>setLoaded(true)} onError={()=>{setFailed(true);setLoaded(false);}} />
+          </picture> : <p className="scene-art-unavailable" role="status">The desk artwork could not load. All project links are available below.</p>}
+          {!failed && <DeskSurfaces loaded={loaded} />}
+        </div>
+        <nav className="scene-map" aria-label="Explore the work on the desk">
+          {objects.map(object=><a key={object.id} className={`scene-object ${object.className}`} href={object.href} data-home-origin={object.origin} data-scene-object={object.id} style={position(object)} onFocus={revealFocusedCaption} onClick={event=>follow(event,object.href,object.origin)}>
+            <span className="scene-hit" aria-hidden="true" />
+            <span className="scene-callout"><span className="scene-callout-copy"><strong>{object.title}</strong><span>{object.context}</span></span><ArrowRight size={15} aria-hidden="true" /></span>
+          </a>)}
+        </nav>
+      </div>
+      <p className="desk-source-note page-width">Original desk artwork. The screens and printed insert show genuine project captures.</p>
     </section>
   );
 }

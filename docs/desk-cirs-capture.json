@@ -1,0 +1,50 @@
+{
+  "kind": "Genuine public CIRS homepage capture for the cinematic desk laptop",
+  "capturedAt": "2026-11-05T10:16:10.986Z",
+  "url": "https://cirschool.org/",
+  "resolvedUrl": "https://cirschool.org/",
+  "httpStatus": 200,
+  "title": "Chinmaya International Residential School — Siruvani, Coimbatore",
+  "viewport": {
+    "width": 1600,
+    "height": 1000,
+    "deviceScaleFactor": 1,
+    "scrollY": 0,
+    "reducedMotion": "reduce",
+    "colorScheme": "dark"
+  },
+  "actions": [],
+  "sourcePNG": {
+    "archivePath": "/workspace/cinematic-desk-scene/sources/cirs-home-1600.png",
+    "width": 1600,
+    "height": 1000,
+    "bytes": 1626274,
+    "sha256": "bdd768ef6acf5577aaf32877e19482971e67aec9a3984a04041019de55dba4e6"
+  },
+  "deliveryWebP": {
+    "path": "public/media/desk-cirs-home-1600.webp",
+    "url": "/media/desk-cirs-home-1600.webp",
+    "width": 1600,
+    "height": 1000,
+    "bytes": 151312,
+    "sha256": "c4c00b9c67c95a7b5b2bf379684adb65ef54bc4e2d33bb4f1b0bb97ea7cca57d",
+    "encoding": "WebP quality 90, method 6; format compression only",
+    "crop": false,
+    "resize": false,
+    "retouch": false,
+    "generatedUI": false
+  },
+  "transport": {
+    "method": "Original public responses fulfilled through the configured environment proxy with normal certificate validation",
+    "certificateValidation": true,
+    "responseRewriting": false,
+    "requestCount": 75,
+    "origins": ["https://cirschool.org"],
+    "failedResponses": [],
+    "transportErrors": [],
+    "nonReadRequests": []
+  },
+  "treatment": "Complete native viewport screenshot after fonts and visible imagery loaded. No source DOM or CSS edits, clipping, scrolling, generated interface or form submission. No public notice was present and no native action was performed.",
+  "scope": "Evidence of the public homepage at capture time, shown as school-team web work. It is not current Admissions guidance or a sole-authorship claim. The surrounding desk is separately identified original artwork; project capture pixels remain a separate contained source image.",
+  "completeLocalCaptureRecord": "/workspace/cinematic-desk-scene/sources/cirs-capture.json"
+}
