@@ -81,6 +81,8 @@ export default function ProjectOpening({ onNavigate }: { onNavigate: (path: Dest
   }
   return (
     <section className="desk-opening cinematic-desk" aria-labelledby="desk-title">
+      <div className="desk-environment" data-scene-failed={failed||undefined}>
+      <div className="desk-ambience" aria-hidden="true" />
       <div ref={shell} className="scene-shell" onPointerMove={light} onPointerLeave={() => { if(shell.current) delete shell.current.dataset.light; }} data-desk-effects={saveData ? "off" : "on"} data-scene-failed={failed||undefined} data-scene-loaded={loaded||undefined}>
         <header className="scene-intro">
           <div className="scene-intro-copy">
@@ -106,6 +108,7 @@ export default function ProjectOpening({ onNavigate }: { onNavigate: (path: Dest
             <span className="scene-callout"><span className="scene-object-number" aria-hidden="true">0{index+1}</span><span className="scene-callout-copy"><strong>{object.title}{visited.includes(object.id) && <small className="scene-explored">Explored</small>}</strong><span>{object.context}</span><em className="scene-object-action">{actions[object.id]}</em></span><ArrowRight size={15} aria-hidden="true" /></span>
           </a>)}
         </nav>
+      </div>
       </div>
     </section>
   );

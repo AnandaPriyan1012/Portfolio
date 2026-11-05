@@ -1,10 +1,14 @@
 /* One complete physical environment; project images are mapped onto its planes. */
 .cinematic-desk { --desk-header: 76px; padding-top: var(--desk-header); background: #11100d; color: #f0e5d0; }
+.desk-environment { position: relative; isolation: isolate; width: 100%; }
+.desk-ambience { position: absolute; inset: 0; overflow: hidden; pointer-events: none; background: radial-gradient(ellipse at 8% 18%,#69401e88,transparent 60%),linear-gradient(#261d13 0 56%,#442a17 58%,#271a0e); }
+.desk-ambience::before { content: ""; position: absolute; inset: -36px; background: url("/media/cinematic-desk-wide.webp") center/cover no-repeat; filter: blur(28px) brightness(.5) saturate(.8); }
+.desk-ambience::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg,#100b0666,transparent 24% 76%,#100b0666); }
 .scene-shell { position: relative; isolation: isolate; width: 100%; margin-inline: auto; container: desk / inline-size; }
 .scene-visual { position: relative; width: 100%; aspect-ratio: 1672/941; overflow: hidden; background: #15120e; }
 .scene-background,.scene-background img { display: block; width: 100%; height: 100%; }
 .scene-background img { object-fit: contain; }
-.scene-visual::after { content: ""; position: absolute; inset: auto 0 0; height: 10%; background: linear-gradient(transparent,#11100d); pointer-events: none; }
+.scene-visual::after { content: ""; position: absolute; inset: auto 0 0; height: 4%; background: linear-gradient(transparent,#11100d); pointer-events: none; }
 .scene-intro { position: absolute; z-index: 3; top: 5%; left: 67%; right: 3.7%; padding: 13px 15px 10px; background: linear-gradient(115deg,#110f0bd9,#110f0b73); border-left: 1px solid #d5b6764f; }
 .scene-intro h1 { margin: 0; font: 430 clamp(23px,2.15vw,37px)/1.13 var(--font-display); letter-spacing: -.02em; color: #f5e7cc; text-wrap: balance; }
 .scene-intro h1 > span { color: #d4ba87; }
@@ -94,6 +98,9 @@
 
 /* The illustration, projected captures and hit regions share the same window. */
 @media (min-width:1101px) and (min-height:621px) {
+ .scene-shell { width: min(100%,calc((100svh - var(--desk-header)) * 1672 / 941)); }
+ .desk-environment:not([data-scene-failed]) .scene-visual { background: transparent; }
+ .scene-background { -webkit-mask-image: linear-gradient(90deg,transparent,#000 16px,#000 calc(100% - 16px),transparent); mask-image: linear-gradient(90deg,transparent,#000 16px,#000 calc(100% - 16px),transparent); }
  .scene-intro { top: 4.5%; left: 69%; right: 3%; padding: 20px 22px; background: linear-gradient(110deg,#100d09d9,#100d0952); border: 0; border-top: 1px solid #d6b77870; }
  .scene-intro h1 { font-size: clamp(27px,2.35vw,46px); }
  .scene-callout { max-width: min(340px,28vw); }
@@ -183,3 +190,28 @@
 .scene-shell[data-desk-effects="off"] :is(.scene-object-action,.scene-callout,.scene-callout > svg,.scene-hit,.scene-laptop-display,.scene-tablet-display) { transition: none; }
 @media(forced-colors:active) { .scene-object-number,.scene-eyebrow,.scene-invitation,.scene-object-action { color: CanvasText; } .scene-callout { border: 1px solid CanvasText; background: Canvas; } .scene-grain { display: none; } }
 @media(forced-colors:active) { .scene-visual::after { display: none; } }
+
+/* Size the introduction against the actual fitted scene, not the window. */
+@media (min-width:1101px) and (min-height:621px) {
+ .scene-intro { padding: 16px; }
+ .scene-intro h1 { font-size: clamp(25px,2.35cqw,40px); }
+ .scene-eyebrow { margin-bottom: 8px; }
+ .scene-invitation { margin-top: 9px; }
+ .scene-intro-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 0 12px; }
+ .scene-intro-controls .desk-work-link,.scene-intro-controls .desk-discovery { margin-top: 8px; }
+}
+@container desk (max-width:1599px) {
+ .scene-intro-controls .desk-discovery-progress { display: none; }
+}
+@container desk (max-width:1099px) {
+ .scene-intro-controls { column-gap: 8px; }
+ .scene-intro-controls .desk-discovery-button { padding-right: 8px; gap: 6px; font-size: 11px; }
+ .scene-intro-controls .desk-discovery-dial { width: 27px; }
+}
+@media (min-width:1101px) and (min-height:621px) {
+ @container desk (max-width:1099px) { .scene-intro { padding: 14px; } }
+}
+.desk-environment[data-scene-failed] .desk-ambience { display: none; }
+.desk-environment:has([data-desk-effects="off"]) .desk-ambience::before { display: none; }
+@media (max-width:1100px), (max-height:620px) { .desk-ambience { display: none; } }
+@media (forced-colors:active) { .desk-ambience { display: none; } .scene-background { -webkit-mask-image: none; mask-image: none; } }
