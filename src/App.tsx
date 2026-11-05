@@ -30,6 +30,7 @@ import ScreeningRoom from "./components/ScreeningRoom";
 import HeroFilm from "./components/HeroFilm";
 import HomeCirsProof from "./components/HomeCirsProof";
 import WorkPage from "./components/WorkPage";
+import BatchDispatchStudy from "./components/BatchDispatchStudy";
 import HomeDirectory from "./components/HomeDirectory";
 import AboutIdentity from "./components/AboutIdentity";
 import GlassCursor from "./components/GlassCursor";
@@ -298,7 +299,7 @@ function ScrollOpening({
   );
 }
 
-function DecisionRoom() {
+function DecisionRoom({ motionEnabled }: { motionEnabled: boolean }) {
   const room = experienceContent.decision;
   const [choice, setChoice] = useState<"now" | "batch" | null>(null);
   const [lens, setLens] = useState("technology");
@@ -398,6 +399,12 @@ function DecisionRoom() {
             onChange={(e) => setBatch(Number(e.target.value))}
           />
         </label>
+        <BatchDispatchStudy
+          key={`${rate}:${batch}`}
+          rate={rate}
+          batch={batch}
+          motionEnabled={motionEnabled}
+        />
         <div className="lab-metrics" aria-live="polite">
           <span>
             <strong>{(((batch - 1) * (10 / rate)) / 2).toFixed(1)} min</strong>
@@ -905,7 +912,9 @@ export default function App() {
                       Read the project notes
                     </button>
                   </div>
-                  <DecisionRoom />
+                  <DecisionRoom
+                    motionEnabled={preferences.motion && !menuOpen && !modal && !osOpen && !tourOpen}
+                  />
                 </div>
               </details>
               {experiments.map((item, index) => (

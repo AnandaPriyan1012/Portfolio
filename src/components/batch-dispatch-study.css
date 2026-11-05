@@ -1,0 +1,70 @@
+.batch-dispatch-study { container: batch-study / inline-size; position: relative; margin: 22px 0 18px; padding: 18px; color: #e5e7d9; background: linear-gradient(130deg,#e2ca8a0a,transparent 48%),#101919; border: 1px solid #d9c79a3b; border-radius: 3px; box-shadow: inset 0 1px #f2e7c30e,5px 5px 0 #b4c6b00c; }
+.batch-study-heading { display: flex; align-items: start; justify-content: space-between; gap: 20px; }
+.batch-study-kicker { color: #d3c198; font: 400 10px/1.5 var(--font-body,sans-serif); letter-spacing: .08em; text-transform: uppercase; }
+.batch-study-heading h5 { margin: 7px 0 0; color: #ece9d9; font: 500 clamp(18px,2vw,24px)/1.15 var(--font-display,sans-serif); letter-spacing: -.03em; }
+.batch-study-clock { flex-shrink: 0; text-align: right; }
+.batch-study-clock > span { color: #bcc8bc; font: 400 10px/1.5 var(--font-body,sans-serif); }
+.batch-study-clock strong { display: block; color: #e6d2a2; font: 400 29px/1.1 "AP Pixelify",monospace; }
+.batch-study-clock small { display: block; margin-top: 3px; color: #bcc8bc; font: 400 10px/1.5 var(--font-body,sans-serif); }
+.batch-dispatch-study .batch-study-qualification { margin: 14px 0; color: #c0cabb; font: 400 10px/1.7 var(--font-body,sans-serif); }
+.batch-order-list { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 7px; list-style: none; padding: 0; margin: 0; }
+@container batch-study (min-width:440px) { .batch-order-list { grid-template-columns: repeat(var(--batch-orders),minmax(0,1fr)); } }
+.batch-order { position: relative; min-width: 0; padding: 11px 8px; color: #d4ddcd; background: #0b1314; border: 1px solid #9ab6a33b; border-top: 2px solid #9ab6a35c; }
+.batch-order[data-arrived="true"] { border-top-color: #dfc68a; background: linear-gradient(165deg,#d1ba8012,transparent 75%),#0d1515; }
+.batch-order-name { display: flex; align-items: center; gap: 7px; font: 500 10px/1.5 var(--font-body,sans-serif); white-space: nowrap; }
+.batch-order-name > span { color: #d6c091; font: 400 18px/1 "AP Pixelify",monospace; }
+.batch-order-name i { margin-left: auto; width: 5px; height: 5px; flex-shrink: 0; border: 1px solid #adbaa4; }
+.batch-order[data-arrived="true"] .batch-order-name i { background: #dfc68a; border-color: #dfc68a; }
+.batch-order dl { display: grid; gap: 8px; margin: 14px 0 0; }
+.batch-order dt { color: #b4c2b4; font: 400 10px/1.5 var(--font-body,sans-serif); }
+.batch-order dd { margin: 2px 0 0; color: #edf0df; font: 400 12px/1.4 var(--font-body,sans-serif); font-variant-numeric: tabular-nums; }
+.batch-shared-journey { position: relative; display: flex; align-items: center; gap: 14px; margin-top: 24px; padding: 12px; border: 1px solid #c7c09759; background: #d7ca9b08; }
+.batch-join-line { position: absolute; left: 12%; right: 12%; top: -14px; height: 10px; border: solid #b7b99a70; border-width: 0 1px 1px; }
+.batch-join-line::after { content: ""; position: absolute; left: 50%; top: 10px; height: 5px; border-left: 1px solid #b7b99a70; }
+.batch-shared-symbol { position: relative; display: inline-flex; gap: 7px; align-items: center; flex-shrink: 0; padding-top: 17px; color: #e8d4a5; font: 400 27px/1 "AP Pixelify",monospace; }
+.batch-shared-symbol > span { font-size: 17px; }
+.batch-shared-symbol .batch-packet-pool { position: absolute; top: 0; left: 50%; display: block; width: 52px; height: 14px; transform: translateX(-50%); }
+.batch-packet { position: absolute; top: 2px; left: 0; width: 7px; height: 9px; border: 1px solid #a9b99e; background: #0d1515; transform: translateX(var(--packet-spread)); }
+.batch-packet[data-arrived="true"] { background: #dfc68a; border-color: #dfc68a; }
+.batch-shared-journey[data-dispatched="true"] .batch-packet { transform: translateX(var(--packet-group)); }
+.batch-shared-journey p { margin: 0; }
+.batch-shared-journey strong { display: block; color: #e4e8d9; font: 500 12px/1.5 var(--font-body,sans-serif); }
+.batch-shared-journey p > span { display: block; margin-top: 3px; color: #becbbd; font: 400 10px/1.6 var(--font-body,sans-serif); }
+.batch-shared-journey[data-dispatched="true"] { border-color: #d7c18b; }
+.batch-dispatch-study .batch-cost-explanation { margin: 13px 0; color: #becbbd; font: 400 10px/1.7 var(--font-body,sans-serif); }
+.batch-cost-explanation strong { color: #e7ddbe; font-weight: 500; }
+.batch-study-controls { display: flex; gap: 8px; flex-wrap: wrap; }
+.batch-study-controls button { min-width: 105px; min-height: 44px; padding: 10px 14px; color: #e8ddbd; font: 500 11px/1.5 var(--font-body,sans-serif); border: 1px solid #d2bd8759; background: #dcc48a08; }
+.batch-study-controls .batch-step { color: #d2ddcd; border-color: #b4c1aa59; background: transparent; }
+.batch-study-controls button:focus-visible { outline: 2px solid #f0dca8; outline-offset: -4px; }
+.batch-dispatch-study .batch-study-notice { min-height: 34px; margin: 10px 0 0; color: #c0cabb; font: 400 10px/1.6 var(--font-body,sans-serif); }
+@media (max-width:767px) {
+  .batch-dispatch-study { padding: 13px; }
+  .batch-study-heading { gap: 10px; }
+  .batch-study-heading h5 { font-size: 19px; }
+  .batch-study-clock strong { font-size: 27px; }
+  .batch-order { padding: 10px; }
+  .batch-shared-journey { padding: 11px 9px; gap: 10px; }
+  .batch-shared-symbol { font-size: 24px; gap: 5px; }
+  .batch-study-controls button { flex: 1; min-width: 95px; padding-inline: 8px; }
+}
+@media (prefers-reduced-motion:no-preference) and (forced-colors:none) {
+  :root:not([data-motion="off"]) .batch-dispatch-study[data-motion="on"][data-group-animation="true"] .batch-packet { transition: transform 400ms ease-out; }
+  :root:not([data-motion="off"]) .batch-dispatch-study[data-motion="on"][data-playing="true"] .batch-order[data-arrived="true"] .batch-order-name i { animation: batch-arrival-mark 240ms ease-out; }
+  :root:not([data-motion="off"]) .batch-dispatch-study[data-motion="on"][data-phase="ready"][data-playing="true"] .batch-shared-journey { animation: batch-ready-mark 350ms ease-out; }
+  @keyframes batch-arrival-mark { from { box-shadow: 0 0 0 0 #e9cb8b80; } to { box-shadow: 0 0 0 6px #e9cb8b00; } }
+  @keyframes batch-ready-mark { from { transform: translateY(3px); } to { transform: none; } }
+}
+@media (hover:hover) and (pointer:fine) { .batch-study-controls button:hover { background: #dac28b15; } }
+@media (forced-colors:active) {
+  .batch-dispatch-study, .batch-order, .batch-order[data-arrived="true"], .batch-shared-journey { background: Canvas; color: CanvasText; border-color: CanvasText; box-shadow: none; }
+  .batch-dispatch-study :is(h5,p,span,strong,small,dt,dd) { color: CanvasText; }
+  .batch-order[data-arrived="true"] { border-top-color: Highlight; }
+  .batch-shared-journey[data-dispatched="true"] { outline: 1px solid Highlight; }
+  .batch-study-controls button, .batch-study-controls .batch-step { color: ButtonText; background: ButtonFace; border-color: ButtonText; }
+  .batch-study-controls button:focus-visible { outline: 2px solid Highlight; }
+  .batch-order[data-arrived="true"] .batch-order-name i { background: CanvasText; border-color: CanvasText; }
+  .batch-packet { background: Canvas; border-color: CanvasText; }
+  .batch-packet[data-arrived="true"] { background: CanvasText; border-color: CanvasText; }
+  .batch-join-line, .batch-join-line::after { border-color: CanvasText; }
+}
