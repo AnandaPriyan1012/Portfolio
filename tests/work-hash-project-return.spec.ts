@@ -77,8 +77,11 @@ for (const variant of variants) test.describe(`${variant.width}px Work hash case
     await expect(page).toHaveURL(/\/work#accuflow$/)
     const target = page.locator('#accuflow')
     await expect(target.locator('.feature-heading')).toBeInViewport()
-    const distance = () => target.evaluate(node => Math.abs(node.getBoundingClientRect().top -
-      Math.ceil(document.querySelector('.site-header')!.getBoundingClientRect().height) - 20))
+    const distance = () => target.evaluate(node => {
+      const header = document.querySelector('.site-header')!.getBoundingClientRect()
+      const rail = document.querySelector('.work-chapter-rail')!.getBoundingClientRect()
+      return Math.abs(node.getBoundingClientRect().top - Math.max(header.bottom, rail.bottom) - 20)
+    })
     await expect.poll(distance).toBeLessThan(4)
     await page.evaluate(() => window.dispatchEvent(new Event('resize')))
     await page.waitForTimeout(600)

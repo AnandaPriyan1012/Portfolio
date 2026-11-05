@@ -13,12 +13,14 @@ import InterfaceAtlas from "./InterfaceAtlas";
 import CirsConceptStudy from "./CirsConceptStudy";
 import CommunityLanguageStudy from "./CommunityLanguageStudy";
 import AccuFlowRouteDeck from "./AccuFlowRouteDeck";
+import WorkChapterRail from "./WorkChapterRail";
 import "./work-evidence-drawers.css";
 
 type WorkPageProps = {
   onQuick: (id: Project["id"]) => void;
   onPage: (id: Project["id"]) => void;
   motionEnabled?: boolean;
+  navigationOpen?: boolean;
 };
 
 const evidenceProjects = ["cirs", "community", "accuflow"] as const;
@@ -641,6 +643,7 @@ export default function WorkPage({
   onQuick,
   onPage,
   motionEnabled = true,
+  navigationOpen = false,
 }: WorkPageProps) {
   const community = projects.find((project) => project.id === "community")!;
   const accuflow = projects.find((project) => project.id === "accuflow")!;
@@ -668,6 +671,7 @@ export default function WorkPage({
           <span>↓</span>
         </div>
       </header>
+      <WorkChapterRail navigationOpen={navigationOpen} motionEnabled={motionEnabled} />
       <div id="work">
         <CirsStory
           onQuick={() => onQuick("cirs")}

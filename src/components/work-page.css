@@ -229,7 +229,16 @@
 .work-page #cirs,
 .work-page #community,
 .work-page #accuflow {
-  scroll-margin-top: calc(var(--header-height, 76px) + 28px);
+  /* Native anchors add the document's scroll padding to this margin. */
+  scroll-margin-top: calc(var(--work-rail-header-height, 76px) + var(--work-rail-height, 56px) + 28px - var(--work-native-scroll-padding, 35px));
+}
+
+.work-page :is(a, button, summary, input, [tabindex]) {
+  scroll-margin-block: calc(var(--work-rail-header-height, 76px) + var(--work-rail-height, 56px) + 24px - var(--work-native-scroll-padding, 35px)) 30px;
+}
+
+.work-page .work-chapter-rail a {
+  scroll-margin-block: 0;
 }
 
 .work-page #work {

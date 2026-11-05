@@ -198,8 +198,80 @@ export default function CaseStudyPage({
     setMediaFailed(false);
     const previous = document.title;
     document.title = `${project.title} — Ananda Priyan`;
-    window.scrollTo({ top: 0, behavior: "instant" });
+    const page = pageRef.current;
+    const initialHash = window.location.hash;
+    let chapter: HTMLElement | null = null;
+    try {
+      const id = decodeURIComponent(initialHash.slice(1));
+      const target = document.getElementById(id);
+      if (id.startsWith(`case-${project.id}-`) && page?.contains(target) &&
+        target?.hasAttribute("data-reader-chapter")) chapter = target;
+    } catch { /* An invalid fragment keeps the ordinary case entry. */ }
+    if (!page || !chapter) {
+      window.scrollTo({ top: 0, behavior: "instant" });
+      return () => { document.title = previous; };
+    }
+
+    // A document's native fragment jump precedes React's case layout. Finish
+    // that initial chapter once its writing/media and the AP opening settle.
+    // Later native chapter links and history retain their existing ownership.
+    let pending = true;
+    let ready = false;
+    let frame = 0;
+    let timeout = 0;
+    const imageCleanups: (() => void)[] = [];
+    const stop = () => {
+      pending = false;
+      cancelAnimationFrame(frame);
+      clearTimeout(timeout);
+      for (const type of ["wheel", "pointerdown", "touchstart", "keydown"])
+        window.removeEventListener(type, interaction, true);
+      window.removeEventListener("hashchange", stop);
+      window.removeEventListener("popstate", stop);
+      window.removeEventListener("ap:openingchange", align);
+      imageCleanups.forEach((complete) => complete());
+    };
+    const interaction = (event: Event) => { if (event.isTrusted) stop(); };
+    const align = () => {
+      if (!pending || !ready || document.documentElement.dataset.opening === "active") return;
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        if (!pending || window.location.hash !== initialHash || !chapter.isConnected ||
+          document.documentElement.dataset.opening === "active") return;
+        chapter.scrollIntoView({ block: "start", behavior: "instant" });
+        chapter.focus({ preventScroll: true });
+        stop();
+      });
+    };
+    for (const type of ["wheel", "pointerdown", "touchstart", "keydown"])
+      window.addEventListener(type, interaction, { passive: true, capture: true });
+    window.addEventListener("hashchange", stop);
+    window.addEventListener("popstate", stop);
+    window.addEventListener("ap:openingchange", align);
+    const images = [...page.querySelectorAll("img")].filter((image) =>
+      image.loading !== "lazy" && Boolean(image.compareDocumentPosition(chapter) & Node.DOCUMENT_POSITION_FOLLOWING));
+    const imageReady = images.map((image) => {
+      if (image.complete) return image.decode().catch(() => undefined);
+      return new Promise<void>((resolve) => {
+        const complete = () => {
+          image.removeEventListener("load", complete);
+          image.removeEventListener("error", complete);
+          resolve();
+        };
+        imageCleanups.push(complete);
+        image.addEventListener("load", complete, { once: true });
+        image.addEventListener("error", complete, { once: true });
+      });
+    });
+    const bounded = new Promise<void>((resolve) => { timeout = window.setTimeout(resolve, 1800); });
+    void Promise.race([Promise.allSettled([document.fonts.ready, ...imageReady]), bounded]).then(() => {
+      if (!pending) return;
+      clearTimeout(timeout);
+      ready = true;
+      align();
+    });
     return () => {
+      stop();
       document.title = previous;
     };
   }, [project.id, project.title]);

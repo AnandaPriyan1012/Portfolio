@@ -29,7 +29,11 @@ function headerClearance() {
   const height =
     header?.getBoundingClientRect().height ??
     (Number.isFinite(configured) ? configured : 76);
-  return Math.ceil(height) + 20;
+  // Reserve the Work rail before it sticks, including jumps from the full
+  // index. Its hidden state keeps the same measured height without layout shift.
+  const workRail = document.querySelector<HTMLElement>(".work-page .work-chapter-rail");
+  const chapterHeight = workRail?.getBoundingClientRect().height ?? 0;
+  return Math.ceil(height) + Math.ceil(chapterHeight) + 20;
 }
 
 // A quiet edge follows the real media frame. Keeping the geometry rectangular

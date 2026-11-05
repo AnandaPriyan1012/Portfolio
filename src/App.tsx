@@ -866,6 +866,7 @@ export default function App() {
               onQuick={quick}
               onPage={page}
               motionEnabled={preferences.motion}
+              navigationOpen={menuOpen}
             />
             <section
               id="experiments"
