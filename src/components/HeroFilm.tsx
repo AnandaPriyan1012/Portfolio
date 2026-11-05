@@ -92,6 +92,7 @@ export default function HeroFilm({
       element.pause();
     } else {
       element.muted = true;
+      element.playbackRate = 0.75;
       void element.play().catch((error: DOMException) => {
         if (!cancelled && error.name !== "AbortError") setPaused(true);
       });

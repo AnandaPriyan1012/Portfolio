@@ -17,51 +17,65 @@ async function wheelTo(page: Page, selector: string, offset: number) {
   await expect.poll(async () => Math.abs((await page.locator(selector).boundingBox())!.y - offset)).toBeLessThan(12)
 }
 
-test('the opening leads with authentic project specimens and personal context without ambient media', async ({ page }) => {
+test('ambient hero preserves the full marked frame, loops silently and has a working pause', async ({ page, context }) => {
+  await context.addInitScript(() => { Object.defineProperty(navigator, 'hardwareConcurrency', { value: 8 }); Object.defineProperty(navigator, 'deviceMemory', { value: 8 }) })
   await page.emulateMedia({ reducedMotion: 'no-preference' })
-  await page.addInitScript(() => { Object.defineProperty(navigator, 'hardwareConcurrency', { value: 8 }); Object.defineProperty(navigator, 'deviceMemory', { value: 8 }) })
-  const requests: string[] = []
-  page.on('request', request => { if (/\.mp4(?:[?#]|$)|atelier-room|amber-architecture/.test(request.url())) requests.push(request.url()) })
   await ready(page)
-  await expect(page.getByRole('heading', { level: 1, name: 'Ananda Priyan', exact: true })).toBeInViewport()
-  await expect(page.locator('.opening-personal')).toContainText('Student developer, storyteller & swimmer.')
-  await expect(page.locator('.opening-primary-label')).toContainText('School-team web work')
-  await expect(page.locator('.opening-primary-label')).toContainText('Live website')
-  await expect(page.locator('.opening-specimen-community')).toContainText('Voluntary digital work · since 2023')
-  await expect(page.locator('.opening-specimen-community')).toContainText('Website review preview')
-  await expect(page.locator('.opening-specimen-accuflow')).toContainText('Website & interaction prototype')
-  for (const [selector, path, height] of [
-    ['.opening-specimen-community img', '/media/vallalar-language-en-desktop.webp', 500],
-    ['.opening-specimen-accuflow img', '/media/accuflow-prototype-desktop.webp', 1000],
-  ] as const) {
-    const image = page.locator(selector)
-    await image.evaluate(node => (node as HTMLImageElement).decode())
-    await expect(image).toHaveAttribute('src', path)
-    await expect(image).toHaveCSS('object-fit', 'contain')
-    expect(await image.evaluate(node => [(node as HTMLImageElement).naturalWidth, (node as HTMLImageElement).naturalHeight])).toEqual([1440, height])
+  const video = page.locator('.hero-ambient-film')
+  await expect(video).toHaveAttribute('poster', '/media/amber-architecture-poster.webp')
+  await expect.poll(() => video.evaluate(node => (node as HTMLVideoElement).paused)).toBe(false)
+  expect(await video.evaluate(node => (node as HTMLVideoElement).muted)).toBe(true)
+  expect(await video.evaluate(node => (node as HTMLVideoElement).loop)).toBe(true)
+  expect(await video.evaluate(node => (node as HTMLVideoElement).playbackRate)).toBe(.75)
+  const frame = await video.evaluate(node => {
+    const film = node as HTMLVideoElement, box = film.getBoundingClientRect()
+    const scale = Math.min(box.width / film.videoWidth, box.height / film.videoHeight)
+    return {
+      fit: getComputedStyle(film).objectFit,
+      clip: getComputedStyle(film).clipPath,
+      width: film.videoWidth,
+      height: film.videoHeight,
+      duration: film.duration,
+      mark: { x: box.x + (box.width - film.videoWidth * scale) / 2 + film.videoWidth * scale * .96, y: box.y + (box.height - film.videoHeight * scale) / 2 + film.videoHeight * scale * .95, right: box.right, bottom: box.y + (box.height + film.videoHeight * scale) / 2 },
+    }
+  })
+  expect(frame.fit).toBe('contain')
+  expect(frame.clip).toBe('none')
+  expect([frame.width, frame.height]).toEqual([1280, 720])
+  expect(frame.duration).toBeCloseTo(8, 1)
+  for (const selector of ['.hero-optical-pane', '.hero-story-copy', '.cirs-visual-frame', '.hero-film-toggle']) {
+    const box = (await page.locator(selector).boundingBox())!
+    const overlaps = box.x < frame.mark.right && box.x + box.width > frame.mark.x && box.y < frame.mark.bottom && box.y + box.height > frame.mark.y
+    expect(overlaps, `${selector} leaves the marked corner clear`).toBe(false)
   }
-  await expect(page.locator('.home-cirs-proof')).toHaveCount(1)
-  await expect(page.locator('.hero-ambient-film, .hero-film-toggle, img[src*="atelier-room"]')).toHaveCount(0)
-  await expect(page.getByRole('button', { name: 'View Work', exact: true })).toBeVisible()
-  await expect(page.locator('.opening-studio-link')).toHaveAttribute('href', '/studio')
-  expect(requests).toEqual([])
+  await page.getByRole('button', { name: 'Pause ambient film', exact: true }).click()
+  await expect.poll(() => video.evaluate(node => (node as HTMLVideoElement).paused)).toBe(true)
+  const pausedAt = await video.evaluate(node => (node as HTMLVideoElement).currentTime)
+  await page.waitForTimeout(150)
+  expect(await video.evaluate(node => (node as HTMLVideoElement).currentTime)).toBeCloseTo(pausedAt, 1)
+  await page.getByRole('button', { name: 'Play ambient film', exact: true }).click()
+  await expect.poll(() => video.evaluate(node => (node as HTMLVideoElement).paused)).toBe(false)
+  await video.evaluate(node => { (node as HTMLVideoElement).currentTime = 7.7 })
+  await expect.poll(() => video.evaluate(node => (node as HTMLVideoElement).currentTime), { timeout: 5000 }).toBeLessThan(1)
+  await page.mouse.wheel(0, await page.evaluate(() => innerHeight * 1.6 * .94))
+  await expect.poll(() => video.evaluate(node => (node as HTMLVideoElement).paused)).toBe(true)
+  await page.mouse.wheel(0, -await page.evaluate(() => innerHeight * 1.6))
+  await expect.poll(() => video.evaluate(node => (node as HTMLVideoElement).paused)).toBe(false)
 })
 
-test('phones, reduced motion, save data and a failed specimen keep genuine content without a film dependency', async ({ browser, baseURL }) => {
+test('phones, reduced motion, save data and failed media keep a real still without a film dependency', async ({ browser, baseURL }) => {
   for (const variant of ['phone', 'short-desktop', 'reduced', 'save-data', 'low-power', 'failed'] as const) {
     const context = await browser.newContext({ baseURL, viewport: { width: variant === 'phone' ? 390 : 1440, height: variant === 'short-desktop' ? 720 : 1000 }, reducedMotion: variant === 'reduced' ? 'reduce' : 'no-preference', ...(variant === 'phone' ? { isMobile: true, hasTouch: true } : {}) })
-    await context.addInitScript(low => { Object.defineProperty(navigator, 'hardwareConcurrency', { value: low ? 2 : 8 }); Object.defineProperty(navigator, 'deviceMemory', { value: 8 }) }, variant === 'low-power')
     const page = await context.newPage()
     if (variant === 'save-data') await page.addInitScript(() => Object.defineProperty(navigator, 'connection', { value: { saveData: true } }))
-    if (variant === 'failed') await page.route('**/vallalar-language-en-desktop.webp', route => route.abort())
+    if (variant === 'low-power') await page.addInitScript(() => Object.defineProperty(navigator, 'hardwareConcurrency', { value: 2 }))
+    if (variant === 'failed') await page.route('**/amber-architecture-loop.mp4', route => route.abort())
     const requests: string[] = []
-    page.on('request', request => { if (/\.mp4(?:[?#]|$)|atelier-room|amber-architecture/.test(request.url())) requests.push(request.url()) })
+    page.on('request', request => { if (request.url().includes('amber-architecture-loop.mp4')) requests.push(request.url()) })
     await ready(page)
-    await expect(page.locator('.hero-ambient-film, .hero-film-toggle')).toHaveCount(0)
-    await expect(page.locator('.opening-specimen-accuflow img')).toBeVisible()
-    if (variant === 'failed') await expect(page.locator('.opening-specimen-community')).toContainText('The website capture could not load.')
-    else await expect(page.locator('.opening-specimen-community img')).toBeVisible()
-    expect(requests, `${variant} does not fetch former room/ambient media`).toEqual([])
+    await expect(page.locator('.hero-ambient-film')).toHaveCount(0)
+    await expect(page.locator('.hero-room img')).toBeVisible()
+    if (variant !== 'failed') expect(requests, `${variant} does not fetch the film`).toHaveLength(0)
     await expect(page.locator('.pin-spacer')).toHaveCount(variant === 'failed' ? 1 : 0)
     await context.close()
   }

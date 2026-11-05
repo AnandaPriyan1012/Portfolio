@@ -15,7 +15,7 @@ async function ready(page: Page, path = '/') {
   await page.goto(path)
   await page.evaluate(() => document.fonts.ready)
   if (path === '/') {
-    await page.locator('.opening-specimen-community img').evaluate(node => (node as HTMLImageElement).decode())
+    await page.locator('.hero-room img').evaluate(node => (node as HTMLImageElement).decode())
     await page.locator('.cirs-browser-image').first().evaluate(node => (node as HTMLImageElement).decode())
     expect(await page.locator('.cirs-browser-image').first().evaluate(node => (node as HTMLImageElement).naturalWidth)).toBeGreaterThan(0)
   }
@@ -95,7 +95,8 @@ test('desktop wheel scrolling expands and reverses the real CIRS scene and captu
   const prefix = browserName === 'chromium' ? 'refinement-regression-scroll-desktop' : `refinement-regression-scroll-${browserName}-desktop`
   await page.mouse.move(1410, 950)
   await page.screenshot({ path: `docs/${prefix}-start.png` })
-  await page.mouse.wheel(0, 850)
+  const revealScroll = await page.evaluate(() => innerHeight * 1.6 * .94)
+  await page.mouse.wheel(0, revealScroll)
   await expect.poll(async () => (await page.locator('.cirs-visual-frame').boundingBox())!.width).toBeGreaterThan(initial.width + 300)
   await expect.poll(async () => page.evaluate(() => scrollY)).toBeGreaterThan(830)
   const expanded = (await page.locator('.cirs-visual-frame').boundingBox())!
@@ -104,7 +105,7 @@ test('desktop wheel scrolling expands and reverses the real CIRS scene and captu
   await expect(page.locator('.cirs-scene-captions')).toBeVisible()
   await expect.poll(() => page.locator('.cirs-scene-captions').evaluate(node => Number(getComputedStyle(node).opacity))).toBeGreaterThan(.95)
   await page.screenshot({ path: `docs/${prefix}-middle.png` })
-  await page.mouse.wheel(0, -850)
+  await page.mouse.wheel(0, -revealScroll)
   await expect.poll(async () => page.evaluate(() => scrollY)).toBeLessThan(2)
   await expect.poll(async () => Math.abs((await page.locator('.cirs-visual-frame').boundingBox())!.width - initial.width)).toBeLessThan(2)
   await ready(page, '/work')
@@ -127,7 +128,7 @@ test('mobile retains native scrolling and captures school, community and AccuFlo
   await expect(page.locator('.pin-spacer')).toHaveCount(0)
   expect(await page.locator('.cirs-visual-frame').evaluate(node => getComputedStyle(node).position)).toBe('relative')
   expect((await page.locator('.cirs-visual-frame').boundingBox())!.width).toBeGreaterThan(300)
-  expect(await page.locator('.opening-specimen-community img').evaluate(node => (node as HTMLImageElement).currentSrc)).toContain('vallalar-language-en-desktop.webp')
+  expect(await page.locator('.hero-room img').evaluate(node => (node as HTMLImageElement).currentSrc)).toContain('atelier-room-portrait.webp')
   const prefix = browserName === 'chromium' ? 'refinement-regression-scroll-mobile' : `refinement-regression-scroll-${browserName}-mobile`
   await page.screenshot({ path: `docs/${prefix}-start.png` })
   await ready(page, '/work')

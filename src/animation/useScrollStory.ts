@@ -115,7 +115,7 @@ function coordinateMaterial(element: HTMLElement, desktop: boolean) {
       const progress =
         ScrollTrigger.getById("atelier-cirs-opening")?.progress ??
         clamp(-scene.top / Math.max(scene.height * 0.55, 1));
-      world = progress < 0.08 ? "hero" : "cirs";
+      world = progress < 0.28 ? "hero" : "cirs";
       const frame = viewportBox(openingFrame.getBoundingClientRect());
       const inset = desktop ? Math.max(0, 1 - progress / 0.58) * 3 : 0;
       activeBox = {
@@ -537,7 +537,7 @@ export default function useScrollStory({ root, enabled, route }: Options) {
         // Numeric coordinates use the actual native scroll position and avoid
         // adding CSS scroll-margin/padding to the requested header offset twice.
         lenis.resize();
-        lenis.scrollTo(top, { immediate, duration: 0.85 });
+        lenis.scrollTo(top, { immediate, duration: 1.2 });
       } else
         window.scrollTo({
           top,
@@ -734,7 +734,7 @@ export default function useScrollStory({ root, enabled, route }: Options) {
               autoRaf: false,
               smoothWheel: true,
               syncTouch: false,
-              anchors: { offset: -headerClearance(), duration: 0.85 },
+              anchors: { offset: -headerClearance(), duration: 1.2 },
               prevent: (node) =>
                 Boolean(node.closest("dialog, .ap-os, [data-lenis-prevent]")),
             });
@@ -803,11 +803,7 @@ export default function useScrollStory({ root, enabled, route }: Options) {
             const scene = select<HTMLElement>(".scroll-opening");
             const frame = select<HTMLElement>(".cirs-visual-frame");
             const hero = select(".hero-story-copy");
-            const heroName = select(".hero-story-copy > h1");
-            const heroSupportingCopy = selectAll(".hero-story-copy > :not(h1)");
             const room = select(".hero-room");
-            const communitySpecimen = select(".opening-specimen-community");
-            const prototypeSpecimen = select(".opening-specimen-accuflow");
             const heroFilm = select(".hero-film-stage");
             const opticalPane = select(".hero-optical-pane");
             const title = select(".cirs-scene-title");
@@ -859,7 +855,7 @@ export default function useScrollStory({ root, enabled, route }: Options) {
                   id: "atelier-cirs-opening",
                   trigger: scene,
                   start: "top top",
-                  end: "+=110%",
+                  end: "+=160%",
                   pin: true,
                   pinSpacing: true,
                   scrub: true,
@@ -867,39 +863,23 @@ export default function useScrollStory({ root, enabled, route }: Options) {
                   anticipatePin: 1,
                   onUpdate: (trigger) => {
                     scene.dataset.progress = trigger.progress.toFixed(3);
-                    proof("scroll", trigger.progress >= 0.7 ? "admissions" : "campus");
+                    proof("scroll", trigger.progress >= 0.82 ? "admissions" : "campus");
                     ambientInOpening = trigger.progress < 0.48;
                     syncAmbient();
                   },
                   onRefresh: (trigger) => {
                     if (title) gsap.set(title, { top: headerClearance() });
                     scene.dataset.progress = trigger.progress.toFixed(3);
-                    proof("scroll", trigger.progress >= 0.7 ? "admissions" : "campus");
+                    proof("scroll", trigger.progress >= 0.82 ? "admissions" : "campus");
                     ambientInOpening = trigger.progress < 0.48;
                     syncAmbient();
                   },
                 },
               });
-              if (heroSupportingCopy.length)
-                opening.to(
-                  heroSupportingCopy,
-                  { autoAlpha: 0, y: -8, duration: 0.14 },
-                  0.08,
-                );
-              if (heroName)
-                opening.to(heroName, { y: -160, duration: 0.24 }, 0.16);
+              // Keep the familiar title readable through the first beat.
+              // A single gradual fade avoids compounding child opacities.
               if (hero)
-                opening.to(hero, { autoAlpha: 0, y: -12, duration: 0.24 }, 0.2);
-              // Real project plates unfold within the existing opening. They
-              // share its scroll owner and give way to the readable CIRS proof.
-              if (communitySpecimen)
-                opening.fromTo(communitySpecimen,
-                  { xPercent: 0, yPercent: 0, rotation: -5, rotationY: 10, transformPerspective: 1000 },
-                  { xPercent: -18, yPercent: -14, rotation: -1, rotationY: -8, duration: 0.42 }, 0.02);
-              if (prototypeSpecimen)
-                opening.fromTo(prototypeSpecimen,
-                  { xPercent: 0, yPercent: 0, rotation: 5, rotationY: -10, transformPerspective: 1000 },
-                  { xPercent: 18, yPercent: -22, rotation: 1, rotationY: 8, duration: 0.42 }, 0.02);
+                opening.to(hero, { autoAlpha: 0, y: -24, duration: 0.38 }, 0.28);
               if (room)
                 opening.fromTo(
                   room,
@@ -912,9 +892,9 @@ export default function useScrollStory({ root, enabled, route }: Options) {
                     autoAlpha: 0,
                     scale: 0.98,
                     clipPath: "inset(13% 5% 17% 5% round 18px)",
-                    duration: 0.4,
+                    duration: 0.46,
                   },
-                  0.18,
+                  0.28,
                 );
               if (opticalPane) {
                 opening.fromTo(
@@ -925,11 +905,11 @@ export default function useScrollStory({ root, enabled, route }: Options) {
                     rotationX: 0,
                     scale: 1.04,
                     autoAlpha: 1,
-                    duration: 0.34,
+                    duration: 0.5,
                   },
                   0,
                 );
-                opening.to(opticalPane, { autoAlpha: 0, duration: 0.25 }, 0.4);
+                opening.to(opticalPane, { autoAlpha: 0, duration: 0.32 }, 0.44);
               }
               // Keep the entire source frame, including its watermark, intact.
               // Only the sibling film layer's opacity changes during the handoff.
@@ -937,15 +917,15 @@ export default function useScrollStory({ root, enabled, route }: Options) {
                 opening.fromTo(
                   heroFilm,
                   { opacity: 1 },
-                  { opacity: 0, duration: 0.62 },
-                  0.18,
+                  { opacity: 0, duration: 0.54 },
+                  0.24,
                 );
               opening.fromTo(
                 frame,
                 {
                   ...initialFrame,
                   clipPath: "inset(0% 0% 0% 0% round 12px)",
-                  autoAlpha: 1,
+                  autoAlpha: 0.62,
                 },
                 {
                   left: "6%",
@@ -954,20 +934,20 @@ export default function useScrollStory({ root, enabled, route }: Options) {
                   height: frameHeight,
                   autoAlpha: 1,
                   clipPath: "inset(0% 0% 0% 0% round 0px)",
-                  duration: 0.58,
+                  duration: 0.40,
                 },
-                0,
+                0.48,
               );
               if (title)
-                opening.to(title, { autoAlpha: 1, duration: 0.12 }, 0.42);
+                opening.to(title, { autoAlpha: 1, duration: 0.16 }, 0.62);
               if (captions)
-                opening.to(captions, { autoAlpha: 1, duration: 0.12 }, 0.58);
+                opening.to(captions, { autoAlpha: 1, duration: 0.16 }, 0.74);
               opening.fromTo(frame, { "--home-proof-progress": 0 }, {
-                "--home-proof-progress": 1, duration: 0.08,
-              }, 0.66);
-              // Keep normalized progress at 0–1 and reserve the final quarter for
-              // the fully expanded view and fully opaque, stationary captions.
-              opening.to({}, { duration: 0.26 }, 0.74);
+                "--home-proof-progress": 1, duration: 0.16,
+              }, 0.74);
+              // A longer dissolve tracks the dominant source and ends in a
+              // stationary reading hold; reverse scrolling uses the same path.
+              opening.to({}, { duration: 0.10 }, 0.90);
 
               // A loaded direct link may start after the pinned scene. Refresh never
               // resets scroll position or forces visitors back through the opening.
@@ -1123,7 +1103,7 @@ export default function useScrollStory({ root, enabled, route }: Options) {
           // Native focus may have scrolled before its scroll event arrives.
           // Sync the real position before Lenis compares its cached target.
           lenis.resize();
-          lenis.scrollTo(target, { duration: 0.85, immediate: options?.immediate });
+          lenis.scrollTo(target, { duration: 1.2, immediate: options?.immediate });
         } else {
           let destination: Element | null =
             target instanceof Element ? target : null;
@@ -1145,7 +1125,7 @@ export default function useScrollStory({ root, enabled, route }: Options) {
                   window.scrollY -
                   headerClearance(),
               ),
-              { duration: 0.85, immediate: options?.immediate },
+              { duration: 1.2, immediate: options?.immediate },
             );
           }
         }

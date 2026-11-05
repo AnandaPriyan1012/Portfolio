@@ -142,8 +142,8 @@ test.describe('the real desktop Home proof timeline', () => {
     await wheelToPhase(page, .60)
     const campus = await evidence(page, 'campus', false)
     const initialHeight = await page.locator('.pin-spacer').evaluate(node => node.getBoundingClientRect().height)
-    expect(initialHeight).toBeLessThanOrEqual(2102)
-    await wheelToPhase(page, .69)
+    expect(initialHeight).toBeLessThanOrEqual(2602)
+    await wheelToPhase(page, .82)
     const blend = await frame(page).evaluate(node => {
       const layer = (view: string) => Number(getComputedStyle(node.querySelector(`[data-proof-layer="${view}"]`)!).opacity)
       return { progress: Number(getComputedStyle(node).getPropertyValue('--home-proof-progress')), campus: layer('campus'), admissions: layer('admissions') }
@@ -152,7 +152,7 @@ test.describe('the real desktop Home proof timeline', () => {
     expect(blend.progress).toBeLessThan(1)
     expect(blend.campus).toBeGreaterThan(0)
     expect(blend.admissions).toBeGreaterThan(0)
-    await wheelToPhase(page, .84)
+    await wheelToPhase(page, .94)
     const admissions = await evidence(page, 'admissions', false)
     expect((await frame(page).boundingBox())!.height).toBeGreaterThan(400)
     await expect(page.locator('.cirs-scene-captions')).toBeInViewport()
@@ -164,7 +164,7 @@ test.describe('the real desktop Home proof timeline', () => {
 
   test('a keyboard choice outranks scroll and focused controls until Follow scroll is deliberately resumed', async ({ page }) => {
     await home(page)
-    await wheelToPhase(page, .84)
+    await wheelToPhase(page, .94)
     const campus = choose(page, 'campus')
     await campus.focus(); await page.keyboard.press('Enter')
     await expect(frame(page)).toHaveAttribute('data-proof-owner', 'manual')
@@ -172,7 +172,7 @@ test.describe('the real desktop Home proof timeline', () => {
     await page.keyboard.press('Tab')
     await expect(choose(page, 'admissions')).toBeFocused()
     await wheelToPhase(page, .59)
-    await wheelToPhase(page, .85)
+    await wheelToPhase(page, .94)
     await expect(choose(page, 'admissions')).toBeFocused()
     await evidence(page, 'campus', false)
     await page.keyboard.press('Tab')
@@ -191,7 +191,7 @@ test.describe('the real desktop Home proof timeline', () => {
     await wheelToPhase(page, .60)
     await source(page).focus()
     await expect(frame(page)).toHaveAttribute('data-proof-owner', 'focus')
-    await wheelToPhase(page, .84)
+    await wheelToPhase(page, .94)
     await expect(frame(page)).toHaveAttribute('data-proof-view', 'admissions')
     await expect(source(page)).toBeFocused()
     await evidence(page, 'campus', false)
@@ -213,7 +213,7 @@ for (const variant of [
     isMobile: variant.touch, hasTouch: variant.touch })
   test('manual source, exact native opener and Y survive explicit case Back and browser history', async ({ page }, testInfo) => {
     await home(page)
-    if (!variant.touch) await wheelToPhase(page, .84)
+    if (!variant.touch) await wheelToPhase(page, .94)
     else await choose(page, 'campus').scrollIntoViewIfNeeded()
     const results = []
     for (const [view, nativeBack] of [['campus', false], ['admissions', true]] as const) {
@@ -276,7 +276,7 @@ for (const mode of ['phone390', 'phone320', 'reduced', 'motion-off', 'forced-col
 test('changing to reduced motion removes the pin and manual view survives the quiet layout', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' })
   await home(page)
-  await wheelToPhase(page, .84)
+  await wheelToPhase(page, .94)
   await choose(page, 'campus').focus(); await page.keyboard.press('Enter')
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await expect(page.locator('.pin-spacer')).toHaveCount(0)
@@ -294,7 +294,7 @@ test('changing to reduced motion removes the pin and manual view survives the qu
 test('resizing a running scene to phone produces a readable native-flow proof and genuine phone source', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' })
   await home(page)
-  await wheelToPhase(page, .84)
+  await wheelToPhase(page, .94)
   await page.setViewportSize({ width: 390, height: 844 })
   await expect(frame(page)).toHaveAttribute('data-proof-mode', 'static')
   await expect(page.locator('.pin-spacer')).toHaveCount(0)
@@ -307,7 +307,7 @@ test('resizing a running scene to phone produces a readable native-flow proof an
 test('enabling forced colors removes an existing pin without discarding the native source choice', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference', forcedColors: 'none' })
   await home(page)
-  await wheelToPhase(page, .84)
+  await wheelToPhase(page, .94)
   await choose(page, 'campus').focus(); await page.keyboard.press('Enter')
   await page.emulateMedia({ forcedColors: 'active' })
   await expect(frame(page)).toHaveAttribute('data-proof-mode', 'static')
@@ -322,7 +322,7 @@ for (const failed of ['campus', 'admissions'] as const) test(`a failed ${failed}
   const stem = failed === 'campus' ? 'home' : 'admissions'
   await page.route(new RegExp(`/media/atlas-cirs-${stem}-(?:desktop|mobile)\\.webp$`), route => route.abort())
   await home(page)
-  await wheelToPhase(page, .84)
+  await wheelToPhase(page, .94)
   const available = failed === 'campus' ? 'admissions' : 'campus'
   await expect(choose(page, failed)).toHaveAttribute('aria-disabled', 'true')
   await expect(frame(page)).toHaveAttribute('data-proof-mode', 'scroll')

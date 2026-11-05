@@ -16,7 +16,7 @@ async function ready(page: Page, path = '/') {
   await page.evaluate(() => document.fonts.ready)
   await page.locator('header .ap-signature').evaluate(node => (node as HTMLImageElement).decode())
   if (path === '/') {
-    await page.locator('.opening-specimen-community img').evaluate(node => (node as HTMLImageElement).decode())
+    await page.locator('.hero-room img').evaluate(node => (node as HTMLImageElement).decode())
     await page.locator('.cirs-browser-image').first().evaluate(node => (node as HTMLImageElement).decode())
   }
   await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))))
@@ -43,8 +43,8 @@ for (const width of [320, 375, 390, 768, 1024, 1440]) {
     await ready(page)
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width)
     const mobile = width < 768
-    const source = await page.locator('.opening-specimen-community img').evaluate(node => (node as HTMLImageElement).currentSrc)
-    expect(source).toContain('vallalar-language-en-desktop.webp')
+    const source = await page.locator('.hero-room img').evaluate(node => (node as HTMLImageElement).currentSrc)
+    expect(source).toContain(mobile ? 'atelier-room-portrait.webp' : width < 1024 ? 'atelier-room-tablet.webp' : 'atelier-room-wide.webp')
     await expect(page.locator('h1')).toHaveCount(1)
     await expect(page.locator('h1')).toContainText('Ananda')
     for (const selector of ['.hero-story-copy h1', '.hero-factual-intro', '.view-work-button', '.cirs-visual-frame']) {
@@ -149,7 +149,8 @@ test('one shared pane changes real geometry through each desktop material world 
   const initial = (await page.locator('.cirs-visual-frame').boundingBox())!
   const startPath = await page.locator('.material-pane').getAttribute('d')
   await page.screenshot({ path: 'docs/refinement-desktop-start.png' })
-  await page.mouse.wheel(0, 850)
+  const revealScroll = await page.evaluate(() => innerHeight * 1.6 * .94)
+  await page.mouse.wheel(0, revealScroll)
   await expect.poll(async () => (await page.locator('.cirs-visual-frame').boundingBox())!.width).toBeGreaterThan(initial.width * 2)
   await expect(page.locator('main')).toHaveAttribute('data-material-world', 'cirs')
   await expect.poll(() => page.locator('.glass-material').evaluate(node => Number(getComputedStyle(node).opacity))).toBeGreaterThan(.2)
@@ -157,7 +158,7 @@ test('one shared pane changes real geometry through each desktop material world 
   expect(cirsPath).not.toBe(startPath)
   await expect.poll(() => page.locator('.cirs-scene-captions').evaluate(node => Number(getComputedStyle(node).opacity))).toBeGreaterThan(.95)
   await page.screenshot({ path: 'docs/refinement-desktop-middle.png' })
-  await page.mouse.wheel(0, -850)
+  await page.mouse.wheel(0, -revealScroll)
   await expect.poll(() => page.evaluate(() => scrollY)).toBeLessThan(2)
   await expect.poll(async () => Math.abs((await page.locator('.cirs-visual-frame').boundingBox())!.width - initial.width)).toBeLessThan(2)
   const paths = [cirsPath]
@@ -185,7 +186,7 @@ test('portrait phones keep native scroll, full glass, and a lightweight changing
   await expect(page.locator('main')).toHaveAttribute('data-scroll-engine', 'gsap-native')
   await expect(page.locator('.pin-spacer')).toHaveCount(0)
   await expect(page.locator('.glass-cursor')).toHaveCount(0)
-  await expect(page.locator('.project-opening-stage')).toBeVisible()
+  await expect(page.locator('.hero-room')).toBeVisible()
   await page.locator('.state-opening').waitFor({ state: 'detached' })
   await page.screenshot({ path: 'docs/refinement-mobile-start.png' })
   await ready(page, '/work')
@@ -204,7 +205,7 @@ test('reduced motion and low-power devices keep the sculpture with static scroll
   await expect(page.locator('.pin-spacer')).toHaveCount(0)
   await expect(page.locator('.glass-material')).toBeHidden()
   await expect(page.locator('.state-opening')).toHaveCount(0)
-  await expect(page.locator('.project-opening-stage')).toBeVisible()
+  await expect(page.locator('.hero-room')).toBeVisible()
   const before = (await page.locator('.cirs-visual-frame').boundingBox())!
   await page.mouse.wheel(0, 650)
   await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(600)

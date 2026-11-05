@@ -65,8 +65,8 @@ test('the identity scene keeps one page title, native four-lane navigation and t
   await expect(plate).toContainText('Personal bests recorded in my CV.')
   await identity.locator('.about-identity-perspectives > summary').click()
   await expect(identity.locator('.about-identity-perspectives h4')).toHaveCount(4)
-  await expect(page.locator('.achievement')).toHaveCount(5)
-  await expect(page.locator('.achievement').first().locator('h3')).toHaveText('Chinmaya Gaurav Award')
+  await expect(page.locator('.achievement')).toHaveCount(4)
+  await expect(page.locator('.achievement').first().locator('h3')).toHaveText('ICSC 2026')
   await expect(page.locator('body')).not.toContainText(/isolated about study|prototype boundary|the original mark/i)
 })
 

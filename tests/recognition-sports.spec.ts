@@ -29,9 +29,9 @@ for (const width of [320, 390, 1440]) {
 
     const recognition = page.locator('#recognition')
     const entries = recognition.locator('.achievement')
-    await expect(entries).toHaveCount(5)
+    await expect(entries).toHaveCount(4)
     await expect(entries.locator('h3')).toHaveText([
-      'Chinmaya Gaurav Award', 'ICSC 2026', 'International Chemistry Competition 2026',
+      'ICSC 2026', 'International Chemistry Competition 2026',
       'International Computer Science Competition', 'CIRSMUN 2026',
     ])
     for (const entry of await entries.all()) {
@@ -40,13 +40,9 @@ for (const width of [320, 390, 1440]) {
       await expect(entry).toHaveAttribute('open', '')
       await expect(entry.locator('.achievement-source')).toBeVisible()
     }
-    await expect(entries.first()).toContainText('Chinmaya International Residential School · 2026')
-    // The two supplied Gaurav versions disagree on category; shared title,
-    // recipient context and year are published without choosing a version.
-    await expect(entries.first()).not.toContainText(/Excellence in Swimming|Upholding CIRS Value/i)
+    await expect(entries.nth(0)).toContainText('as recorded in my CV')
     await expect(entries.nth(1)).toContainText('as recorded in my CV')
-    await expect(entries.nth(2)).toContainText('as recorded in my CV')
-    const ambassador = entries.nth(3)
+    const ambassador = entries.nth(2)
     await expect(ambassador).toContainText('30 August 2026')
     await expect(ambassador).toContainText('separate from the competition result above')
     const verify = ambassador.getByRole('link', { name: 'Verify with ICSC', exact: true })

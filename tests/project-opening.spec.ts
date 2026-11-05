@@ -10,7 +10,7 @@ async function ready(page: Page, path = '/') {
   if (process.env.AP_EXPECT_BUNDLE) expect(await page.locator('script[type="module"]').first().getAttribute('src')).toBe(`/assets/${process.env.AP_EXPECT_BUNDLE}`)
   if (process.env.AP_EXPECT_STYLE) await expect(page.locator(`link[href="/assets/${process.env.AP_EXPECT_STYLE}"]`)).toHaveCount(1)
   if (path === '/') {
-    await page.locator('.opening-specimen img').evaluateAll(nodes => Promise.all(nodes.map(node => (node as HTMLImageElement).decode())))
+    await page.locator('.hero-room img').evaluate(node => (node as HTMLImageElement).decode())
     await page.locator('.cirs-browser-image').first().evaluate(node => (node as HTMLImageElement).decode())
     await settle(page)
   }
@@ -37,99 +37,88 @@ async function wheelY(page: Page, target: number) {
 }
 async function physicalLayout(page: Page, desktop: boolean) {
   const layout = await page.evaluate(() => {
-    const selectors = ['.hero-story-copy h1','.opening-personal','.hero-factual-intro','.view-work-button','.opening-studio-link','.opening-specimen-community','.opening-specimen-accuflow','.home-cirs-proof','.opening-edition']
-    const rect = (element: Element) => { const r = element.getBoundingClientRect(); return { x:r.x,y:r.y,width:r.width,height:r.height,bottom:r.bottom,right:r.right } }
-    const boxes = Object.fromEntries(selectors.map(selector => [selector,rect(document.querySelector(selector)!)]))
-    const text = [...document.querySelectorAll('.hero-story-copy h1,.opening-personal,.hero-factual-intro,.opening-actions > *')].flatMap(element => {
-      const range = document.createRange(); range.selectNodeContents(element)
-      return [...range.getClientRects()].filter(r => r.width && r.height).map(r => ({x:r.x,y:r.y,right:r.right,bottom:r.bottom}))
-    })
-    const artifacts = [...document.querySelectorAll('.opening-specimen-heading,.opening-specimen-capture,.opening-specimen figcaption')].map(rect)
-    const overlaps = text.flatMap((a, i) => artifacts.filter(b => Math.min(a.right,b.right)-Math.max(a.x,b.x)>1 && Math.min(a.bottom,b.bottom)-Math.max(a.y,b.y)>1).map(b => ({i,a,b})))
-    const controls = [...document.querySelectorAll('.opening-actions > :is(a,button)')].map(element => {
-      const r = element.getBoundingClientRect(), hit = document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)
-      return {text:element.textContent,width:r.width,height:r.height,reachable:!!hit && (hit===element || element.contains(hit))}
-    })
-    return {width:innerWidth,height:innerHeight,scrollWidth:document.documentElement.scrollWidth,boxes,overlaps,controls}
+    const selectors = ['.hero-story-copy h1','.hero-factual-intro','.view-work-button','.opening-studio-link','.home-cirs-proof']
+    const rect = (element: Element) => { const r=element.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height,bottom:r.bottom,right:r.right} }
+    const boxes=Object.fromEntries(selectors.map(selector=>[selector,rect(document.querySelector(selector)!)]))
+    const controls=[...document.querySelectorAll('.hero-story-copy > :is(a,button)')].map(element=>{const r=element.getBoundingClientRect(),hit=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);return {text:element.textContent,width:r.width,height:r.height,reachable:!!hit&&(hit===element||element.contains(hit))}})
+    return {width:innerWidth,height:innerHeight,scrollWidth:document.documentElement.scrollWidth,boxes,controls,room:rect(document.querySelector('.hero-room')!),font:getComputedStyle(document.querySelector('h1')!).fontFamily}
   })
   expect(layout.scrollWidth).toBeLessThanOrEqual(layout.width)
-  expect(layout.overlaps, 'The actual text and actions do not overlap project headings, captures or captions').toEqual([])
-  for (const [selector, box] of Object.entries(layout.boxes)) {
-    expect(box.x, `${selector} left`).toBeGreaterThanOrEqual(-1)
-    expect(box.right, `${selector} right`).toBeLessThanOrEqual(layout.width + 1)
-    if (desktop) expect(box.bottom, `${selector} stays inside the first viewport`).toBeLessThanOrEqual(layout.height + 1)
+  expect(layout.font).toContain('AP Pixelify')
+  for(const [selector,box]of Object.entries(layout.boxes)){
+    expect(box.x,`${selector} left`).toBeGreaterThanOrEqual(-1)
+    expect(box.right,`${selector} right`).toBeLessThanOrEqual(layout.width+1)
+    if(desktop)expect(box.bottom,`${selector} stays inside the first viewport`).toBeLessThanOrEqual(layout.height+1)
   }
-  if (!desktop) expect(layout.boxes['.opening-edition'].bottom, 'The edition line precedes the actual specimen cards').toBeLessThanOrEqual(Math.min(layout.boxes['.opening-specimen-community'].y,layout.boxes['.opening-specimen-accuflow'].y))
-  for (const control of layout.controls) { expect(control.width).toBeGreaterThanOrEqual(44); expect(control.height).toBeGreaterThanOrEqual(44); expect(control.reachable).toBe(true) }
+  for(const control of layout.controls){expect(control.width).toBeGreaterThanOrEqual(44);expect(control.height).toBeGreaterThanOrEqual(44);expect(control.reachable).toBe(true)}
   return layout
 }
-test.afterEach(async ({page}) => { expect(seen.get(page) || [], 'No uncaught page errors').toEqual([]) })
+test.afterEach(async({page})=>{expect(seen.get(page)||[],'No uncaught page errors').toEqual([])})
 
-test('the real project plates unfold and reverse into the genuine CIRS proof on native wheel input', async ({ page, context }, testInfo) => {
-  await capable(context); await page.emulateMedia({reducedMotion:'no-preference'}); await ready(page)
-  await expect(page.locator('main')).toHaveAttribute('data-scroll-engine','gsap-lenis')
+test('the familiar glass room retains its readable retro title through an 850px wheel and reverses from the real school proof',async({page,context},testInfo)=>{
+  await capable(context);await page.emulateMedia({reducedMotion:'no-preference'});await ready(page)
+  await expect(page.locator('.retro-opening')).toHaveCount(1)
+  await expect(page.locator('.opening-film-frame,.opening-specimen')).toHaveCount(0)
+  await expect(page.locator('.hero-optical-pane')).toHaveCount(1)
   await expect(page.locator('.pin-spacer')).toHaveCount(1)
-  const initial = await physicalLayout(page,true)
-  const originalTransform = await page.locator('.opening-specimen-community').evaluate(node => getComputedStyle(node).transform)
-  const url = page.url()
-  const distance = await page.evaluate(async () => {
-    const source = performance.getEntriesByType('resource').map(entry=>entry.name).find(name=>/(?:gsap_ScrollTrigger|motion-vendor)[^/]*\.js(?:\?|$)/.test(name))!
-    const loaded = await import(/* @vite-ignore */ source)
-    const coordinator = Object.values(loaded).find((value:any)=>typeof value?.getAll === 'function') as any
-    const trigger = coordinator.getAll().find((item:any)=>item.vars.id==='atelier-cirs-opening')
-    return { start: trigger.start, end: trigger.end }
-  })
-  await wheelY(page,distance.start+(distance.end-distance.start)*.28)
-  expect(await page.locator('.opening-specimen-community').evaluate(node => getComputedStyle(node).transform)).not.toBe(originalTransform)
+  const initial=await physicalLayout(page,true),url=page.url()
   await expect(page.locator('.home-cirs-proof')).toHaveAttribute('data-effective-proof','campus')
-  await wheelY(page,distance.start+(distance.end-distance.start)*.82)
+  await expect(page.locator('.hero-room')).toHaveAttribute('aria-hidden','true')
+  const runway=await page.locator('.scroll-opening').evaluate(node=>node.parentElement!.getBoundingClientRect().height-node.getBoundingClientRect().height)
+  expect(runway).toBeCloseTo(1600,0)
+  await wheelY(page,850)
+  const mid=await page.evaluate(()=>({hero:+getComputedStyle(document.querySelector('.hero-story-copy')!).opacity,room:+getComputedStyle(document.querySelector('.hero-room')!).opacity,progress:document.querySelector<HTMLElement>('.scroll-opening')!.dataset.progress}))
+  expect(mid.hero,'The title still reads after the same 850px gesture that erased the previous opening').toBeGreaterThan(.25)
+  expect(mid.hero).toBeLessThan(.5)
+  expect(mid.room).toBeGreaterThan(.3)
+  await expect(page.locator('.home-cirs-proof')).toHaveAttribute('data-effective-proof','campus')
+  await wheelY(page,runway*.94)
   await expect(page.locator('.home-cirs-proof')).toHaveAttribute('data-effective-proof','admissions')
   await expect(page.locator('.cirs-browser-body')).toHaveAttribute('href','https://cirschool.org/admissions.html')
   expect((await page.locator('.cirs-visual-frame').boundingBox())!.width).toBeGreaterThan(initial.boxes['.home-cirs-proof'].width+300)
-  await expect.poll(()=>page.locator('.project-opening-stage').evaluate(node=>Number(getComputedStyle(node).opacity))).toBeLessThan(.01)
-  await expect.poll(()=>page.locator('.cirs-scene-captions').evaluate(node=>Number(getComputedStyle(node).opacity))).toBeGreaterThan(.95)
+  await expect.poll(()=>page.locator('.hero-story-copy').evaluate(node=>+getComputedStyle(node).opacity)).toBeLessThan(.01)
+  await expect.poll(()=>page.locator('.cirs-scene-captions').evaluate(node=>+getComputedStyle(node).opacity)).toBeGreaterThan(.95)
   expect(page.url()).toBe(url)
   await wheelY(page,0)
   await expect(page.locator('.home-cirs-proof')).toHaveAttribute('data-effective-proof','campus')
-  await expect.poll(()=>page.locator('.project-opening-stage').evaluate(node=>Number(getComputedStyle(node).opacity))).toBeGreaterThan(.99)
-  await expect.poll(async()=>Math.abs((await page.locator('.cirs-visual-frame').boundingBox())!.width-initial.boxes['.home-cirs-proof'].width)).toBeLessThan(1)
-  await testInfo.attach('opening-wheel-journey',{body:JSON.stringify({initial,distance,finalY:await page.evaluate(()=>scrollY)}),contentType:'application/json'})
+  await expect.poll(()=>page.locator('.hero-room').evaluate(node=>+getComputedStyle(node).opacity)).toBeGreaterThan(.99)
+  await expect.poll(()=>page.locator('.hero-story-copy').evaluate(node=>+getComputedStyle(node).opacity)).toBeGreaterThan(.99)
+  await testInfo.attach('retro-wheel-journey',{body:JSON.stringify({initial,runway,mid,finalY:await page.evaluate(()=>scrollY)}),contentType:'application/json'})
 })
 
-test('short capable desktops keep actual text, native actions and both whole previews inside the first fold', async ({ browser,baseURL },testInfo) => {
+test('the earlier luxury geometry and native retro actions fit ordinary and minimum capable desktops',async({browser,baseURL},testInfo)=>{
   const evidence=[]
   for(const viewport of [{width:1440,height:844},{width:1100,height:760}]){
     const context=await browser.newContext({baseURL,viewport,reducedMotion:'no-preference'});await capable(context)
     const page=await context.newPage();await ready(page)
     await expect(page.locator('.pin-spacer')).toHaveCount(1)
     evidence.push(await physicalLayout(page,true))
+    await expect(page.locator('.hero-room img')).toHaveAttribute('src','/media/atelier-room-wide.webp')
+    await expect(page.getByRole('heading',{level:1,name:'Ananda Priyan',exact:true})).toBeInViewport()
+    await expect(page.locator('.opening-studio-link')).toHaveAttribute('href','/studio')
     expect(seen.get(page)).toEqual([]);await context.close()
   }
-  await testInfo.attach('short-desktop-reading-layout',{body:JSON.stringify(evidence),contentType:'application/json'})
+  await testInfo.attach('retro-first-fold',{body:JSON.stringify(evidence),contentType:'application/json'})
 })
 
-for(const width of [390,320]) test(`${width}px visitors read identity, complete project specimens and a full CIRS mobile capture in normal flow`,async({browser,baseURL},testInfo)=>{
+for(const width of [390,320])test(`${width}px visitors retain the glass composition, native actions and a full school proof without pinning`,async({browser,baseURL},testInfo)=>{
   const context=await browser.newContext({baseURL,viewport:{width,height:844},isMobile:true,hasTouch:true,reducedMotion:width===320?'reduce':'no-preference'});await capable(context)
   const page=await context.newPage();await ready(page)
-  await expect(page.locator('.pin-spacer')).toHaveCount(0)
+  await expect(page.locator('.pin-spacer,.hero-ambient-film')).toHaveCount(0)
   const layout=await physicalLayout(page,false)
-  const actions=layout.boxes['.view-work-button'], community=layout.boxes['.opening-specimen-community'], accu=layout.boxes['.opening-specimen-accuflow'], proof=layout.boxes['.home-cirs-proof']
-  expect(actions.bottom).toBeLessThan(Math.min(community.y,accu.y))
-  expect(Math.max(community.bottom,accu.bottom)).toBeLessThan(proof.y)
-  for(const image of await page.locator('.opening-specimen img').all()){await expect(image).toHaveCSS('object-fit','contain');expect(await image.evaluate(node=>(node as HTMLImageElement).naturalWidth)).toBe(1440)}
+  expect(await page.locator('.hero-room img').evaluate(node=>(node as HTMLImageElement).currentSrc)).toMatch(/atelier-room-portrait\.webp$/)
   await expect(page.locator('.home-cirs-proof')).toHaveAttribute('data-effective-proof','admissions')
-  expect(proof.height).toBeGreaterThan(750)
+  expect(layout.boxes['.home-cirs-proof'].height).toBeGreaterThan(750)
   expect(await page.locator('.cirs-browser-image').evaluate(node=>(node as HTMLImageElement).currentSrc)).toMatch(/atlas-cirs-admissions-mobile\.webp$/)
-  await page.getByRole('button',{name:'View Work',exact:true}).tap()
-  await expect(page).toHaveURL(/\/work$/);await page.locator('.state-opening').waitFor({state:'detached'})
-  await page.goBack();await page.locator('.state-opening').waitFor({state:'detached'})
+  await page.getByRole('button',{name:'View Work',exact:true}).tap();await expect(page).toHaveURL(/\/work$/)
+  await page.locator('.state-opening').waitFor({state:'detached'});await page.goBack();await page.locator('.state-opening').waitFor({state:'detached'})
   await expect(page.getByRole('heading',{name:'Ananda Priyan',exact:true})).toBeVisible()
   await expect(page.locator('.pin-spacer')).toHaveCount(0)
   expect(seen.get(page)).toEqual([])
-  await testInfo.attach('phone-opening-reading-layout',{body:JSON.stringify(layout),contentType:'application/json'});await context.close()
+  await testInfo.attach('retro-phone-layout',{body:JSON.stringify(layout),contentType:'application/json'});await context.close()
 })
 
-test('the native film link keeps its exact Home opener and scroll position through Studio and browser history',async({page,context},testInfo)=>{
+test('the native Films link returns to its exact Home opener and scroll position',async({page,context},testInfo)=>{
   await capable(context);await page.emulateMedia({reducedMotion:'no-preference'});await ready(page)
   const opener=page.locator('.opening-studio-link')
   await page.getByRole('button',{name:'View Work',exact:true}).focus();await page.keyboard.press('Tab');await expect(opener).toBeFocused()
@@ -141,45 +130,52 @@ test('the native film link keeps its exact Home opener and scroll position throu
   await expect(opener).toBeFocused();await expect.poll(async()=>Math.abs(await page.evaluate(()=>scrollY)-y)).toBeLessThan(4)
   await expect(page.locator('.pin-spacer')).toHaveCount(1)
   await page.keyboard.press('Shift+Tab');await expect(page.getByRole('button',{name:'View Work',exact:true})).toBeFocused()
-  await testInfo.attach('native-studio-opening-return',{body:JSON.stringify({beforeY:y,afterY:await page.evaluate(()=>scrollY)}),contentType:'application/json'})
+  await testInfo.attach('native-retro-films-return',{body:JSON.stringify({beforeY:y,afterY:await page.evaluate(()=>scrollY)}),contentType:'application/json'})
 })
 
-test('responsive and preference changes clean up the one Home story without erasing the native film action',async({page,context},testInfo)=>{
+test('responsive and quiet changes preserve native opening focus while respecting deliberate focus outside it',async({page,context})=>{
   await capable(context);await page.emulateMedia({reducedMotion:'no-preference'});await ready(page)
   const opener=page.locator('.opening-studio-link')
   await page.getByRole('button',{name:'View Work',exact:true}).focus();await page.keyboard.press('Tab');await expect(opener).toBeFocused()
-  await page.emulateMedia({reducedMotion:'reduce'})
-  await expect(page.locator('main')).toHaveAttribute('data-scroll-engine','static');await expect(page.locator('.pin-spacer')).toHaveCount(0)
-  await expect(opener).toBeFocused()
-  await page.emulateMedia({reducedMotion:'no-preference'});await expect(page.locator('.pin-spacer')).toHaveCount(1)
-  await expect(opener).toBeFocused()
-  await page.setViewportSize({width:1024,height:1000});await expect(page.locator('.pin-spacer')).toHaveCount(0)
-  await expect(opener).toBeFocused()
-  await expect(page.locator('.opening-specimen')).toHaveCount(2)
-  await page.setViewportSize({width:1440,height:1000});await expect(page.locator('.pin-spacer')).toHaveCount(1)
-  await expect(opener).toBeFocused()
-  await expect(opener).toHaveAttribute('href','/studio')
+  await page.emulateMedia({reducedMotion:'reduce'});await expect(page.locator('.pin-spacer')).toHaveCount(0);await expect(opener).toBeFocused()
+  await page.emulateMedia({reducedMotion:'no-preference'});await expect(page.locator('.pin-spacer')).toHaveCount(1);await expect(opener).toBeFocused()
+  await page.setViewportSize({width:1024,height:1000});await expect(page.locator('.pin-spacer')).toHaveCount(0);await expect(opener).toBeFocused()
+  await page.setViewportSize({width:1440,height:1000});await expect(page.locator('.pin-spacer')).toHaveCount(1);await expect(opener).toBeFocused()
   const nav=page.getByRole('navigation',{name:'Main navigation'})
   await nav.getByRole('link',{name:'About',exact:true}).focus();await page.keyboard.press('Tab')
   const outside=nav.getByRole('link',{name:'Contact',exact:true});await expect(outside).toBeFocused()
-  await page.emulateMedia({reducedMotion:'reduce'});await expect(page.locator('.pin-spacer')).toHaveCount(0)
-  await expect(outside).toBeFocused()
-  await page.emulateMedia({reducedMotion:'no-preference'});await expect(page.locator('.pin-spacer')).toHaveCount(1)
-  await expect(outside).toBeFocused()
-  await page.waitForTimeout(200);await expect(outside).toBeFocused()
-  await testInfo.attach('opening-lifecycle',{body:JSON.stringify({pins:await page.locator('.pin-spacer').count(),active:await page.evaluate(()=>document.activeElement?.outerHTML)}),contentType:'application/json'})
+  await page.emulateMedia({reducedMotion:'reduce'});await expect(page.locator('.pin-spacer')).toHaveCount(0);await expect(outside).toBeFocused()
+  await page.emulateMedia({reducedMotion:'no-preference'});await expect(page.locator('.pin-spacer')).toHaveCount(1);await expect(outside).toBeFocused()
 })
 
-test('an unavailable peripheral prototype capture leaves the real CIRS story and honest project context usable',async({page,context})=>{
+test('unavailable decorative room and film assets cannot block the actual school proof or native Work action',async({page,context})=>{
   await capable(context);await page.emulateMedia({reducedMotion:'no-preference'})
-  await page.route('**/accuflow-prototype-desktop.webp',route=>route.abort())
+  await page.route(/\/media\/(?:atelier-room-[^/]+\.webp|amber-architecture-loop\.mp4)$/,route=>route.abort())
   const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message))
   await page.goto('/');await page.locator('.state-opening').waitFor({state:'detached'});await page.evaluate(()=>document.fonts.ready)
-  await expect(page.locator('.opening-specimen-accuflow')).toContainText('The website capture could not load. Explore Work for the project context.')
-  await expect(page.locator('.opening-specimen-accuflow')).toContainText('Website & interaction prototype')
-  await expect(page.locator('.opening-specimen-community img')).toBeVisible()
+  await expect(page.locator('.hero-ambient-film')).toHaveCount(0)
   await expect(page.locator('.pin-spacer')).toHaveCount(1)
   await expect(page.locator('.home-cirs-proof')).toHaveAttribute('data-effective-proof','campus')
+  await page.locator('.cirs-browser-image').evaluate(node=>(node as HTMLImageElement).decode())
+  expect(await page.locator('.cirs-browser-image').evaluate(node=>(node as HTMLImageElement).naturalWidth)).toBe(1440)
   await page.getByRole('button',{name:'View Work',exact:true}).click();await expect(page).toHaveURL(/\/work$/)
   expect(errors).toEqual([])
+})
+
+test('the route curtain fades within its existing lifetime and real input dismisses it immediately',async({page,context},testInfo)=>{
+  await capable(context);await page.emulateMedia({reducedMotion:'no-preference'});await ready(page)
+  await page.evaluate(()=>{const state={start:0,frames:[] as {ms:number;opacity:number|null;path:string}[],done:false};(window as any).__curtainQA=state;document.querySelector('.opening-studio-link')!.addEventListener('click',()=>{state.start=performance.now();const tick=()=>{const mask=document.querySelector('.state-opening');state.frames.push({ms:performance.now()-state.start,opacity:mask?+getComputedStyle(mask).opacity:null,path:location.pathname});if(!state.done)requestAnimationFrame(tick)};requestAnimationFrame(tick)},{once:true})})
+  await page.locator('.opening-studio-link').click();await expect(page).toHaveURL(/\/studio$/)
+  await page.locator('.state-opening').waitFor({state:'detached',timeout:2500})
+  const frames=await page.evaluate(()=>{const s=(window as any).__curtainQA;s.done=true;return s.frames as {ms:number;opacity:number|null;path:string}[]})
+  const routeFrames=frames.filter(f=>f.path==='/studio'),visible=routeFrames.filter(f=>f.opacity!==null)
+  await testInfo.attach('curtain-frames-before-assertion',{body:JSON.stringify(frames),contentType:'application/json'})
+  expect(visible.some(f=>f.opacity!>.05&&f.opacity!<.95),'The actual final curtain frames fade rather than jump from black').toBe(true)
+  expect(visible.at(-1)!.ms).toBeLessThan(1900)
+  const nav=page.getByRole('navigation',{name:'Main navigation'})
+  await nav.getByRole('link',{name:'About',exact:true}).click();await expect(page.locator('.state-opening')).toBeVisible()
+  const started=Date.now();await page.keyboard.press('Escape');await page.locator('.state-opening').waitFor({state:'detached'});const escapeMs=Date.now()-started;expect(escapeMs).toBeLessThan(350)
+  await nav.getByRole('link',{name:'Work',exact:true}).click();await expect(page.locator('.state-opening')).toBeVisible()
+  const wheelStarted=Date.now();await page.mouse.wheel(0,120);await page.locator('.state-opening').waitFor({state:'detached'});const wheelMs=Date.now()-wheelStarted;expect(wheelMs).toBeLessThan(350)
+  await testInfo.attach('finite-gentle-curtain',{body:JSON.stringify({frames,escapeMs,wheelMs}),contentType:'application/json'})
 })

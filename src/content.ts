@@ -394,15 +394,6 @@ export const aboutLanes = [
 
 export const achievements = [
   {
-    id: "gaurav",
-    title: "Chinmaya Gaurav Award",
-    distinction: "Chinmaya International Residential School · 2026",
-    description:
-      "School recognition from Chinmaya International Residential School, recorded in my 2026 CV.",
-    record: "CV record",
-    certificate: null,
-  },
-  {
     id: "icsc",
     title: "ICSC 2026",
     distinction: "Silver Honour · Top 1%",
