@@ -1,0 +1,85 @@
+.home-work-proof {
+  --home-proof-ink: #f0e6d2;
+  --home-proof-muted: #c6baa3;
+  --home-proof-accent: #d8bb82;
+  --home-proof-line: #b7a27c38;
+  position: relative;
+  height: auto;
+  min-height: 0;
+  padding: clamp(44px,6vw,88px) 6% clamp(52px,6vw,88px);
+  background: #171510;
+  color: var(--home-proof-ink);
+  border-top: 1px solid var(--home-proof-line);
+  font-family: var(--font-body);
+}
+.home-work-proof .home-proof-inner { width: min(100%,1240px); margin-inline: auto; }
+.home-work-proof .home-proof-intro { max-width: 720px; margin-bottom: 18px; }
+.home-work-proof .home-proof-kicker { margin: 0 0 11px; color: var(--home-proof-accent); font: 500 12px/1.6 var(--font-body); letter-spacing: .045em; }
+.home-work-proof .home-proof-intro h2 { margin: 0; color: var(--home-proof-ink); font: 430 clamp(30px,3.2vw,47px)/1.16 var(--font-display); letter-spacing: -.02em; }
+.home-work-proof .home-proof-intro > p:last-child { max-width: 610px; margin: 15px 0 0; color: var(--home-proof-muted); font: 400 16px/1.75 var(--font-body); }
+.home-work-proof .home-proof-project { display: grid; align-items: center; gap: clamp(24px,4vw,60px); padding: clamp(36px,4.5vw,66px) 0; }
+.home-work-proof .home-proof-cirs { grid-template-columns: minmax(0,1.5fr) minmax(0,1fr); }
+.home-work-proof .home-proof-community { grid-template-columns: minmax(0,1fr) minmax(0,1.25fr); border-block: 1px solid var(--home-proof-line); }
+.home-work-proof .home-proof-accuflow { grid-template-columns: minmax(0,1fr) minmax(0,1.65fr); }
+.home-work-proof .home-proof-account { min-width: 0; }
+.home-work-proof .home-proof-account h3 { margin: 0 0 23px; color: var(--home-proof-ink); font: 440 clamp(27px,2.5vw,37px)/1.2 var(--font-display); letter-spacing: -.015em; }
+.home-work-proof .home-proof-account dl { display: grid; gap: 17px; margin: 0; }
+.home-work-proof .home-proof-account dl > div { display: grid; gap: 5px; }
+.home-work-proof .home-proof-account dt { color: var(--home-proof-accent); font: 550 12px/1.5 var(--font-body); letter-spacing: .025em; }
+.home-work-proof .home-proof-account dd { margin: 0; color: var(--home-proof-muted); font: 400 14px/1.75 var(--font-body); }
+.home-work-proof .home-proof-link { display: inline-flex; align-items: center; gap: 15px; min-height: 44px; max-width: 100%; margin-top: 17px; padding-block: 8px; color: var(--home-proof-ink); font: 500 14px/1.6 var(--font-body); text-decoration: underline; text-decoration-color: var(--home-proof-line); text-underline-offset: 6px; }
+.home-work-proof .home-proof-link svg { flex-shrink: 0; color: var(--home-proof-accent); }
+.home-work-proof .home-proof-link:hover { text-decoration-color: currentColor; }
+.home-work-proof :is(.home-proof-link,.home-proof-film):focus-visible { outline: 2px solid var(--home-proof-accent); outline-offset: 5px; }
+.home-work-proof .home-proof-artifact { min-width: 0; margin: 0; }
+.home-work-proof .home-proof-source { display: grid; width: 100%; overflow: hidden; background: #0c0d0b; }
+.home-work-proof .home-proof-source img { display: block; width: 100%; height: 100%; max-width: 100%; object-fit: contain; }
+.home-work-proof .home-proof-artifact figcaption { margin: 11px 0 0; color: var(--home-proof-muted); font: 400 11px/1.7 var(--font-body); }
+.home-work-proof .home-proof-language-spread .home-proof-source { background: #f5f0e5; }
+.home-work-proof .home-proof-language-spread .home-proof-source + .home-proof-source { width: 88%; margin: 13px 0 0 auto; }
+.home-work-proof .home-proof-unavailable { display: grid; min-height: 100%; margin: 0; padding: 18px; align-content: center; color: #e8ddc4; background: #1c1913; font: 400 14px/1.65 var(--font-body); }
+.home-work-proof .home-proof-films { padding-top: 32px; border-top: 1px solid var(--home-proof-line); }
+.home-work-proof .home-proof-films > header { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 22px; }
+.home-work-proof .home-proof-films h3 { margin: 0; color: var(--home-proof-ink); font: 430 clamp(24px,2.3vw,34px)/1.2 var(--font-display); letter-spacing: -.015em; }
+.home-work-proof .home-proof-films > header .home-proof-link { flex-shrink: 0; margin: 0; }
+.home-work-proof .home-proof-film-strip { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: clamp(12px,2.5vw,30px); }
+.home-work-proof .home-proof-film { display: block; min-width: 0; color: var(--home-proof-ink); text-decoration: none; }
+.home-work-proof .home-proof-film-name { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 10px; font: 500 14px/1.5 var(--font-body); }
+.home-work-proof .home-proof-film-name svg { flex-shrink: 0; color: var(--home-proof-accent); }
+.home-work-proof .home-proof-film-meta { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 3px 10px; margin-top: 4px; color: var(--home-proof-muted); font: 400 12px/1.6 var(--font-body); }
+.home-work-proof .home-proof-film:hover .home-proof-film-name { text-decoration: underline; text-underline-offset: 4px; }
+
+:root[data-theme="light"] .home-work-proof { --home-proof-ink: #302b22; --home-proof-muted: #5b5347; --home-proof-accent: #735321; --home-proof-line: #8d795945; background: #f0eadf; }
+
+@media (max-width:900px) {
+  .home-work-proof .home-proof-cirs { grid-template-columns: minmax(0,1.15fr) minmax(0,1fr); }
+  .home-work-proof .home-proof-accuflow { grid-template-columns: minmax(0,1fr) minmax(0,1.15fr); }
+  .home-work-proof .home-proof-account h3 { font-size: 28px; }
+}
+@media (max-width:650px) {
+  .home-work-proof { padding-inline: 6%; }
+  .home-work-proof .home-proof-project { grid-template-columns: minmax(0,1fr); align-items: start; gap: 20px; }
+  .home-work-proof .home-proof-account { display: contents; }
+  .home-work-proof .home-proof-account > .home-proof-kicker { order: 0; margin: 0 0 -9px; }
+  .home-work-proof .home-proof-account h3 { order: 1; margin: 0; font-size: 28px; }
+  .home-work-proof .home-proof-artifact { order: 2; }
+  .home-work-proof .home-proof-account dl { order: 3; }
+  .home-work-proof .home-proof-account > .home-proof-link { order: 4; margin-top: 0; }
+  .home-work-proof .home-proof-intro > p:last-child { font-size: 15px; }
+  .home-work-proof .home-proof-account dl { gap: 15px; }
+  .home-work-proof .home-proof-language-spread .home-proof-source + .home-proof-source { width: 92%; }
+  .home-work-proof .home-proof-films > header { display: block; }
+  .home-work-proof .home-proof-films > header .home-proof-link { margin-top: 10px; }
+  .home-work-proof .home-proof-film-strip { grid-template-columns: minmax(0,1fr); gap: 18px; }
+  .home-work-proof .home-proof-film { display: grid; grid-template-columns: minmax(112px,.9fr) minmax(0,1fr); grid-template-rows: auto auto; gap: 4px 14px; }
+  .home-work-proof .home-proof-film > .home-proof-source { grid-row: 1/3; align-self: center; }
+  .home-work-proof .home-proof-film-name { align-items: end; align-self: end; margin: 0; font-size: 14px; }
+  .home-work-proof .home-proof-film-name svg { display: none; }
+  .home-work-proof .home-proof-film-meta { margin: 0; font-size: 12px; }
+  .home-work-proof .home-proof-film-meta > span { flex-basis: 100%; }
+}
+@media (forced-colors:active) {
+  :root .home-work-proof,:root[data-theme="light"] .home-work-proof { --home-proof-ink: CanvasText; --home-proof-muted: CanvasText; --home-proof-accent: LinkText; --home-proof-line: CanvasText; color: CanvasText; background: Canvas; }
+  .home-work-proof .home-proof-link,.home-work-proof .home-proof-film { color: LinkText; }
+  .home-work-proof .home-proof-source,.home-work-proof .home-proof-unavailable { color: CanvasText; background: Canvas; }
+}

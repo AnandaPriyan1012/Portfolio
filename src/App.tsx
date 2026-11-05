@@ -25,6 +25,7 @@ import { GuidedTour } from "./components/Discovery";
 import AtelierNavigation from "./components/AtelierNavigation";
 import ScreeningRoom from "./components/ScreeningRoom";
 import ProjectOpening from "./components/ProjectOpening";
+import HomeWorkProof from "./components/HomeWorkProof";
 import WorkPage from "./components/WorkPage";
 import BatchDispatchStudy from "./components/BatchDispatchStudy";
 import AboutIdentity from "./components/AboutIdentity";
@@ -700,7 +701,7 @@ export default function App() {
     caseReturn.current = { path: originToken === "tour-launcher" || studioProject || workProject ? `${route}${window.location.hash}` : route,
       top: scrollY, ...(originHref ? { originHref } : {}),
       ...(originFocus ? { originFocus } : {}),
-      ...((route === "/" && (originToken === "selected-preview" || originToken === "cirs-scene" || originToken === "cirs-caption" || originToken === "desk-cirs" || originToken === "desk-community" || originToken === "desk-accuflow")) ||
+      ...((route === "/" && (originToken === "selected-preview" || originToken === "cirs-scene" || originToken === "cirs-caption" || originToken === "desk-cirs" || originToken === "desk-community" || originToken === "desk-accuflow" || originToken === "home-proof-cirs" || originToken === "home-proof-community" || originToken === "home-proof-accuflow")) ||
         (mainRoutes.includes(route) && originToken === "tour-launcher") || studioProject ? { originToken } : {}),
       ...(workProject ? { originToken: "work-project" } : {}) };
     navigate(`/projects/${id}`, { departureFocus: originFocus });
@@ -768,6 +769,7 @@ export default function App() {
                 else navigate(path);
               }}
             />
+            <HomeWorkProof onProject={(id, origin) => page(id, undefined, origin)} onNavigate={navigate} />
           </>
         )}
         {mainPage === "work" && (

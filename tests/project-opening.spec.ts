@@ -162,7 +162,7 @@ async function assertReturned(page: Page, selector: string, departure: { top: nu
   return top
 }
 
-test('one cinematic illustration contains genuine surfaces, truthful native destinations and the existing personal identity', async ({ page, context }, testInfo) => {
+test('genuine scene sources remain truthful, aligned after resizing and idle without ambient playback', async ({ page, context }, testInfo) => {
   await capable(context)
   const ambient: string[] = []
   page.on('request', request => { if (/\.mp4(?:[?#]|$)|atelier-room|amber-architecture|glass-corridor|screening-room-loop|ap-pixelify/.test(request.url())) ambient.push(request.url()) })
@@ -183,7 +183,7 @@ test('one cinematic illustration contains genuine surfaces, truthful native dest
     { path: '/media/atlas-accuflow-guide-desktop.webp', natural: [1440, 1000], project: 'AccuFlow', fit: 'contain' },
     { path: '/media/ap-signature.png', natural: [768, 512], project: null, fit: 'contain' },
   ])
-  await expect(page.locator('.desk-vallalar')).toContainText('Voluntary digital work · Website preview')
+  await expect(page.locator('.desk-vallalar')).toContainText('Voluntary work · Review preview')
   await expect(page.locator('.desk-accuflow')).toContainText('Website & guide prototype')
   await expect(page.locator('.desk-source-note')).toContainText('Original desk artwork')
   await expect(page.locator('.desk-opening')).not.toContainText(/available for work|open to work|accepting projects|process hotspot|Gaurav/i)
@@ -193,13 +193,33 @@ test('one cinematic illustration contains genuine surfaces, truthful native dest
   expect([...new Set(fonts.loaded)].sort()).toEqual(['Fraunces Variable', 'Instrument Sans Variable'])
   expect(ambient).toEqual([])
   await testInfo.attach('genuine-scene-sources', { body: JSON.stringify({ images, fonts, ambient }), contentType: 'application/json' })
+  const observations = []
+  for (const width of [1440, 1920, 1024, 768, 390, 320]) {
+    await page.setViewportSize({ width, height: 1000 })
+    await expect.poll(async () => Math.max(...(await projectedCorners(page)).map(result => result.error))).toBeLessThan(.3)
+    observations.push({ width, corners: await projectedCorners(page) })
+  }
+  const idle = await page.locator('.scene-surfaces').evaluate(async node => {
+    await new Promise(resolve => setTimeout(resolve, 150))
+    let mutations = 0
+    const observer = new MutationObserver(records => mutations += records.length)
+    observer.observe(node, { attributes: true, subtree: true, attributeFilter: ['style', 'data-projected'] })
+    await new Promise(resolve => setTimeout(resolve, 400))
+    observer.disconnect()
+    return mutations
+  })
+  expect(idle).toBe(0)
+  await expect(page).toHaveURL(/\/$/)
+  await testInfo.attach('projected-corners-and-idle', { body: JSON.stringify({ observations, idle }), contentType: 'application/json' })
 })
 
-for (const width of [320, 390, 768, 1024, 1440, 1920]) test(`${width}px scene keeps the full illustration and five readable native object labels`, async ({ browser, baseURL }, testInfo) => {
-  const compact = width <= 900
-  const context = await browser.newContext({ baseURL, viewport: { width, height: 1000 }, isMobile: compact, hasTouch: compact, reducedMotion: width === 320 ? 'reduce' : 'no-preference' })
+const fitDimensions = [[1366, 768], [1280, 720], [1440, 900], [1920, 1080], [320, 568], [375, 667], [390, 844], [414, 896], [768, 1024], [844, 390], [1024, 600]] as const
+for (const [width, height] of fitDimensions) test(`${width}x${height} keeps the full desk, Work and all five native destinations on the initial screen`, async ({ browser, baseURL }, testInfo) => {
+  const touch = width <= 900
+  const context = await browser.newContext({ baseURL, viewport: { width, height }, isMobile: touch, hasTouch: touch, reducedMotion: width === 320 ? 'reduce' : 'no-preference' })
   const page = await context.newPage()
   await ready(page)
+  expect(await page.evaluate(() => scrollY)).toBe(0)
   await expect(page.locator('.site-header[data-desk] .navigation-caption')).toHaveCount(1)
   await expect(page.locator('.site-header[data-desk] .navigation-caption')).toBeVisible()
   const images = await sources(page), layout = await geometry(page)
@@ -208,29 +228,49 @@ for (const width of [320, 390, 768, 1024, 1440, 1920]) test(`${width}px scene ke
   expect(images.slice(1).map(image => image.natural)).toEqual([[1600, 1000], [1440, 500], [1440, 1000], [768, 512]])
   expect(Math.abs(layout.visual.height / layout.visual.width - 941 / 1672)).toBeLessThan(.002)
   expect(layout.objects.map(object => object.href)).toEqual(destinations)
-  expect(layout.mapPosition).toBe(compact ? 'static' : 'absolute')
-  if (width === 1920) {
-    await page.locator('.desk-work-link').focus()
-    for (const object of objects) {
-      await page.keyboard.press('Tab')
-      await expect(page.locator(object.selector)).toBeFocused()
-      const label = await page.locator(`${object.selector} .scene-callout`).boundingBox()
-      expect(label, 'The focused physical object has a visible callout').not.toBeNull()
-      expect(label!.y).toBeGreaterThanOrEqual(await page.locator('.site-header').evaluate(node => node.getBoundingClientRect().bottom))
-      expect(label!.y + label!.height, 'Native Tab exposes the entire focused object label').toBeLessThanOrEqual(1000)
-    }
+  const fit = await page.evaluate(() => {
+    const header = document.querySelector('.site-header')!.getBoundingClientRect()
+    const viewport = { left: visualViewport?.offsetLeft || 0, top: visualViewport?.offsetTop || 0, width: visualViewport?.width || innerWidth, height: visualViewport?.height || innerHeight }
+    const rect = (node: Element) => { const r = node.getBoundingClientRect(); return { x: r.x, y: r.y, right: r.right, bottom: r.bottom, width: r.width, height: r.height } }
+    return { headerBottom: header.bottom, viewport, visual: rect(document.querySelector('.scene-visual')!), controls: [document.querySelector('.desk-work-link')!, ...document.querySelectorAll('.scene-callout')].map(node => ({ text: node.textContent, font: parseFloat(getComputedStyle(node.querySelector('strong') || node).fontSize), ...rect(node) })) }
+  })
+  expect(fit.visual.y).toBeGreaterThanOrEqual(fit.headerBottom)
+  expect(fit.visual.bottom).toBeLessThanOrEqual(fit.viewport.top + fit.viewport.height)
+  for (const control of fit.controls) {
+    expect(control.x).toBeGreaterThanOrEqual(fit.viewport.left)
+    expect(control.y).toBeGreaterThanOrEqual(fit.headerBottom)
+    expect(control.right).toBeLessThanOrEqual(fit.viewport.left + fit.viewport.width)
+    expect(control.bottom).toBeLessThanOrEqual(fit.viewport.top + fit.viewport.height)
+    expect(control.width).toBeGreaterThanOrEqual(44)
+    expect(control.height).toBeGreaterThanOrEqual(44)
+    expect(control.font).toBeGreaterThanOrEqual(14)
   }
-  if (compact) {
-    expect(layout.map.y).toBeGreaterThanOrEqual(layout.visual.bottom - 1)
-    for (const object of layout.objects) expect(object.height).toBeGreaterThanOrEqual(44)
+  for (const object of objects) await expect(page.locator(object.selector)).toHaveAccessibleName(new RegExp(`${object.selector === '.desk-vallalar' ? 'Vallalar.*Voluntary work.*Review preview' : object.selector === '.desk-cirs' ? 'CIRS website.*School-team web work.*Live website' : object.selector === '.desk-accuflow' ? 'AccuFlow.*Website & guide prototype' : object.selector === '.desk-films' ? 'Films & trailers.*Vantara.*TED-Ed.*CIRS launch' : 'About & contact.*person behind the work'}`, 'i'))
+  await page.locator('.desk-work-link').focus()
+  const keyboard = []
+  for (const object of objects) {
+    await page.keyboard.press('Tab')
+    await expect(page.locator(object.selector)).toBeFocused()
+    expect(await page.evaluate(() => scrollY), 'All native object labels fit without focus-triggered scroll').toBe(0)
+    expect(await page.locator(`${object.selector} .scene-callout`).evaluate(node => parseFloat(getComputedStyle(node).outlineWidth))).toBeGreaterThanOrEqual(2)
+    keyboard.push({ selector: object.selector, y: await page.evaluate(() => scrollY) })
+  }
+  for (const object of [...objects].reverse().slice(1)) {
+    await page.keyboard.press('Shift+Tab')
+    await expect(page.locator(object.selector)).toBeFocused()
+    expect(await page.evaluate(() => scrollY)).toBe(0)
+  }
+  await page.keyboard.press('Shift+Tab')
+  await expect(page.locator('.desk-work-link')).toBeFocused()
+  expect(await page.evaluate(() => scrollY)).toBe(0)
+  if (touch) {
     await page.locator('.desk-cirs .scene-callout').tap()
     await expect(page).toHaveURL(/\/projects\/cirs$/)
-    // The reduced-motion opening can finish during the native tap; its transient
-    // timing is covered separately by route-opening.spec.ts.
+    // A reduced-motion opening may have already completed during the tap.
     await openingFinished(page, width === 320 ? 'wait' : 'dismiss')
   }
   expect(errors.get(page)).toEqual([])
-  await testInfo.attach('responsive-scene-geometry', { body: JSON.stringify({ width, images, layout }), contentType: 'application/json' })
+  await testInfo.attach('initial-screen-fit', { body: JSON.stringify({ width, height, images, layout, fit, keyboard }), contentType: 'application/json' })
   await context.close()
 })
 
@@ -264,28 +304,6 @@ test('native keyboard focus and actual polygon hits agree with the five physical
   await page.keyboard.press('Shift+Tab')
   await expect(page.locator('.desk-films')).toBeFocused()
   await testInfo.attach('native-object-hit-and-focus', { body: JSON.stringify(samples), contentType: 'application/json' })
-})
-
-test('genuine screen corners stay on the physical surfaces through real resizes and become idle', async ({ page }, testInfo) => {
-  await ready(page)
-  const observations = []
-  for (const width of [1440, 1920, 1024, 768, 390, 320]) {
-    await page.setViewportSize({ width, height: 1000 })
-    await expect.poll(async () => Math.max(...(await projectedCorners(page)).map(result => result.error))).toBeLessThan(.3)
-    observations.push({ width, corners: await projectedCorners(page) })
-  }
-  const idle = await page.locator('.scene-surfaces').evaluate(async node => {
-    await new Promise(resolve => setTimeout(resolve, 150))
-    let mutations = 0
-    const observer = new MutationObserver(records => mutations += records.length)
-    observer.observe(node, { attributes: true, subtree: true, attributeFilter: ['style', 'data-projected'] })
-    await new Promise(resolve => setTimeout(resolve, 400))
-    observer.disconnect()
-    return mutations
-  })
-  expect(idle).toBe(0)
-  await expect(page).toHaveURL(/\/$/)
-  await testInfo.attach('projected-corners-and-idle', { body: JSON.stringify({ observations, idle }), contentType: 'application/json' })
 })
 
 test('all three project objects return to the exact native origin and actual departure position', async ({ page }, testInfo) => {
@@ -376,7 +394,7 @@ test('film and contact objects retain native modifiers, actual destinations and 
   await testInfo.attach('scene-destination-history', { body: JSON.stringify({ modified, returns }), contentType: 'application/json' })
 })
 
-test('controlled capture and artwork failures stay honest and never block the five project destinations', async ({ page }, testInfo) => {
+test('quiet preferences and controlled asset failures preserve honest native scene navigation', async ({ page, browser, baseURL }, testInfo) => {
   await page.route('**/desk-cirs-home-1600.webp', route => route.abort())
   await page.goto('/')
   await openingFinished(page)
@@ -406,9 +424,6 @@ test('controlled capture and artwork failures stay honest and never block the fi
   await expect(page).toHaveURL(/\/studio$/)
   await openingFinished(page, 'dismiss')
   await testInfo.attach('controlled-scene-failure', { body: JSON.stringify({ injected: ['desk-cirs-home-1600.webp aborted', 'cinematic-desk-*.webp aborted'], fallbackLayouts }), contentType: 'application/json' })
-})
-
-test('quiet modes retain the full scene, native keyboard links and fixed-camera behavior', async ({ browser, baseURL }, testInfo) => {
   const modes = []
   for (const mode of ['reduced', 'forced', 'off', 'save-data'] as const) {
     const context = await browser.newContext({ baseURL, viewport: { width: 1440, height: 1000 }, reducedMotion: mode === 'reduced' ? 'reduce' : 'no-preference', forcedColors: mode === 'forced' ? 'active' : 'none' })
