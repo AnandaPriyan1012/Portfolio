@@ -225,7 +225,9 @@ for (const width of [320, 390, 768, 1024, 1440, 1920]) test(`${width}px scene ke
     for (const object of layout.objects) expect(object.height).toBeGreaterThanOrEqual(44)
     await page.locator('.desk-cirs .scene-callout').tap()
     await expect(page).toHaveURL(/\/projects\/cirs$/)
-    await openingFinished(page, 'dismiss')
+    // The reduced-motion opening can finish during the native tap; its transient
+    // timing is covered separately by route-opening.spec.ts.
+    await openingFinished(page, width === 320 ? 'wait' : 'dismiss')
   }
   expect(errors.get(page)).toEqual([])
   await testInfo.attach('responsive-scene-geometry', { body: JSON.stringify({ width, images, layout }), contentType: 'application/json' })
