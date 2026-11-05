@@ -1,7 +1,8 @@
-import { useId, useLayoutEffect, useState } from "react";
+import { useId, useLayoutEffect, useRef, useState } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import CaptureInspection from "./CaptureInspection";
+import CaptureNavigation from "./CaptureNavigation";
 import "./accuflow-route-deck.css";
 
 const routes = [
@@ -30,10 +31,15 @@ type RouteId = (typeof routes)[number]["id"];
 // A bounded choice for ordinary SPA returns, without writing storage or history.
 let rememberedRoute: RouteId = "guide";
 
-export default function AccuFlowRouteDeck({ motionEnabled }: { motionEnabled: boolean }) {
+export default function AccuFlowRouteDeck({ motionEnabled, onCaptureNavigate }: {
+  motionEnabled: boolean;
+  onCaptureNavigate?: (target: HTMLButtonElement) => void;
+}) {
   const id = useId();
   const [selected, setSelected] = useState<RouteId>(rememberedRoute);
   const [failed, setFailed] = useState<ReadonlySet<RouteId>>(() => new Set());
+  const buttons = useRef<(HTMLButtonElement | null)[]>([]);
+  const pending = useRef<number | null>(null);
   const index = routes.findIndex((route) => route.id === selected);
   const route = routes[index];
   const desktop = `/media/atlas-accuflow-${route.id}-desktop.webp`;
@@ -43,7 +49,23 @@ export default function AccuFlowRouteDeck({ motionEnabled }: { motionEnabled: bo
   useLayoutEffect(() => {
     // The explicit source ratios establish the new scene height before refresh.
     ScrollTrigger.refresh();
-  }, [selected, unavailable]);
+    const destination = pending.current;
+    pending.current = null;
+    if (destination !== index) return;
+    const target = buttons.current[destination];
+    if (!target?.isConnected) return;
+    target.focus({ preventScroll: true });
+    if (onCaptureNavigate) onCaptureNavigate(target);
+    else target.scrollIntoView({ block: "start", behavior: "instant" });
+  }, [selected, unavailable, index, onCaptureNavigate]);
+
+  function select(index: number, footer = false) {
+    pending.current = null;
+    if (index < 0 || index >= routes.length || routes[index].id === selected) return;
+    pending.current = footer ? index : null;
+    rememberedRoute = routes[index].id;
+    setSelected(routes[index].id);
+  }
 
   return (
     <section className="accuflow-assembly accu-route-deck" data-route={route.id}
@@ -57,8 +79,9 @@ export default function AccuFlowRouteDeck({ motionEnabled }: { motionEnabled: bo
         {routes.map((item, position) => (
           <li key={item.id}>
             <button type="button" aria-label={`Show AccuFlow ${item.label}`}
+              ref={(element) => { buttons.current[position] = element; }}
               aria-pressed={selected === item.id} aria-controls={`${id}-screen`}
-              onClick={() => { rememberedRoute = item.id; setSelected(item.id); }}>
+              onClick={() => select(position)}>
               <span className="accu-route-key" aria-hidden="true">0{position + 1}</span>
               <span>{item.label}</span><span className="accu-route-led" aria-hidden="true" />
             </button>
@@ -99,6 +122,8 @@ export default function AccuFlowRouteDeck({ motionEnabled }: { motionEnabled: bo
           <a href="https://accuflow-premium-ai.netlify.app/about" target="_blank" rel="noopener noreferrer">About <ArrowUpRight size={13} aria-hidden="true" /></a>
         </nav>
       </footer>
+      <CaptureNavigation labels={routes.map((item) => item.label)} index={index}
+        label="AccuFlow route capture navigation" onSelect={(index) => select(index, true)} />
       <span className="accuflow-scroll-meter" aria-hidden="true" />
     </section>
   );

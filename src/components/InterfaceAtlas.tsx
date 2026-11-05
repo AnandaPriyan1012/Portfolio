@@ -1,6 +1,8 @@
-import { useId, useRef, useState, type KeyboardEvent } from "react";
+import { useId, useLayoutEffect, useRef, useState, type KeyboardEvent } from "react";
 import { ArrowRight } from "lucide-react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import CaptureInspection from "./CaptureInspection";
+import CaptureNavigation from "./CaptureNavigation";
 
 type ProjectId = "cirs" | "accuflow";
 type InterfaceView = {
@@ -121,18 +123,44 @@ const views: Record<ProjectId, InterfaceView[]> = {
   ],
 };
 
-export default function InterfaceAtlas({ project, initialView, onViewChange }: {
+export default function InterfaceAtlas({ project, initialView, onViewChange, onCaptureNavigate }: {
   project: ProjectId;
   initialView?: string;
   onViewChange?: (id: string) => void;
+  onCaptureNavigate?: (target: HTMLButtonElement) => void;
 }) {
   const id = useId();
   const [selected, setSelected] = useState(() => Math.max(0, views[project].findIndex((view) => view.id === initialView)));
   const buttons = useRef<(HTMLButtonElement | null)[]>([]);
+  const pending = useRef<number | null>(null);
   const projectViews = views[project];
   const view = projectViews[selected];
   const projectName = project === "cirs" ? "CIRS" : "AccuFlow";
   const compactUsesDesktop = project === "accuflow" && view.id === "home";
+
+  useLayoutEffect(() => {
+    const destination = pending.current;
+    pending.current = null;
+    if (destination !== selected) return;
+    const target = buttons.current[destination];
+    if (!target?.isConnected) return;
+    if (onCaptureNavigate) ScrollTrigger.refresh();
+    target.focus({ preventScroll: true });
+    if (onCaptureNavigate) onCaptureNavigate(target);
+    else target.scrollIntoView({ block: "start", behavior: "instant" });
+  }, [selected, onCaptureNavigate]);
+
+  function select(index: number, footer = false) {
+    pending.current = null;
+    if (index < 0 || index >= projectViews.length) return;
+    if (index === selected) {
+      if (!footer) onViewChange?.(projectViews[index].id);
+      return;
+    }
+    pending.current = footer ? index : null;
+    setSelected(index);
+    onViewChange?.(projectViews[index].id);
+  }
 
   function moveTab(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     let next = index;
@@ -143,8 +171,7 @@ export default function InterfaceAtlas({ project, initialView, onViewChange }: {
     else if (event.key === "End") next = projectViews.length - 1;
     else return;
     event.preventDefault();
-    setSelected(next);
-    onViewChange?.(projectViews[next].id);
+    select(next);
     buttons.current[next]?.focus();
   }
 
@@ -182,7 +209,7 @@ export default function InterfaceAtlas({ project, initialView, onViewChange }: {
               buttons.current[index] = element;
             }}
             key={item.id}
-            onClick={() => { setSelected(index); onViewChange?.(item.id); }}
+            onClick={() => select(index)}
             onKeyDown={(event) => moveTab(event, index)}
           >
             <span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
@@ -251,6 +278,8 @@ export default function InterfaceAtlas({ project, initialView, onViewChange }: {
           </small>
         </div>
       </div>
+      {project === "accuflow" && <CaptureNavigation labels={projectViews.map((item) => item.label)}
+        index={selected} label="AccuFlow interface capture navigation" onSelect={(index) => select(index, true)} />}
     </section>
   );
 }

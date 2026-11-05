@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { X, Plus, Sun, Moon } from "lucide-react";
 import {
@@ -514,6 +514,10 @@ export default function App() {
       !cirsImageFailed,
     route,
   });
+  const navigateWorkCapture = useCallback((target: HTMLButtonElement) => {
+    target.focus({ preventScroll: true });
+    storyMotion.scrollTo(target, { immediate: true });
+  }, [storyMotion.scrollTo]);
   const contactReady = Boolean(
     copy.contact.email || copy.contact.socials.length,
   );
@@ -880,6 +884,7 @@ export default function App() {
               onPage={page}
               motionEnabled={preferences.motion}
               navigationOpen={menuOpen}
+              onCaptureNavigate={navigateWorkCapture}
             />
             <section
               id="experiments"

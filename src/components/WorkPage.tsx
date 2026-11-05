@@ -22,6 +22,7 @@ type WorkPageProps = {
   onPage: (id: Project["id"]) => void;
   motionEnabled?: boolean;
   navigationOpen?: boolean;
+  onCaptureNavigate?: (target: HTMLButtonElement) => void;
 };
 
 const evidenceProjects = ["cirs", "community", "accuflow"] as const;
@@ -390,6 +391,7 @@ function Feature({
   onQuick,
   onPage,
   motionEnabled,
+  onCaptureNavigate,
 }: {
   project: Project;
   index: number;
@@ -397,6 +399,7 @@ function Feature({
   onQuick: () => void;
   onPage: () => void;
   motionEnabled: boolean;
+  onCaptureNavigate?: (target: HTMLButtonElement) => void;
 }) {
   return (
     <article
@@ -464,7 +467,7 @@ function Feature({
             </div>
           </div>
         ) : (
-          <AccuFlowRouteDeck motionEnabled={motionEnabled} />
+          <AccuFlowRouteDeck motionEnabled={motionEnabled} onCaptureNavigate={onCaptureNavigate} />
         )}
         {project.id === "accuflow" && (
           <div className="accuflow-stage-info">
@@ -601,6 +604,7 @@ export default function WorkPage({
   onPage,
   motionEnabled = true,
   navigationOpen = false,
+  onCaptureNavigate,
 }: WorkPageProps) {
   const community = projects.find((project) => project.id === "community")!;
   const accuflow = projects.find((project) => project.id === "accuflow")!;
@@ -687,6 +691,7 @@ export default function WorkPage({
           messy={false}
           onQuick={() => onQuick("accuflow")}
           onPage={() => onPage("accuflow")}
+          onCaptureNavigate={onCaptureNavigate}
         />
         <WorkEvidenceDrawer
           project="accuflow"
@@ -695,7 +700,7 @@ export default function WorkPage({
           description="Home, Product, How it works and the initial guide interface from the running prototype."
           action="4 prototype views"
         >
-          {(view, onChange) => <InterfaceAtlas project="accuflow" initialView={view} onViewChange={onChange} />}
+          {(view, onChange) => <InterfaceAtlas project="accuflow" initialView={view} onViewChange={onChange} onCaptureNavigate={onCaptureNavigate} />}
         </WorkEvidenceDrawer>
       </div>
     </div>

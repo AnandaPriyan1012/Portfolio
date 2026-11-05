@@ -1,0 +1,27 @@
+.capture-navigation { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; margin-top: 22px; padding: 16px 0 0; border-top: 1px solid #d2c19440; color: #e8e4d1; }
+.capture-navigation-current { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: baseline; gap: 14px; margin-bottom: 3px; }
+.capture-navigation-current > span { color: #c9ba93; font: 400 14px/1.5 "AP Pixelify",monospace; }
+.capture-navigation-current > strong { color: #ced7c5; font: 400 11px/1.6 var(--font-body,sans-serif); }
+.capture-navigation button { display: flex; align-items: center; gap: 12px; min-width: 0; min-height: 58px; padding: 10px 13px; border: 1px solid #cfba854f; background: linear-gradient(120deg,#e0c98b0b,transparent),#111a19; color: #d9c99f; text-align: left; }
+.capture-navigation button > span { min-width: 0; font: 400 10px/1.5 var(--font-body,sans-serif); }
+.capture-navigation button strong { display: block; margin-top: 3px; color: #eee8d2; font: 500 12px/1.5 var(--font-body,sans-serif); overflow-wrap: anywhere; }
+.capture-navigation button svg { flex-shrink: 0; }
+.capture-navigation .capture-next { justify-content: flex-end; text-align: right; }
+.capture-navigation button:disabled { color: #9eaa96; border-color: #bcc6ad2e; background: #0e1716; cursor: default; }
+.capture-navigation button:disabled strong { color: #aab6a0; }
+.capture-navigation button:focus-visible { outline: 2px solid #f0d99f; outline-offset: -4px; }
+@media (max-width:767px) {
+  .capture-navigation { gap: 8px; }
+  .capture-navigation-current { flex-wrap: wrap; gap: 3px 12px; }
+  .capture-navigation button { gap: 8px; padding-inline: 10px; }
+}
+@media (hover:hover) and (pointer:fine) { .capture-navigation button:not(:disabled):hover { border-color: #ddc48b; } }
+@media (forced-colors:active) {
+  .capture-navigation, :root[data-theme="light"] .capture-navigation { color: CanvasText; border-color: CanvasText; }
+  .capture-navigation-current :is(span,strong), :root[data-theme="light"] .capture-navigation-current :is(span,strong) { color: CanvasText; }
+  .capture-navigation button, :root[data-theme="light"] .capture-navigation button { color: ButtonText; background: ButtonFace; border-color: ButtonText; }
+  .capture-navigation button strong, :root[data-theme="light"] .capture-navigation button strong { color: ButtonText; }
+  .capture-navigation button:disabled, .capture-navigation button:disabled strong,
+  :root[data-theme="light"] .capture-navigation button:disabled, :root[data-theme="light"] .capture-navigation button:disabled strong { color: GrayText; border-color: GrayText; }
+  .capture-navigation button:focus-visible, :root[data-theme="light"] .capture-navigation button:focus-visible { outline: 2px solid Highlight; }
+}

@@ -21,8 +21,8 @@ for (const width of [320, 390, 1440]) test(`${width}px Work keeps real evidence 
   await expect(page.locator('.work-evidence-drawer')).toHaveCount(3)
   await expect(page.locator('.work-evidence-content')).toHaveCount(0)
   await expect(page.locator('#cirs, #community, #accuflow')).toHaveCount(3)
-  await expect(page.locator('.community-purpose')).toContainText('After helping prepare and distribute meals')
-  await expect(page.locator('.community-purpose')).toContainText('request for a stronger online presence')
+  await expect(page.locator('.community-purpose')).toContainText('I helped prepareand distribute meals.')
+  await expect(page.locator('.community-purpose')).toContainText('The organisers described limited online reach.')
   await expect(page.locator('[data-editor-note]')).toHaveCount(0)
   // The visible route deck may load its selected Guide proof; hidden detailed
   // viewers still mount no other Atlas/language capture before disclosure.
