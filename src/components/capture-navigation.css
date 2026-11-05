@@ -1,6 +1,6 @@
 .capture-navigation { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; margin-top: 22px; padding: 16px 0 0; border-top: 1px solid #d2c19440; color: #e8e4d1; }
 .capture-navigation-current { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: baseline; gap: 14px; margin-bottom: 3px; }
-.capture-navigation-current > span { color: #c9ba93; font: 400 14px/1.5 "AP Pixelify",monospace; }
+.capture-navigation-current > span { color: #c9ba93; font: 400 14px/1.5 var(--font-body); }
 .capture-navigation-current > strong { color: #ced7c5; font: 400 11px/1.6 var(--font-body,sans-serif); }
 .capture-navigation button { display: flex; align-items: center; gap: 12px; min-width: 0; min-height: 58px; padding: 10px 13px; border: 1px solid #cfba854f; background: linear-gradient(120deg,#e0c98b0b,transparent),#111a19; color: #d9c99f; text-align: left; }
 .capture-navigation button > span { min-width: 0; font: 400 10px/1.5 var(--font-body,sans-serif); }

@@ -1,16 +1,16 @@
 /*
- * Syne by the Syne Project Authors: architectural display lettering.
+ * Fraunces by the Fraunces Project Authors: warm, upright display lettering.
  * Instrument Sans by the Instrument Sans Project Authors: reading and UI.
  * Both are self-hosted unchanged under SIL OFL-1.1; notices ship in /fonts/.
- * https://github.com/google/fonts/blob/main/ofl/syne/OFL.txt
+ * https://github.com/google/fonts/blob/main/ofl/fraunces/OFL.txt
  * https://github.com/Instrument/instrument-sans/blob/master/OFL.txt
  */
 @font-face {
-  font-family: "Syne Variable";
+  font-family: "Fraunces Variable";
   font-style: normal;
-  font-weight: 400 800;
+  font-weight: 100 900;
   font-display: swap;
-  src: url("@fontsource-variable/syne/files/syne-latin-wght-normal.woff2") format("woff2");
+  src: url("@fontsource-variable/fraunces/files/fraunces-latin-full-normal.woff2") format("woff2");
 }
 @font-face {
   font-family: "Instrument Sans Variable";
@@ -20,14 +20,21 @@
   src: url("@fontsource-variable/instrument-sans/files/instrument-sans-latin-wght-normal.woff2") format("woff2");
 }
 :root {
-  --font-display: "Syne Variable", "Arial", sans-serif;
+  --font-display: "Fraunces Variable", Georgia, serif;
   --font-body: "Instrument Sans Variable", "Arial", sans-serif;
   --font-mono: "Instrument Sans Variable", "Arial", sans-serif;
   font-family: var(--font-body);
   font-optical-sizing: auto;
 }
 
-/* The emphasis is structural: upright letterforms, weight and a warm tone. */
+/* Keep the serif upright and its expressive axes steady; size follows the text. */
+:is(h1, h2, h3, h4),
+.work-index-name > strong,
+.identity-card-nameplate p,
+.identity-card-invitation {
+  font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 0, "WONK" 0;
+}
 :is(h1, h2, h3, h4) em,
 .home-directory-rail em,
 .identity-card-invitation em {
@@ -40,10 +47,10 @@
 }
 
 .hero-story-copy > h1 {
-  font-size: clamp(66px, 7.3vw, 112px);
-  font-weight: 550;
-  line-height: 1.02;
-  letter-spacing: -0.055em;
+  font-size: clamp(54px, 6.2vw, 90px);
+  font-weight: 450;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
 }
 .hero-factual-intro {
   font-size: 15px;
@@ -52,29 +59,30 @@
 }
 
 .work-page-opening h1 {
-  font-size: clamp(75px, 11.4vw, 168px);
-  font-weight: 550;
-  line-height: 1.02;
-  letter-spacing: -0.065em;
+  font-size: clamp(58px, 8vw, 112px);
+  font-weight: 450;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
 }
 .work-page-opening h1 em {
   font-weight: inherit;
   letter-spacing: inherit;
 }
 .screening-room[data-page="studio"] .screening-heading h1 {
-  font-size: clamp(49px, 6.9vw, 100px);
-  font-weight: 500;
-  line-height: 1.02;
-  letter-spacing: -0.055em;
+  font-size: clamp(44px, 5.8vw, 82px);
+  font-weight: 450;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
 }
 .screening-room .screening-heading :is(h1, h2) em {
   font-weight: inherit;
 }
-.about-page-intro h1 {
-  font-size: clamp(43px, 5.3vw, 78px);
-  font-weight: 500;
-  line-height: 1.08;
-  letter-spacing: -0.055em;
+.about-page-intro h1,
+.about-identity .about-identity-name > h1 {
+  font-size: clamp(42px, 5vw, 72px);
+  font-weight: 450;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
 }
 
 .work-index-name > strong,
@@ -85,8 +93,16 @@
 .case-next-story h2,
 .recognition-section h2,
 .contact-section .contact-identity-copy h2 {
-  font-weight: 500;
-  letter-spacing: -0.05em;
+  font-weight: 450;
+  letter-spacing: -0.015em;
+}
+.work-page :is(.material-title, .cirs-detail-copy > h2),
+.screening-room[data-page="studio"] .screening-title-card h3,
+.about-identity .about-identity-copy > h3,
+.about-origins :is(h2, h3) {
+  font-weight: 450;
+  line-height: 1.16;
+  letter-spacing: -0.015em;
 }
 
 .section-label,
@@ -97,41 +113,43 @@
   font-weight: 500;
 }
 .atelier-navigation .main-nav > a {
+  font-family: var(--font-body);
   font-weight: 500;
-  letter-spacing: 0.075em;
+  letter-spacing: 0.04em;
 }
 .site-footer .footer-wordmark {
   font-size: 25px;
-  font-weight: 500;
-  letter-spacing: -0.045em;
+  font-weight: 450;
+  letter-spacing: -0.015em;
 }
 .identity-card-nameplate p {
-  font-weight: 500;
-  letter-spacing: -0.045em;
+  font-weight: 450;
+  letter-spacing: -0.015em;
 }
 .identity-card-invitation {
-  font-weight: 500;
-  letter-spacing: -0.045em;
+  font-weight: 450;
+  letter-spacing: -0.015em;
 }
 
 @media (max-width: 767px) {
   .hero-story-copy > h1 {
-    font-size: clamp(43px, 12.3vw, 78px);
-    line-height: 1;
-    letter-spacing: -0.055em;
+    font-size: clamp(36px, 10vw, 56px);
+    line-height: 1.12;
+    letter-spacing: -0.02em;
   }
   .work-page-opening h1 {
-    font-size: clamp(56px, 13.4vw, 90px);
-    letter-spacing: -0.07em;
-    line-height: 1.02;
+    font-size: clamp(42px, 11vw, 60px);
+    letter-spacing: -0.025em;
+    line-height: 1.1;
   }
   .screening-room[data-page="studio"] .screening-heading h1 {
-    font-size: clamp(41px, 10.4vw, 62px);
-    line-height: 1.04;
+    font-size: clamp(36px, 9.4vw, 52px);
+    line-height: 1.12;
   }
-  .about-page-intro h1 {
-    font-size: clamp(36px, 9.3vw, 54px);
-    line-height: 1.1;
+  .about-page-intro h1,
+  .about-identity .about-identity-name > h1 {
+    font-size: clamp(31px, 8.4vw, 40px);
+    line-height: 1.14;
   }
   .hero-factual-intro {
     font-size: 13px;

@@ -2,7 +2,6 @@ import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import type { CSSProperties, FocusEvent } from "react";
 import { ArrowRight, Play } from "lucide-react";
 import type { creativeMedia } from "../content";
-import StudioAtmosphere from "./StudioAtmosphere";
 import { isApprovedDriveEmbed } from "./DriveFilmPlayer";
 import { hasApprovedNativePlayback } from "../media-readiness";
 import FilmMoments from "./FilmMoments";
@@ -248,7 +247,6 @@ export default function ScreeningRoom({
           <p className="screening-intro">Trailers. Auditions. A website launch.</p>
         </header>
 
-        <StudioAtmosphere enabled={motionEnabled} films={readyFilms} selectedId={selected?.id ?? ""} />
 
         <div className="screening-layout">
           <div className="screening-projection" ref={projectionRef} id={selected?.id}>

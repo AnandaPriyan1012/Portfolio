@@ -9,7 +9,7 @@
 .work-page .community-narrative li::before { color: #c8b381; }
 .community-story-thread { position: absolute; top: 14px; bottom: 14px; left: 13px; width: 1px; overflow: hidden; background: #cdb7833d; pointer-events: none; }
 .community-story-thread > span { position: absolute; inset: 0; background: linear-gradient(#b89b62,#efdb9c); transform: scaleY(var(--community-thread-progress)); transform-origin: top; }
-.work-page .community-narrative .community-story-node { position: absolute; top: 0; left: -43px; display: grid; place-items: center; width: 27px; height: 27px; border: 1px solid #cdb78380; background: linear-gradient(135deg,#c9b27916,#0c1512); color: #d7c18e; box-shadow: inset 0 1px #fff2; font: 400 17px/1 "AP Pixelify",monospace; pointer-events: none; }
+.work-page .community-narrative .community-story-node { position: absolute; top: 0; left: -43px; display: grid; place-items: center; width: 27px; height: 27px; border: 1px solid #cdb78380; background: linear-gradient(135deg,#c9b27916,#0c1512); color: #d7c18e; box-shadow: inset 0 1px #fff2; font: 400 17px/1 var(--font-display); pointer-events: none; }
 .community-scroll-runway[data-scene-step="service"] [data-service-step="service"] .community-story-node,
 .community-scroll-runway[data-scene-step="request"] [data-service-step="request"] .community-story-node,
 .community-scroll-runway[data-scene-step="contribution"] [data-service-step="contribution"] .community-story-node { color: #ffedbc; border-color: #eed6a0; background: linear-gradient(135deg,#d8bd7638,#14201a); box-shadow: inset 0 1px #fff3,0 0 18px #ddc78a12; }

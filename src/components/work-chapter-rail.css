@@ -20,7 +20,7 @@
 .work-chapter-rail a::after { content: ""; position: absolute; inset: auto 25% 0; height: 2px; background: #e0c88f; opacity: 0; }
 .work-chapter-rail a[aria-current="location"] { color: #f3e4bd; background: linear-gradient(180deg, transparent, #d9c7950c); }
 .work-chapter-rail a[aria-current="location"]::after { opacity: 1; }
-.work-chapter-number { color: #c4b085; font: 400 19px/1 "AP Pixelify",monospace; }
+.work-chapter-number { color: #c4b085; font: 400 19px/1 var(--font-display); }
 .work-chapter-rail a:focus-visible { outline: 2px solid #f3ddb3; outline-offset: -3px; }
 :root[data-theme="light"] .work-chapter-rail { color: #292b25; background: linear-gradient(110deg,#e2cb930f,transparent 60%), #f4f1e8f5; border-color: #6b63494d; box-shadow: 0 8px 22px #19251d0d; }
 :root[data-theme="light"] .work-chapter-rail a { color: #505347; }

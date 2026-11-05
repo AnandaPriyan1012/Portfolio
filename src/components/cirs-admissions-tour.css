@@ -125,7 +125,7 @@
   background: #cfddcf04;
   text-align: left;
 }
-.work-page .cirs-tour[data-presentation="work"] .cirs-interface-map button > span { color: #d2bd8d; font: 400 17px/1 "AP Pixelify",monospace; }
+.work-page .cirs-tour[data-presentation="work"] .cirs-interface-map button > span { color: #d2bd8d; font: 400 17px/1 var(--font-display); }
 .work-page .cirs-tour[data-presentation="work"] .cirs-interface-map button strong { color: #e4e9dc; font-size: 12px; line-height: 1.5; }
 .work-page .cirs-tour[data-presentation="work"] .cirs-interface-map button small { color: #b8c6b9; font-size: 11px; line-height: 1.6; }
 .work-page .cirs-tour[data-presentation="work"] .cirs-interface-map button[aria-pressed="true"] { border-color: #dcc793; background: #d4bc7d12; }

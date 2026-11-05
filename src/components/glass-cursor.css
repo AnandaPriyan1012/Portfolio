@@ -82,14 +82,20 @@
 .glass-arrow-cursor[data-pressed="true"] .glass-arrow-shape {
   transform: scale(0.93);
 }
-:root[data-glass-pointer="visible"] .glass-pointer-target,
-:root[data-glass-pointer="visible"] .glass-pointer-target * {
+/* A valid positioned arrow owns ordinary page surfaces continuously. Per-node
+   markers update in RAF and cannot safely suppress the browser cursor alone. */
+:root[data-glass-pointer="visible"] body,
+:root[data-glass-pointer="visible"] body * {
   cursor: none !important;
 }
 :root[data-glass-pointer="visible"]
-  .glass-pointer-target
-  :is(input, textarea, select, [contenteditable], video, audio, iframe, embed, object, [data-cursor="none"], [data-cursor="native"]) {
+  :is(input:not([type="radio"], [type="checkbox"], [type="button"], [type="submit"], [type="reset"], [type="image"]), textarea, select, option, [contenteditable]:not([contenteditable="false"]), [role="textbox"], video, audio[controls], iframe, embed, object, .os-window-titlebar, .state-opening, [data-cursor="none"], [data-cursor="native"], :disabled, [aria-disabled="true"]),
+:root[data-glass-pointer="visible"]
+  :is(input:not([type="radio"], [type="checkbox"], [type="button"], [type="submit"], [type="reset"], [type="image"]), textarea, select, option, [contenteditable]:not([contenteditable="false"]), [role="textbox"], video, audio[controls], iframe, embed, object, .os-window-titlebar, .state-opening, [data-cursor="none"], [data-cursor="native"], :disabled, [aria-disabled="true"]) * {
   cursor: revert !important;
+}
+:root[data-glass-pointer="visible"] dialog::backdrop {
+  cursor: auto !important;
 }
 @media (pointer: coarse),
   (prefers-reduced-motion: reduce),
@@ -97,16 +103,16 @@
   .glass-cursor.glass-arrow-cursor {
     display: none;
   }
-  :root[data-glass-pointer="visible"] .glass-pointer-target,
-  :root[data-glass-pointer="visible"] .glass-pointer-target * {
+  :root[data-glass-pointer="visible"] body,
+  :root[data-glass-pointer="visible"] body * {
     cursor: revert !important;
   }
 }
 :root[data-motion="off"] .glass-cursor.glass-arrow-cursor {
   display: none;
 }
-:root[data-motion="off"][data-glass-pointer="visible"] .glass-pointer-target,
-:root[data-motion="off"][data-glass-pointer="visible"] .glass-pointer-target * {
+:root[data-motion="off"][data-glass-pointer="visible"] body,
+:root[data-motion="off"][data-glass-pointer="visible"] body * {
   cursor: revert !important;
 }
 /* The opaque opening sits above the glass arrow. Native remains visible now,
@@ -114,7 +120,7 @@
 :root[data-opening="active"] .glass-cursor-layer {
   visibility: hidden !important;
 }
-:root[data-opening="active"] .glass-pointer-target,
-:root[data-opening="active"] .glass-pointer-target * {
+:root[data-opening="active"] body,
+:root[data-opening="active"] body * {
   cursor: revert !important;
 }

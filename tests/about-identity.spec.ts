@@ -26,7 +26,7 @@ async function ready(page: Page) {
   await page.evaluate(() => document.fonts.ready)
   await page.locator('.state-opening').waitFor({ state: 'detached' })
   const loaded = await page.evaluate(() => [...document.fonts].filter(font => font.status === 'loaded').map(font => font.family))
-  expect(loaded).toContain('Syne Variable')
+  expect(loaded).toContain('Fraunces Variable')
   expect(loaded).toContain('Instrument Sans Variable')
   return page.locator('.about-identity')
 }

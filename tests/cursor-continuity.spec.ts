@@ -54,7 +54,8 @@ test('the same host and last real position survive keyboard SPA routes, cases, b
   await glassAt(page, 15, 400)
   await page.locator('.glass-arrow-cursor').evaluate(el => el.setAttribute('data-instance-proof', 'original'))
   for (const label of ['Studio', 'About', 'Work']) {
-    await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: label, exact: true }).focus()
+    const link = label === 'Studio' ? page.locator('a[href="/studio"]:visible').first() : page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: label, exact: true })
+    await link.focus()
     await page.keyboard.press('Enter')
     await expect(page.locator('main')).toHaveAttribute('data-page', label.toLowerCase())
     await glassAt(page, 15, 400)
@@ -90,11 +91,11 @@ test('stationary pointer remains positioned through scrolling and ordinary click
 
 test('a reused navigation link retains the native-hiding marker after its route class changes', async ({ page }) => {
   await page.goto('/work')
-  const link = page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Studio', exact: true })
+  const link = page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'About', exact: true })
   await link.hover()
   const r = (await link.boundingBox())!, point = { x: r.x + r.width / 2, y: r.y + r.height / 2 }
   await link.click()
-  await expect(page).toHaveURL(/\/studio$/)
+  await expect(page).toHaveURL(/\/about$/)
   await glassAt(page, point.x, point.y)
   await link.evaluate(el => el.className = 'synthetic-react-class-update')
   await glassAt(page, point.x, point.y)
@@ -104,7 +105,7 @@ test('Escape closing a narrow desktop menu resamples the surface under its stati
   await page.setViewportSize({ width: 600, height: 900 })
   await page.goto('/work')
   await page.getByRole('button', { name: 'Open menu', exact: true }).click()
-  const link = page.locator('#site-nav a[href="/studio"]')
+  const link = page.locator('#site-nav a[href="/about"]')
   await link.hover()
   const r = (await link.boundingBox())!, point = { x: r.x + r.width / 2, y: r.y + r.height / 2 }
   await glassAt(page, point.x, point.y)

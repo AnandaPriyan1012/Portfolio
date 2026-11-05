@@ -56,8 +56,8 @@
 .site-header.atelier-navigation .main-nav {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  width: min(600px, 65%);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  width: min(450px, 60%);
   gap: 3px;
   margin: 0;
   padding: 4px;

@@ -17,7 +17,7 @@ test.beforeEach(async ({ page }) => {
 async function settled(page: Page) {
   await page.locator('.state-opening').waitFor({ state: 'detached' })
   await page.evaluate(() => document.fonts.ready)
-  expect(await page.evaluate(() => [...document.fonts].some(font => font.family === 'Syne Variable' && font.status === 'loaded'))).toBe(true)
+  expect(await page.evaluate(() => [...document.fonts].some(font => font.family === 'Fraunces Variable' && font.status === 'loaded'))).toBe(true)
   if (process.env.AP_QA_EXPECTED_BUNDLE)
     await expect(page.locator('script[type="module"]')).toHaveAttribute('src', `/assets/${process.env.AP_QA_EXPECTED_BUNDLE}`)
 }

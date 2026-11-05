@@ -8,13 +8,13 @@ type Props = {
   onNavigate: (id: string) => void;
   currentPage?: "home" | "work" | "studio" | "about";
   onHome?: () => void;
+  objectsAsNavigation?: boolean;
 };
 
 const chapters = [
-  { id: "work", label: "Work", number: "01", href: "/work" },
-  { id: "studio", label: "Studio", number: "02", href: "/studio" },
-  { id: "about", label: "About", number: "03", href: "/about" },
-  { id: "contact", label: "Contact", number: "04", href: "/about#contact" },
+  { id: "work", label: "Work", href: "/work" },
+  { id: "about", label: "About", href: "/about" },
+  { id: "contact", label: "Contact", href: "/about#contact" },
 ];
 
 const pageCaptions = {
@@ -32,9 +32,10 @@ export default function AtelierNavigation({
   onNavigate,
   currentPage = "home",
   onHome,
+  objectsAsNavigation = false,
 }: Props) {
   return (
-    <header className="site-header atelier-navigation">
+    <header className="site-header atelier-navigation" data-desk={objectsAsNavigation || undefined}>
       <a
         className="wordmark"
         href="/"
@@ -59,9 +60,9 @@ export default function AtelierNavigation({
         <Signature />
       </a>
       <span className="navigation-caption" aria-hidden="true">
-        Ananda Priyan<span>{pageCaptions[currentPage]}</span>
+        Ananda Priyan{!objectsAsNavigation && <span>{pageCaptions[currentPage]}</span>}
       </span>
-      <button
+      {!objectsAsNavigation && <button
         className="menu-button"
         aria-label={menuOpen ? "Close menu" : "Open menu"}
         aria-expanded={menuOpen}
@@ -70,8 +71,8 @@ export default function AtelierNavigation({
       >
         <span>{menuOpen ? "Close" : "Menu"}</span>
         {menuOpen ? <X size={18} /> : <Menu size={18} />}
-      </button>
-      <nav
+      </button>}
+      {!objectsAsNavigation && <nav
         id="site-nav"
         className={menuOpen ? "main-nav is-open" : "main-nav"}
         aria-label="Main navigation"
@@ -95,16 +96,10 @@ export default function AtelierNavigation({
               onNavigate(chapter.id);
             }}
           >
-            <span
-              className="navigation-number"
-              data-number={chapter.number}
-              aria-hidden="true"
-            />
             {chapter.label}
-            <span className="navigation-light" aria-hidden="true" />
           </a>
         ))}
-      </nav>
+      </nav>}
     </header>
   );
 }

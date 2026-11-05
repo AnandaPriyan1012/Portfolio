@@ -76,38 +76,38 @@ function saveEvidence(project: EvidenceProject, change: Partial<EvidencePreferen
 const projectBriefs = {
   cirs: [
     [
-      "Purpose",
-      "I proposed refreshing our school website so future students and parents could understand campus life and Admissions more clearly.",
+      "Problem",
+      "Future students and parents needed a clearer picture of campus life and an easier way to find Admissions information.",
     ],
     [
-      "My part",
+      "Role",
       "Page design and web development with the school’s team, including Admissions and phone layouts.",
     ],
-    ["The work", "The live school website and its practical Admissions Guide."],
+    ["Outcome", "The official school website is live, with a dedicated Admissions Guide."],
   ],
   community: [
     [
-      "Purpose",
-      "After helping prepare and distribute meals, I asked how else I could help. The organisers wanted a stronger online presence.",
+      "Problem",
+      "After helping prepare and distribute meals, I asked how else I could help, and the organisers described limited online reach.",
     ],
-    ["My part", "Voluntary Social Media & Technology Head, since 2023."],
+    ["Role", "Voluntary Social Media & Technology Head since 2023: digital storytelling, social media and website work."],
     [
-      "Work shown",
-      "The website’s About page in English and Tamil, from its public review preview.",
+      "Outcome",
+      "Website work is available as a public review preview, alongside ongoing digital storytelling and social-media work.",
     ],
   ],
   accuflow: [
     [
       "Purpose",
-      "Connect a product story to a pressure-point information guide.",
+      "Explore how a product website can lead into a conversational guide for pressure-point information.",
     ],
     [
-      "Project scope",
-      "A six-page product website and conversational guide prototype.",
+      "Scope",
+      "A six-page product website and conversational-interface prototype.",
     ],
     [
-      "Work shown",
-      "The real Try interface and four routes from the running website prototype.",
+      "Outcome",
+      "The publicly viewable prototype is shown through four captured routes, including the initial guide interface.",
     ],
   ],
 } as const;
@@ -463,14 +463,14 @@ function Feature({
                   Service <span>→</span> The question <span>→</span> Digital work
                 </p>
               </div>
-              <CommunityNarrative />
+              <details className="project-process-notes"><summary>Service and digital work</summary><CommunityNarrative /></details>
             </div>
           </div>
         ) : (
           <AccuFlowRouteDeck motionEnabled={motionEnabled} onCaptureNavigate={onCaptureNavigate} />
         )}
         {project.id === "accuflow" && (
-          <div className="accuflow-stage-info">
+          <details className="project-process-notes"><summary>Prototype context</summary><div className="accuflow-stage-info">
             <p data-flow-stage>
               <span>The interaction</span>
               {project.story.process}
@@ -479,7 +479,7 @@ function Feature({
               <span>Current stage</span>
               {project.story.outcome}
             </p>
-          </div>
+          </div></details>
         )}
         <div className="feature-footer">
           <span>
@@ -543,58 +543,17 @@ const selectedProjects = [
   },
 ] as const;
 
-function WorkProjectIndex({ motionEnabled }: { motionEnabled: boolean }) {
-  // Keep the last preview while crossing the gap to its native project link.
-  // Selection lives here so inspecting an image does not rerender the chapters.
-  const [previewProject, setPreviewProject] =
-    useState<(typeof selectedProjects)[number]["id"]>("cirs");
-
+function WorkProjectIndex() {
   return (
-    <nav
-      className="work-project-index"
-      aria-label="Explore selected projects"
-      data-preview-mode="shared"
-      data-preview-motion={motionEnabled ? "on" : "off"}
-    >
-      {selectedProjects.map((item, index) => {
-        const asset = projectAssets[item.id];
-        return (
-          <a
-            key={item.id}
-            className={`work-index-entry work-index-${item.id}`}
-            href={`#${item.anchor}`}
-            data-preview-selected={previewProject === item.id || undefined}
-            onMouseEnter={() => setPreviewProject(item.id)}
-            onFocus={() => setPreviewProject(item.id)}
-          >
-            <span className="work-index-number">0{index + 1}</span>
-            <span className="work-index-name">
-              <strong>{item.title}</strong>
-              <span>{item.discipline}</span>
-            </span>
-            <span className="work-index-note">{item.note}</span>
-            {asset.previewUrl && (
-              <span className="work-index-preview" aria-hidden="true">
-                <picture>
-                  {asset.mobilePreviewUrl && (
-                    <source
-                      media="(max-width:767px)"
-                      srcSet={asset.mobilePreviewUrl}
-                    />
-                  )}
-                  <img src={asset.previewUrl} alt="" loading="eager" />
-                </picture>
-                <span>{item.artifact}</span>
-              </span>
-            )}
-            <ArrowRight
-              className="work-index-arrow"
-              size={22}
-              aria-hidden="true"
-            />
-          </a>
-        );
-      })}
+    <nav className="work-project-index simple-project-index" aria-label="Explore selected projects">
+      {selectedProjects.map((item, index) => (
+        <a key={item.id} className={`work-index-entry work-index-${item.id}`} href={`#${item.anchor}`}>
+          <span className="work-index-number">0{index + 1}</span>
+          <span className="work-index-name"><strong>{item.title}</strong><span>{item.discipline}</span></span>
+          <span className="work-index-note">{item.note}</span>
+          <ArrowRight className="work-index-arrow" size={20} aria-hidden="true" />
+        </a>
+      ))}
     </nav>
   );
 }
@@ -626,7 +585,7 @@ export default function WorkPage({
           </p>
           <span>Three projects. Different purposes.</span>
         </div>
-        <WorkProjectIndex motionEnabled={motionEnabled} />
+        <WorkProjectIndex />
         <div className="work-page-scroll-note" aria-hidden="true">
           <span>Follow the work</span>
           <span>↓</span>

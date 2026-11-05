@@ -7,9 +7,10 @@ type Device = Navigator & {
   deviceMemory?: number;
 };
 type Mode = "surface" | "link" | "action" | "view" | "visit" | "play" | "email" | "save";
+const choiceInputs = "input:is([type='radio'], [type='checkbox'], [type='button'], [type='submit'], [type='reset'], [type='image'])";
 const nativeRegions =
-  "input, textarea, select, option, [contenteditable]:not([contenteditable='false']), [role='textbox'], video, audio[controls], iframe, embed, object, .os-window-titlebar, .state-opening, [data-cursor='none'], [data-cursor='native']";
-const controls = "a[href], button, summary, [role='button'], [role='link']";
+  "input:not([type='radio'], [type='checkbox'], [type='button'], [type='submit'], [type='reset'], [type='image']), textarea, select, option, [contenteditable]:not([contenteditable='false']), [role='textbox'], video, audio[controls], iframe, embed, object, .os-window-titlebar, .state-opening, [data-cursor='none'], [data-cursor='native']";
+const controls = `a[href], button, summary, [role='button'], [role='link'], ${choiceInputs}`;
 const hotspot = 0.75;
 
 /** The native pointer is hidden only after this glass arrow has a valid position. */
@@ -38,12 +39,14 @@ export default function GlassCursor({ enabled }: { enabled: boolean }) {
     };
     const absent = () => { if (position.current) position.current.inside = false; };
     window.addEventListener("pointermove", remember, { passive: true });
+    window.addEventListener("pointerover", remember, { passive: true });
     window.addEventListener("pointerdown", remember, { passive: true });
     window.addEventListener("blur", absent);
     document.addEventListener("visibilitychange", absent);
     document.documentElement.addEventListener("pointerleave", absent);
     return () => {
       window.removeEventListener("pointermove", remember);
+      window.removeEventListener("pointerover", remember);
       window.removeEventListener("pointerdown", remember);
       window.removeEventListener("blur", absent);
       document.removeEventListener("visibilitychange", absent);
@@ -209,8 +212,16 @@ export default function GlassCursor({ enabled }: { enabled: boolean }) {
       } else schedule();
     };
     const over = (event: PointerEvent) => {
-      if (event.target instanceof Element && event.target.closest(nativeRegions)) hide();
-      schedule();
+      if (!storePosition(event)) return;
+      if (event.target instanceof Element &&
+          (event.target.closest(nativeRegions) || event.target.closest(":disabled, [aria-disabled='true']"))) {
+        hide();
+        return;
+      }
+      // A native region may have hidden the arrow. Resolve the new boundary
+      // immediately; ordinary movement still uses one scheduled frame.
+      cancelAnimationFrame(frame);
+      refresh();
     };
     const press = (event: PointerEvent) => {
       if (!storePosition(event)) return;

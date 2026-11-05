@@ -18,18 +18,15 @@ import { hasApprovedNativePlayback } from "./media-readiness";
 import type { Project } from "./content";
 import CaseStudyPage from "./components/CaseStudyPage";
 import OSExperience from "./components/OSExperience";
-import GlassMaterial from "./components/GlassMaterial";
 import NotFound from "./components/NotFound";
 import useScrollStory from "./animation/useScrollStory";
 import useActiveSection from "./animation/useActiveSection";
-import useVisitTrail from "./hooks/useVisitTrail";
 import { GuidedTour } from "./components/Discovery";
 import AtelierNavigation from "./components/AtelierNavigation";
 import ScreeningRoom from "./components/ScreeningRoom";
 import ProjectOpening from "./components/ProjectOpening";
 import WorkPage from "./components/WorkPage";
 import BatchDispatchStudy from "./components/BatchDispatchStudy";
-import HomeDirectory from "./components/HomeDirectory";
 import AboutIdentity from "./components/AboutIdentity";
 import GlassCursor from "./components/GlassCursor";
 import IdentityCard from "./components/IdentityCard";
@@ -367,11 +364,9 @@ export default function App() {
   const [tourOpen, setTourOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [lane, setLane] = useState("builder");
-  const [cirsImageFailed, setCirsImageFailed] = useState(false);
   const [cut, setCut] = useState<"quick" | "director">("quick");
   const [question, setQuestion] = useState<string | null>(null);
   const [route, setRoute] = useState(normalizedPath());
-  const { visitedPaths, resetVisits } = useVisitTrail(route);
   const [initialNavigation] = useState(() => {
     const entry = historyPosition();
     const positions = readHistoryPositions(entry);
@@ -421,10 +416,7 @@ export default function App() {
   const mainRef = useRef<HTMLElement>(null);
   const storyMotion = useScrollStory({
     root: mainRef,
-    enabled:
-      preferences.motion &&
-      Boolean(projectAssets.cirs.previewUrl) &&
-      !cirsImageFailed,
+    enabled: false,
     route,
   });
   const navigateWorkCapture = useCallback((target: HTMLButtonElement) => {
@@ -708,7 +700,7 @@ export default function App() {
     caseReturn.current = { path: originToken === "tour-launcher" || studioProject || workProject ? `${route}${window.location.hash}` : route,
       top: scrollY, ...(originHref ? { originHref } : {}),
       ...(originFocus ? { originFocus } : {}),
-      ...((route === "/" && (originToken === "selected-preview" || originToken === "cirs-scene")) ||
+      ...((route === "/" && (originToken === "selected-preview" || originToken === "cirs-scene" || originToken === "cirs-caption" || originToken === "desk-cirs" || originToken === "desk-community" || originToken === "desk-accuflow")) ||
         (mainRoutes.includes(route) && originToken === "tour-launcher") || studioProject ? { originToken } : {}),
       ...(workProject ? { originToken: "work-project" } : {}) };
     navigate(`/projects/${id}`, { departureFocus: originFocus });
@@ -739,7 +731,7 @@ export default function App() {
         <GlassCursor enabled={preferences.motion} />
         <CaseStudyPage
           project={currentProject}
-          motionEnabled={preferences.motion}
+          motionEnabled={false}
           restoreSavedPosition={restoreCasePosition.current}
           onBack={home}
           onContact={() => {
@@ -764,30 +756,17 @@ export default function App() {
         onMenuToggle={() => setMenuOpen(!menuOpen)}
         onNavigate={navigateSection}
         onHome={() => navigate("/")}
+        objectsAsNavigation={mainPage === "home"}
       />
-      <main id="main" ref={mainRef} data-page={mainPage}>
-        <GlassMaterial />
+      <main id="main" ref={mainRef} data-page={mainPage} data-presentation="quiet">
         {mainPage === "home" && (
           <>
             <ProjectOpening
-              motionEnabled={preferences.motion}
-              onWork={() => navigate("/work")}
-              onStudio={() => navigate("/studio")}
-              onCaseStudy={() => page("cirs", undefined, "cirs-scene")}
-              onImageError={() => setCirsImageFailed(true)}
-              onDirector={() =>
-                setModal({ type: "media", id: "directors-cut" })
-              }
-            />
-            <HomeDirectory
-              onNavigate={(path, originToken) => {
+              onNavigate={(path, origin) => {
                 const project = projects.find((item) => path === `/projects/${item.id}`);
-                if (project) page(project.id, undefined, originToken);
+                if (project) page(project.id, undefined, origin);
                 else navigate(path);
               }}
-              motionEnabled={preferences.motion}
-              visitedPaths={visitedPaths}
-              onResetVisits={resetVisits}
             />
           </>
         )}
@@ -796,7 +775,7 @@ export default function App() {
             <WorkPage
               onQuick={quick}
               onPage={page}
-              motionEnabled={preferences.motion}
+              motionEnabled={false}
               navigationOpen={menuOpen}
               onCaptureNavigate={navigateWorkCapture}
             />
@@ -838,7 +817,7 @@ export default function App() {
                     </button>
                   </div>
                   <DecisionRoom
-                    motionEnabled={preferences.motion && !menuOpen && !modal && !osOpen && !tourOpen}
+                    motionEnabled={false}
                   />
                 </div>
               </details>
@@ -895,7 +874,7 @@ export default function App() {
         {mainPage === "studio" && (
           <ScreeningRoom
             films={creativeMedia}
-            motionEnabled={preferences.motion}
+            motionEnabled={false}
             asPage
             onContact={() => navigate("/about#contact")}
             onSelectFilm={selectStudioFilm}
@@ -908,7 +887,7 @@ export default function App() {
             <AboutIdentity
               selected={lane}
               onSelect={setLane}
-              motionEnabled={preferences.motion}
+              motionEnabled={false}
               onNavigate={(path, originAnchor?: HTMLAnchorElement) => {
                 const target = projects.find((item) => path === `/projects/${item.id}`);
                 if (target) page(target.id, path, undefined, originAnchor);
@@ -997,7 +976,7 @@ export default function App() {
                 {contactReady && copy.contact.email && (
                   <IdentityCard
                     email={copy.contact.email}
-                    motionEnabled={preferences.motion}
+                    motionEnabled={false}
                   />
                 )}
               </div>
@@ -1005,9 +984,9 @@ export default function App() {
           </>
         )}
       </main>
-      <footer className="site-footer page-width">
+      <footer className={`site-footer page-width${mainPage === "home" ? " desk-footer" : ""}`}>
         <div>
-          <a
+          {mainPage !== "home" && <a
             href="/"
             className="footer-wordmark"
             onClick={(event) => {
@@ -1025,15 +1004,16 @@ export default function App() {
             }}
           >
             Ananda Priyan
-          </a>
-          <p>{copy.footerCredit}</p>
+          </a>}
+          <p>{mainPage === "home" ? "Built with AI assistance." : copy.footerCredit}</p>
         </div>
-        <nav className="footer-page-links" aria-label="Portfolio pages">
+        {mainPage !== "home" && <nav className="footer-page-links" aria-label="Portfolio pages">
           {[
             ["/", "Home"],
             ["/work", "Work"],
-            ["/studio", "Studio"],
-            ["/about", "About & contact"],
+            ["/studio", "Films"],
+            ["/about", "About"],
+            ["/about#contact", "Contact"],
           ].map(([path, label]) => (
             <a
               key={path}
@@ -1056,12 +1036,15 @@ export default function App() {
               {label}
             </a>
           ))}
-        </nav>
+        </nav>}
         <div className="footer-settings">
-          <button data-navigation-origin="tour-launcher" onClick={() => setTourOpen(true)}>
-            Take the 60-second tour
-          </button>
-          <button onClick={() => setOsOpen(true)}>AP OS</button>
+          <details className="footer-archive">
+            <summary>More to explore</summary>
+            <div>
+              <button data-navigation-origin="tour-launcher" onClick={() => setTourOpen(true)}>Guided project tour</button>
+              <button onClick={() => setOsOpen(true)}>AP OS experiment</button>
+            </div>
+          </details>
           <button
             onClick={() =>
               preferences.setTheme(
@@ -1082,7 +1065,7 @@ export default function App() {
             aria-pressed={preferences.motion}
             disabled={preferences.reduced}
           >
-            Motion {preferences.motion ? "on" : "off"}
+            Glass cursor {preferences.motion ? "on" : "off"}
           </button>
           <a
             href="#"
