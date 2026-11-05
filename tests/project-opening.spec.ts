@@ -111,10 +111,20 @@ async function projectedCorners(page: Page) {
     const scale = visual.clientWidth / 1672
     return Object.entries(definitions).map(([name, definition]) => {
       const node = visual.querySelector<HTMLElement>(`[data-scene-plane="${name}"]`)!
-      const matrix = new DOMMatrixReadOnly(getComputedStyle(node).transform)
       const local = [[0, 0], [definition.width, 0], [definition.width, definition.height], [0, definition.height]]
-      const measured = local.map(([x, y]) => { const p = new DOMPoint(x, y).matrixTransform(matrix); return [p.x / p.w, p.y / p.w] })
-      const expected = definition.quad.map(([x, y]) => [x * scale, y * scale])
+      const origin = visual.getBoundingClientRect()
+      // Measure the browser's rendered endpoints. Computed matrix3d strings
+      // round their coefficients and magnify that rounding on ultrawide scenes.
+      const measured = local.map(([x, y]) => {
+        const point = document.createElement('span')
+        point.setAttribute('aria-hidden', 'true')
+        Object.assign(point.style, { position: 'absolute', left: `${x}px`, top: `${y}px`, width: '0', height: '0', pointerEvents: 'none' })
+        node.append(point)
+        const r = point.getBoundingClientRect()
+        point.remove()
+        return [r.x - origin.x, r.y - origin.y]
+      })
+      const expected = definition.quad.map(([x, y]) => [x * scale, y * visual.clientHeight / 941])
       const error = Math.max(...measured.map(([x, y], index) => Math.hypot(x - expected[index][0], y - expected[index][1])))
       return { name, measured, expected, error, transform: getComputedStyle(node).transform }
     })
@@ -167,17 +177,17 @@ test('genuine scene sources remain truthful, aligned after resizing and idle wit
   const ambient: string[] = []
   page.on('request', request => { if (/\.mp4(?:[?#]|$)|atelier-room|amber-architecture|glass-corridor|screening-room-loop|ap-pixelify/.test(request.url())) ambient.push(request.url()) })
   await ready(page, true)
-  await expect(page.getByRole('heading', { level: 1, name: /Web work for my school\.\s*Stories for the screen\./ })).toBeVisible()
+  await expect(page.getByRole('heading', { level: 1, name: /Built for my school\.\s*Cut for the screen\./ })).toBeVisible()
   await expect(page.locator('.site-header[data-desk] .navigation-caption')).toHaveText('Ananda Priyan')
   await expect(page.locator('.site-header nav,.site-header .menu-button,.site-footer nav,.site-footer .wordmark')).toHaveCount(0)
   await expect(page.locator('.desk-opening')).not.toContainText('Ananda Priyan')
   await expect(page.locator('.scene-map > a')).toHaveCount(5)
   expect(await page.locator('.scene-object').evaluateAll(nodes => nodes.map(a => a.getAttribute('href')))).toEqual(destinations)
   for (const object of objects.slice(0, 3)) await expect(page.locator(`[data-home-origin="${object.token}"]`)).toHaveCount(1)
-  await expect(page.locator('.desk-opening canvas,.desk-opening video,.desk-opening iframe,.desk-opening button,.hero-room,.hero-ambient-film,.pin-spacer')).toHaveCount(0)
+  await expect(page.locator('.desk-opening canvas,.desk-opening video,.desk-opening iframe,.hero-room,.hero-ambient-film,.pin-spacer')).toHaveCount(0)
   const images = await sources(page)
   expect(images).toEqual([
-    { path: '/media/cinematic-desk-wide.webp', natural: [1672, 941], project: null, fit: 'contain' },
+    { path: '/media/cinematic-desk-wide.webp', natural: [1672, 941], project: null, fit: 'fill' },
     { path: '/media/desk-cirs-home-1600.webp', natural: [1600, 1000], project: 'CIRS', fit: 'contain' },
     { path: '/media/vallalar-language-en-desktop.webp', natural: [1440, 500], project: 'Vallalar', fit: 'contain' },
     { path: '/media/atlas-accuflow-guide-desktop.webp', natural: [1440, 1000], project: 'AccuFlow', fit: 'contain' },
@@ -194,10 +204,10 @@ test('genuine scene sources remain truthful, aligned after resizing and idle wit
   expect(ambient).toEqual([])
   await testInfo.attach('genuine-scene-sources', { body: JSON.stringify({ images, fonts, ambient }), contentType: 'application/json' })
   const observations = []
-  for (const width of [1440, 1920, 1024, 768, 390, 320]) {
-    await page.setViewportSize({ width, height: 1000 })
+  for (const [width, height] of [[1920, 1080], [1440, 900], [1366, 768], [1200, 800], [1101, 621], [1024, 1000], [768, 1024], [390, 844], [320, 568]]) {
+    await page.setViewportSize({ width, height })
     await expect.poll(async () => Math.max(...(await projectedCorners(page)).map(result => result.error))).toBeLessThan(.3)
-    observations.push({ width, corners: await projectedCorners(page) })
+    observations.push({ width, height, corners: await projectedCorners(page) })
   }
   const idle = await page.locator('.scene-surfaces').evaluate(async node => {
     await new Promise(resolve => setTimeout(resolve, 150))
@@ -213,12 +223,14 @@ test('genuine scene sources remain truthful, aligned after resizing and idle wit
   await testInfo.attach('projected-corners-and-idle', { body: JSON.stringify({ observations, idle }), contentType: 'application/json' })
 })
 
-const fitDimensions = [[1366, 768], [1280, 720], [1440, 900], [1920, 1080], [320, 568], [375, 667], [390, 844], [414, 896], [768, 1024], [844, 390], [1024, 600]] as const
+const fitDimensions = [[1366, 768], [1280, 720], [1440, 900], [1920, 1080], [1200, 800], [1101, 621], [1101, 650], [1024, 1000], [320, 568], [375, 667], [390, 844], [414, 896], [768, 1024], [844, 390], [1024, 600]] as const
 for (const [width, height] of fitDimensions) test(`${width}x${height} keeps the full desk, Work and all five native destinations on the initial screen`, async ({ browser, baseURL }, testInfo) => {
   const touch = width <= 900
   const context = await browser.newContext({ baseURL, viewport: { width, height }, isMobile: touch, hasTouch: touch, reducedMotion: width === 320 ? 'reduce' : 'no-preference' })
+  if (width === 320) await context.addInitScript(() => sessionStorage.setItem('ap-desk-explored', JSON.stringify(['cirs', 'community', 'accuflow', 'films', 'contact'])))
   const page = await context.newPage()
   await ready(page)
+  if (width === 320) await expect(page.locator('.scene-explored')).toHaveCount(5)
   expect(await page.evaluate(() => scrollY)).toBe(0)
   await expect(page.locator('.site-header[data-desk] .navigation-caption')).toHaveCount(1)
   await expect(page.locator('.site-header[data-desk] .navigation-caption')).toBeVisible()
@@ -226,16 +238,26 @@ for (const [width, height] of fitDimensions) test(`${width}x${height} keeps the 
   expect(images[0].path).toBe(width <= 767 ? '/media/cinematic-desk-compact.webp' : '/media/cinematic-desk-wide.webp')
   expect(images[0].natural).toEqual(width <= 767 ? [960, 540] : [1672, 941])
   expect(images.slice(1).map(image => image.natural)).toEqual([[1600, 1000], [1440, 500], [1440, 1000], [768, 512]])
-  expect(Math.abs(layout.visual.height / layout.visual.width - 941 / 1672)).toBeLessThan(.002)
+  if (width > 1100 && height > 620) {
+    expect(layout.visual.x).toBe(0)
+    expect(layout.visual.width).toBe(width)
+    expect(layout.visual.bottom).toBe(height)
+  } else expect(Math.abs(layout.visual.height / layout.visual.width - 941 / 1672)).toBeLessThan(.002)
   expect(layout.objects.map(object => object.href)).toEqual(destinations)
   const fit = await page.evaluate(() => {
     const header = document.querySelector('.site-header')!.getBoundingClientRect()
     const viewport = { left: visualViewport?.offsetLeft || 0, top: visualViewport?.offsetTop || 0, width: visualViewport?.width || innerWidth, height: visualViewport?.height || innerHeight }
     const rect = (node: Element) => { const r = node.getBoundingClientRect(); return { x: r.x, y: r.y, right: r.right, bottom: r.bottom, width: r.width, height: r.height } }
-    return { headerBottom: header.bottom, viewport, visual: rect(document.querySelector('.scene-visual')!), controls: [document.querySelector('.desk-work-link')!, ...document.querySelectorAll('.scene-callout')].map(node => ({ text: node.textContent, font: parseFloat(getComputedStyle(node.querySelector('strong') || node).fontSize), ...rect(node) })) }
+    return { headerBottom: header.bottom, viewport, visual: rect(document.querySelector('.scene-visual')!), discovery: rect(document.querySelector('.desk-discovery-button')!), controls: [document.querySelector('.desk-work-link')!, ...document.querySelectorAll('.scene-callout')].map(node => ({ text: node.textContent, font: parseFloat(getComputedStyle(node.querySelector('strong') || node).fontSize), ...rect(node) })) }
   })
   expect(fit.visual.y).toBeGreaterThanOrEqual(fit.headerBottom)
   expect(fit.visual.bottom).toBeLessThanOrEqual(fit.viewport.top + fit.viewport.height)
+  expect(fit.discovery.x).toBeGreaterThanOrEqual(fit.viewport.left)
+  expect(fit.discovery.y).toBeGreaterThanOrEqual(fit.headerBottom)
+  expect(fit.discovery.right).toBeLessThanOrEqual(fit.viewport.left + fit.viewport.width)
+  expect(fit.discovery.bottom).toBeLessThanOrEqual(fit.viewport.top + fit.viewport.height)
+  expect(fit.discovery.width).toBeGreaterThanOrEqual(44)
+  expect(fit.discovery.height).toBeGreaterThanOrEqual(44)
   for (const control of fit.controls) {
     expect(control.x).toBeGreaterThanOrEqual(fit.viewport.left)
     expect(control.y).toBeGreaterThanOrEqual(fit.headerBottom)
@@ -247,12 +269,27 @@ for (const [width, height] of fitDimensions) test(`${width}x${height} keeps the 
   }
   for (const object of objects) await expect(page.locator(object.selector)).toHaveAccessibleName(new RegExp(`${object.selector === '.desk-vallalar' ? 'Vallalar.*Voluntary work.*Review preview' : object.selector === '.desk-cirs' ? 'CIRS website.*School-team web work.*Live website' : object.selector === '.desk-accuflow' ? 'AccuFlow.*Website & guide prototype' : object.selector === '.desk-films' ? 'Films & trailers.*Vantara.*TED-Ed.*CIRS launch' : 'About & contact.*person behind the work'}`, 'i'))
   await page.locator('.desk-work-link').focus()
+  await page.keyboard.press('Tab')
+  await expect(page.getByRole('button', { name: 'Pick a project', exact: true })).toBeFocused()
   const keyboard = []
   for (const object of objects) {
     await page.keyboard.press('Tab')
     await expect(page.locator(object.selector)).toBeFocused()
+    // A focused marker may reveal its project-specific action. Check its final
+    // size as well as the resting size so expanded captions remain reachable.
+    await page.waitForTimeout(240)
     expect(await page.evaluate(() => scrollY), 'All native object labels fit without focus-triggered scroll').toBe(0)
     expect(await page.locator(`${object.selector} .scene-callout`).evaluate(node => parseFloat(getComputedStyle(node).outlineWidth))).toBeGreaterThanOrEqual(2)
+    const focused = await page.locator(`${object.selector} .scene-callout`).evaluate(node => {
+      const r = node.getBoundingClientRect()
+      return { x: r.x, y: r.y, right: r.right, bottom: r.bottom, href: document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2)?.closest('a')?.getAttribute('href') }
+    })
+    expect(focused.x).toBeGreaterThanOrEqual(0)
+    expect(focused.y).toBeGreaterThanOrEqual(fit.headerBottom)
+    expect(focused.right).toBeLessThanOrEqual(width)
+    expect(focused.bottom).toBeLessThanOrEqual(height)
+    expect(focused.href).toBe(object.path)
+    await geometry(page)
     keyboard.push({ selector: object.selector, y: await page.evaluate(() => scrollY) })
   }
   for (const object of [...objects].reverse().slice(1)) {
@@ -260,6 +297,8 @@ for (const [width, height] of fitDimensions) test(`${width}x${height} keeps the 
     await expect(page.locator(object.selector)).toBeFocused()
     expect(await page.evaluate(() => scrollY)).toBe(0)
   }
+  await page.keyboard.press('Shift+Tab')
+  await expect(page.getByRole('button', { name: 'Pick a project', exact: true })).toBeFocused()
   await page.keyboard.press('Shift+Tab')
   await expect(page.locator('.desk-work-link')).toBeFocused()
   expect(await page.evaluate(() => scrollY)).toBe(0)
@@ -274,9 +313,42 @@ for (const [width, height] of fitDimensions) test(`${width}x${height} keeps the 
   await context.close()
 })
 
+for (const [width, height] of [[2560, 1080], [1101, 1000]]) test(`${width}x${height} desks keep bounded proportions and aligned, reachable native links`, async ({ page }, testInfo) => {
+  await page.setViewportSize({ width, height })
+  await ready(page)
+  const layout = await geometry(page)
+  expect(layout.visual.x).toBe(0)
+  expect(layout.visual.width).toBe(width)
+  expect(layout.visual.width / layout.visual.height).toBeLessThanOrEqual(2.151)
+  expect(layout.visual.width / layout.visual.height).toBeGreaterThanOrEqual(1.499)
+  // CSS matrix coefficient precision remains within half a CSS pixel even at
+  // 2560px; the ordinary viewport matrix retains the tighter 0.3px budget.
+  await expect.poll(async () => Math.max(...(await projectedCorners(page)).map(result => result.error))).toBeLessThan(width > 1920 ? .5 : .3)
+  const links = []
+  for (const object of objects) {
+    const label = page.locator(`${object.selector} .scene-callout`)
+    await label.scrollIntoViewIfNeeded()
+    await page.locator(object.selector).focus()
+    await label.click({ trial: true })
+    const hit = await label.evaluate(node => {
+      const r = node.getBoundingClientRect()
+      return { href: document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2)?.closest('a')?.getAttribute('href'), top: r.top, bottom: r.bottom, header: document.querySelector('.site-header')!.getBoundingClientRect().bottom }
+    })
+    expect(hit.href).toBe(object.path)
+    expect(hit.top).toBeGreaterThanOrEqual(hit.header)
+    expect(hit.bottom).toBeLessThanOrEqual(height)
+    if (width === 1101) expect(await page.evaluate(() => scrollY)).toBe(0)
+    links.push(hit)
+  }
+  await expect(page).toHaveURL(/\/$/)
+  await testInfo.attach('bounded-desk-fit', { body: JSON.stringify({ layout, links, corners: await projectedCorners(page) }), contentType: 'application/json' })
+})
+
 test('native keyboard focus and actual polygon hits agree with the five physical objects', async ({ page }, testInfo) => {
   await ready(page)
   await page.locator('.desk-work-link').focus()
+  await page.keyboard.press('Tab')
+  await expect(page.getByRole('button', { name: 'Pick a project', exact: true })).toBeFocused()
   const samples = []
   for (const object of objects) {
     await page.keyboard.press('Tab')
@@ -285,7 +357,7 @@ test('native keyboard focus and actual polygon hits agree with the five physical
     const sample = await anchor.evaluate((node, points) => {
       const visual = document.querySelector('.scene-visual')!.getBoundingClientRect(), scale = visual.width / 1672
       const hit = (point: readonly number[]) => {
-        const x = visual.left + point[0] * scale, y = visual.top + point[1] * scale
+        const x = visual.left + point[0] * scale, y = visual.top + point[1] * visual.height / 941
         const element = document.elementFromPoint(x, y)
         return { x, y, href: element?.closest('a')?.getAttribute('href') || null }
       }
@@ -304,6 +376,69 @@ test('native keyboard focus and actual polygon hits agree with the five physical
   await page.keyboard.press('Shift+Tab')
   await expect(page.locator('.desk-films')).toBeFocused()
   await testInfo.attach('native-object-hit-and-focus', { body: JSON.stringify(samples), contentType: 'application/json' })
+})
+
+test('desktop light follows the pointer while the screen reflections finish after one pass', async ({ page, context }, testInfo) => {
+  await capable(context)
+  await ready(page, true)
+  const before = await projectedCorners(page)
+  const reflections = await page.locator('.scene-visual').evaluate(node => node.getAnimations({ subtree: true }).filter(animation => animation.effect instanceof KeyframeEffect && (animation.effect.target as Element)?.matches('.scene-display-reflection')).map(animation => ({ duration: animation.effect!.getTiming().duration, iterations: animation.effect!.getTiming().iterations, playState: animation.playState })))
+  expect(reflections).toHaveLength(2)
+  for (const reflection of reflections) {
+    expect(reflection.iterations).toBe(1)
+    expect(Number(reflection.duration)).toBeGreaterThan(0)
+    expect(Number(reflection.duration)).toBeLessThanOrEqual(6000)
+  }
+  await page.mouse.move(600, 400)
+  await expect(page.locator('.scene-shell')).toHaveAttribute('data-light', 'on')
+  const first = await page.locator('.scene-shell').evaluate(node => [node.style.getPropertyValue('--light-x'), node.style.getPropertyValue('--light-y')])
+  await page.mouse.move(1000, 500)
+  const second = await page.locator('.scene-shell').evaluate(node => [node.style.getPropertyValue('--light-x'), node.style.getPropertyValue('--light-y')])
+  expect(second).not.toEqual(first)
+  expect((await projectedCorners(page)).map(plane => plane.transform)).toEqual(before.map(plane => plane.transform))
+  await page.mouse.move(10, 10)
+  await expect(page.locator('.scene-shell')).not.toHaveAttribute('data-light', 'on')
+  await expect.poll(() => page.locator('.scene-visual').evaluate(node => node.getAnimations({ subtree: true }).filter(animation => animation.effect instanceof KeyframeEffect && (animation.effect.target as Element)?.matches('.scene-display-reflection') && animation.playState === 'running').length), { timeout: 7500 }).toBe(0)
+  await testInfo.attach('finite-desk-effects', { body: JSON.stringify({ reflections, lightPositions: [first, second], corners: before }), contentType: 'application/json' })
+})
+
+test('project discovery selects native links and records only destinations actually explored', async ({ page }) => {
+  await page.addInitScript(() => sessionStorage.setItem('ap-desk-explored', JSON.stringify(['cirs', 'community', 'accuflow', 'films'])))
+  await ready(page)
+  await expect(page.locator('.desk-discovery-progress')).toHaveText('04 / 05 explored')
+  await expect(page.locator('.scene-object[data-explored]')).toHaveCount(4)
+  const pick = page.getByRole('button', { name: 'Pick a project', exact: true })
+  await pick.click()
+  const contact = page.locator('.desk-contact')
+  await expect(contact).toHaveAttribute('data-selected', 'true')
+  await expect(contact).toBeFocused()
+  await expect(page.locator('.desk-discovery-announcement')).toHaveText('Your pick: About & contact. Meet the person behind it.')
+  await expect(page).toHaveURL(/\/$/)
+  await expect(page.locator('.desk-discovery-progress')).toHaveText('04 / 05 explored')
+  await expect(contact).not.toHaveAttribute('data-explored', 'true')
+  await page.keyboard.press('Enter')
+  await expect(page).toHaveURL(/\/about#contact$/)
+  await openingFinished(page, 'dismiss')
+  await expect(page.locator('#contact h2')).toBeInViewport()
+  expect(await page.evaluate(() => JSON.parse(sessionStorage.getItem('ap-desk-explored')!))).toEqual(['cirs', 'community', 'accuflow', 'films', 'contact'])
+  await page.goBack()
+  await openingFinished(page, 'dismiss')
+  await expect(page.locator('.desk-discovery-progress')).toHaveText('05 / 05 explored')
+  await expect(contact).toHaveAttribute('data-explored', 'true')
+  await expect(contact.locator('.scene-explored')).toHaveText('Explored')
+  const picks: string[] = []
+  for (let index = 0; index < 5; index++) {
+    await pick.click()
+    const selected = page.locator('.scene-object[data-selected]')
+    await expect(selected).toHaveCount(1)
+    await expect(selected).toBeFocused()
+    const id = (await selected.getAttribute('data-scene-object'))!
+    if (picks.length) expect(id).not.toBe(picks[picks.length - 1])
+    expect(destinations).toContain(await selected.getAttribute('href'))
+    picks.push(id)
+    await expect(page).toHaveURL(/\/$/)
+  }
+  await expect(page.locator('.desk-discovery-progress')).toHaveText('05 / 05 explored')
 })
 
 test('all three project objects return to the exact native origin and actual departure position', async ({ page }, testInfo) => {
@@ -373,6 +508,8 @@ test('film and contact objects retain native modifiers, actual destinations and 
   await film.click({ modifiers: ['Control'] })
   const modified = await page.evaluate(() => window.__deskModified!)
   expect(modified).toEqual({ trusted: true, preventedBeforeHarness: false, href: '/studio' })
+  await expect(page.locator('.desk-films')).not.toHaveAttribute('data-explored', 'true')
+  await expect(page.locator('.desk-discovery-progress')).toHaveText('00 / 05 explored')
   await expect(page).toHaveURL(/\/$/)
   const returns = []
   for (const object of objects.slice(3)) {
@@ -394,7 +531,7 @@ test('film and contact objects retain native modifiers, actual destinations and 
   await testInfo.attach('scene-destination-history', { body: JSON.stringify({ modified, returns }), contentType: 'application/json' })
 })
 
-test('quiet preferences and controlled asset failures preserve honest native scene navigation', async ({ page, browser, baseURL }, testInfo) => {
+test('controlled capture and artwork failures preserve honest native scene navigation', async ({ page }, testInfo) => {
   await page.route('**/desk-cirs-home-1600.webp', route => route.abort())
   await page.goto('/')
   await openingFinished(page)
@@ -416,6 +553,8 @@ test('quiet preferences and controlled asset failures preserve honest native sce
     await expect(page.locator('.scene-surfaces')).toHaveCount(0)
     const layout = await geometry(page)
     expect(layout.mapPosition).toBe('static')
+    expect(layout.visual.height).toBeGreaterThanOrEqual(200)
+    expect(layout.visual.height, 'Failed artwork leaves a compact message before the usable links').toBeLessThanOrEqual(260)
     expect(layout.objects.map(object => object.href)).toEqual(destinations)
     expect(await page.locator('.desk-vallalar .scene-callout').evaluate(node => getComputedStyle(node).transform)).toBe('none')
     fallbackLayouts.push({ width, layout })
@@ -424,6 +563,9 @@ test('quiet preferences and controlled asset failures preserve honest native sce
   await expect(page).toHaveURL(/\/studio$/)
   await openingFinished(page, 'dismiss')
   await testInfo.attach('controlled-scene-failure', { body: JSON.stringify({ injected: ['desk-cirs-home-1600.webp aborted', 'cinematic-desk-*.webp aborted'], fallbackLayouts }), contentType: 'application/json' })
+})
+
+test('quiet preferences preserve motion-free native scene navigation', async ({ browser, baseURL }, testInfo) => {
   const modes = []
   for (const mode of ['reduced', 'forced', 'off', 'save-data'] as const) {
     const context = await browser.newContext({ baseURL, viewport: { width: 1440, height: 1000 }, reducedMotion: mode === 'reduced' ? 'reduce' : 'no-preference', forcedColors: mode === 'forced' ? 'active' : 'none' })
@@ -435,16 +577,27 @@ test('quiet preferences and controlled asset failures preserve honest native sce
     await expect(page.locator('.desk-opening canvas,.desk-opening video,.pin-spacer,.hero-ambient-film,.glass-arrow-cursor')).toHaveCount(0)
     await page.locator('.desk-work-link').focus()
     await page.keyboard.press('Tab')
+    await expect(page.getByRole('button', { name: 'Pick a project', exact: true })).toBeFocused()
+    await page.keyboard.press('Tab')
     await expect(page.locator('.desk-cirs')).toBeFocused()
     expect(await page.locator('.desk-cirs .scene-callout').evaluate(node => parseFloat(getComputedStyle(node).outlineWidth))).toBeGreaterThanOrEqual(2)
     const before = await projectedCorners(page)
     await page.mouse.move(800, 350)
+    await expect(page.locator('.scene-shell')).not.toHaveAttribute('data-light', 'on')
+    const quiet = await page.locator('.scene-visual').evaluate(node => ({
+      reflectionAnimations: [...node.querySelectorAll('.scene-display-reflection')].map(element => getComputedStyle(element).animationName),
+      activeAnimations: node.getAnimations({ subtree: true }).filter(animation => animation.playState === 'running' || animation.pending).length,
+      transitions: [...document.querySelectorAll('.scene-callout,.scene-callout > svg,.scene-laptop-display,.scene-tablet-display,.scene-object-action,.scene-hit,.desk-discovery-button,.desk-discovery-dial svg')].map(element => ({ target: element.getAttribute('class'), duration: getComputedStyle(element).transitionDuration })),
+    }))
+    expect(quiet.reflectionAnimations).toEqual(['none', 'none'])
+    expect(quiet.activeAnimations).toBe(0)
+    expect(quiet.transitions.every(transition => transition.duration.split(',').every(value => parseFloat(value) === 0)), `${mode}: ${JSON.stringify(quiet)}`).toBe(true)
     await page.mouse.wheel(0, 240)
     await expect(page).toHaveURL(/\/$/)
     const after = await projectedCorners(page)
     expect(after.map(plane => plane.transform)).toEqual(before.map(plane => plane.transform))
     expect(errors.get(page)).toEqual([])
-    modes.push({ mode, corners: after })
+    modes.push({ mode, quiet, corners: after })
     await context.close()
   }
   await testInfo.attach('quiet-fixed-camera-scene', { body: JSON.stringify(modes), contentType: 'application/json' })

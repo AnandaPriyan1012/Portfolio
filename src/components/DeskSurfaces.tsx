@@ -12,8 +12,8 @@ const planes: Record<string, { quad: Quad; width: number; height: number }> = {
 
 // Map a real, complete rectangular capture onto its physical plane in the art.
 // This is a fixed-camera projective illustration, not a simulated 3D renderer.
-function projection(quad: Quad, width: number, height: number, scale: number) {
-  const [[x0,y0],[x1,y1],[x2,y2],[x3,y3]] = quad.map(([x,y]) => [x * scale,y * scale]);
+function projection(quad: Quad, width: number, height: number, scaleX: number, scaleY: number) {
+  const [[x0,y0],[x1,y1],[x2,y2],[x3,y3]] = quad.map(([x,y]) => [x * scaleX,y * scaleY]);
   const dx1=x1-x2, dx2=x3-x2, dx3=x0-x1+x2-x3;
   const dy1=y1-y2, dy2=y3-y2, dy3=y0-y1+y2-y3;
   const determinant=dx1*dy2-dx2*dy1;
@@ -40,7 +40,7 @@ export default function DeskSurfaces({ loaded }: { loaded: boolean }) {
       const scale=visual.clientWidth/sceneWidth;
       element.querySelectorAll<HTMLElement>("[data-scene-plane]").forEach(plane => {
         const definition=planes[plane.dataset.scenePlane!];
-        plane.style.transform=projection(definition.quad,definition.width,definition.height,scale);
+        plane.style.transform=projection(definition.quad,definition.width,definition.height,scale,visual.clientHeight/941);
       });
       element.dataset.projected="true";
     };

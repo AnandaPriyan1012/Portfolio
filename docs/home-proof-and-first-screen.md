@@ -4,9 +4,11 @@ This bounded follow-up addresses two owner requests: all desk destinations shoul
 
 ## Opening-screen fit
 
-The entire desktop scene coordinate box is limited by the available small-viewport height and centered. Its original aspect ratio, complete environment and four genuine projected surfaces remain intact; the image is not cropped or stretched. The screen projections and physical hit regions continue to share that actual scene width. Container queries size the captions against the rendered scene rather than an unrelated window width.
+The desktop scene now spans the full window width and normally fills the space below the header. Its height is bounded between width / 2.15 and width / 1.5 so extreme tall or wide windows avoid excessive distortion; ultrawide windows may scroll slightly. The complete environment remains uncropped. The four genuine projected surfaces and physical hit regions share independent X/Y scaling with that actual scene rectangle. Numbered brass captions reveal project-specific actions on hover or keyboard focus. Container queries size captions against the rendered scene.
 
 Phones retain the complete scene, a 44px Work link and the same five native object links in a compact two-column index. Context remains in the links' accessible names, with full readable project accounts below. Landscape phones and short tablets place the scene beside that index. Titles and the Work link stay at least 14px and targets remain at least 44px. The initial 11-size probe covers 1280×720, 1366×768, 1440×900, 1920×1080, 320×568, 375×667, 390×844, 414×896, 768×1024, 844×390 and 1024×600: the complete scene, Work and all five labels fit at the initial scroll position, including native Tab navigation without scrolling.
+
+A keyboard- and touch-accessible “Pick a project” control highlights and focuses a real native destination, preferring unexplored work and avoiding immediate repeats. It never navigates without activating the destination. Actual desk navigation records session-only explored markers and progress; a suggested project alone does not count as explored. Pointer lighting and a single finite reflection pass add restrained feedback; reduced motion, Motion Off, save-data and forced colors suppress the new motion. No background media or animation loop is added.
 
 The document remains scrollable. This is not a scroll lock or a requirement to compress enlarged accessibility text into a fixed viewport. Content below the scene stays in ordinary flow, and the existing keyboard-caption safety behavior remains available.
 
