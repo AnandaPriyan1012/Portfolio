@@ -22,12 +22,14 @@ import { hasApprovedNativePlayback } from "../media-readiness";
 import Signature from "./Signature";
 import CirsAdmissionsTour from "./CirsAdmissionsTour";
 import CaseFilmCollection from "./CaseFilmCollection";
+import CaseLaunchFilm from "./CaseLaunchFilm";
 import CommunityLanguageStudy from "./CommunityLanguageStudy";
 import InterfaceAtlas from "./InterfaceAtlas";
 
 type Props = {
   project: Project;
   motionEnabled?: boolean;
+  restoreSavedPosition?: boolean;
   onBack: () => void;
   onContact: () => void;
   onProject?: (id: Project["id"]) => void;
@@ -93,6 +95,7 @@ export function AccuFlowVisual() {
 export default function CaseStudyPage({
   project,
   motionEnabled = false,
+  restoreSavedPosition = false,
   onBack,
   onContact,
   onProject,
@@ -198,6 +201,9 @@ export default function CaseStudyPage({
     setMediaFailed(false);
     const previous = document.title;
     document.title = `${project.title} — Ananda Priyan`;
+    // A validated native Studio return belongs to App's saved-position/focus
+    // restoration. Fresh and reloaded chapter links still align below.
+    if (restoreSavedPosition) return () => { document.title = previous; };
     const page = pageRef.current;
     const initialHash = window.location.hash;
     let chapter: HTMLElement | null = null;
@@ -274,7 +280,7 @@ export default function CaseStudyPage({
       stop();
       document.title = previous;
     };
-  }, [project.id, project.title]);
+  }, [project.id, project.title, restoreSavedPosition]);
 
   useEffect(() => {
     const page = pageRef.current;
@@ -721,7 +727,7 @@ export default function CaseStudyPage({
                     ? "The matching English and Tamil About-page routes come from the public website review preview. Switch between their captured openings below."
                     : isAccuFlow
                       ? "Follow the actual Homepage, Product, How it works and Guide captures. Each view shows a different part of the website prototype, with its original interface and a link to the source route."
-                      : "A 38-second website launch film is part of the Studio collection. Open its programme entry to watch the supplied footage."}
+                      : "Campus life, the Words become worlds page and Admissions appear in this supplied 38-second website launch film. Watch it here, or continue to the Studio collection."}
                 </p>
                 {project.id === "community" ? (
                   <CommunityLanguageStudy
@@ -736,21 +742,12 @@ export default function CaseStudyPage({
                       if (isAccuflowView(view)) setEvidencePreferences(rememberEvidencePreferences({ accuflowView: view }));
                     }}
                   />
-                ) : launchFilm?.posterUrl && (
+                ) : launchFilm && hasApprovedNativePlayback(launchFilm) && (
                   <div className="case-launch-artifact">
-                    <figure>
-                      <picture data-reader-media>
-                        <img
-                          src={launchFilm.posterUrl}
-                          alt="Frame from the supplied CIRS website launch film"
-                          width={1920}
-                          height={1080}
-                          loading="lazy"
-                          decoding="async"
-                        />
-                      </picture>
-                      <figcaption>CIRS website launch · Supplied film · 0:38</figcaption>
-                    </figure>
+                    <CaseLaunchFilm
+                      film={launchFilm}
+                      posterSrc="/media/cirs-launch-case-0005.webp"
+                    />
                     <a
                       href="/studio#cirs-website-launch"
                       onClick={(event) => {

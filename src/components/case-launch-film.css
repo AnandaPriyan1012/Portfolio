@@ -1,0 +1,22 @@
+.case-launch-film { margin: 0; }
+.case-launch-film-frame { position: relative; aspect-ratio: 16 / 9; overflow: hidden; border: 1px solid var(--case-rule,#d6d8cc35); background: #050707; box-shadow: inset 0 1px 0 #ffffff10,0 20px 50px #0002; }
+.case-launch-film .case-launch-video { display: block; width: 100%; height: 100%; aspect-ratio: 16 / 9; object-fit: contain; background: #050707; }
+.case-launch-film .case-launch-video:focus-visible { outline: 2px solid var(--case-accent,#dbc89d); outline-offset: -4px; }
+.case-launch-film-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px 24px; flex-wrap: wrap; margin-top: 15px; }
+.case-launch-film .case-launch-watch { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 44px; padding: 11px 15px; border: 1px solid var(--case-rule,#d6d8cc35); background: linear-gradient(115deg,#d9c08a13,transparent); color: var(--case-ink,#eee9de); font: 500 13px/1.5 var(--font-body,sans-serif); text-align: left; }
+.case-launch-film .case-launch-watch:focus-visible { outline: 2px solid var(--case-accent,#dbc89d); outline-offset: -4px; }
+.case-launch-film-actions > span { color: var(--case-muted,#b9c2b4); font: 400 11px/1.7 var(--font-body,sans-serif); }
+.case-launch-film .case-launch-status { margin: 12px 0 0; color: var(--case-muted,#b9c2b4); font: 400 12px/1.7 var(--font-body,sans-serif); }
+.case-launch-film .case-launch-status:empty { margin: 0; }
+.case-launch-film figcaption { margin-top: 13px; color: var(--case-muted,#b9c2b4); font: 400 11px/1.8 var(--font-body,sans-serif); }
+@media (max-width:767px) {
+  .case-launch-film-actions { align-items: flex-start; gap: 8px; }
+  .case-launch-film .case-launch-watch { width: 100%; padding-inline: 12px; font-size: 12px; }
+}
+@media (hover:hover) and (pointer:fine) { .case-launch-film .case-launch-watch:hover { border-color: var(--case-accent,#dbc89d); } }
+@media (forced-colors:active) {
+  .case-launch-film-frame { border-color: CanvasText; background: Canvas; box-shadow: none; }
+  .case-launch-film .case-launch-watch { color: ButtonText; background: ButtonFace; border-color: ButtonText; }
+  .case-launch-film :is(.case-launch-status,figcaption), .case-launch-film-actions > span { color: CanvasText; }
+  .case-launch-film :is(.case-launch-video,.case-launch-watch):focus-visible { outline: 2px solid Highlight; }
+}

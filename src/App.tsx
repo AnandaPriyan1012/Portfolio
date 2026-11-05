@@ -469,6 +469,7 @@ export default function App() {
   const historyPositions = useRef(initialNavigation.positions);
   const navigationSequence = useRef(0);
   const historyIntent = useRef<{ sequence: number; cancelled: boolean } | null>(null);
+  const restoreCasePosition = useRef(false);
 
   const caseReturn = useRef<{ path: string; top: number; originHref?: string; originToken?: string; originFocus?: HistoryFocus }>({ path: "/work", top: 0 });
   const currentProject = projects.find(
@@ -570,6 +571,9 @@ export default function App() {
       const intent = { sequence, cancelled: false };
       historyIntent.current = intent;
       const next = normalizedPath();
+      const caseStudioReturn = next === "/projects/cirs" && route === "/studio" &&
+        saved.focus?.href === "/studio#cirs-website-launch";
+      restoreCasePosition.current = caseStudioReturn;
       if (next !== route) storyMotion.beforeNavigate();
       setRoute(next);
       setModal(null);
@@ -582,7 +586,7 @@ export default function App() {
           saved.focus?.href === "/projects/cirs";
         const workProjectReturn = next === "/work" && route.startsWith("/projects/") &&
           saved.focus?.href === route;
-        if (location.hash && !studioProjectReturn && !workProjectReturn) {
+        if (location.hash && !studioProjectReturn && !workProjectReturn && !caseStudioReturn) {
           historyIntent.current = null;
           if (next.startsWith("/projects/")) {
             // Keep the reader's native section focus and CSS scroll margin.
@@ -600,7 +604,7 @@ export default function App() {
             historyIntent.current = null;
             restoreHistoryFocus(saved.focus);
           }
-        }, { preserveHash: studioProjectReturn || workProjectReturn });
+        }, { preserveHash: studioProjectReturn || workProjectReturn || caseStudioReturn });
       });
     };
     window.addEventListener("popstate", back);
@@ -727,6 +731,7 @@ export default function App() {
     const next = destination.split("#")[0].replace(/\/+$/, "") || "/";
     saveHistoryPosition(true, departureFocus);
     historyIntent.current = null;
+    restoreCasePosition.current = false;
     const sequence = ++navigationSequence.current;
     if (next !== route) storyMotion.beforeNavigate();
     setMenuOpen(false);
@@ -818,6 +823,7 @@ export default function App() {
         <CaseStudyPage
           project={currentProject}
           motionEnabled={preferences.motion}
+          restoreSavedPosition={restoreCasePosition.current}
           onBack={home}
           onContact={() => {
             navigate("/about#contact");

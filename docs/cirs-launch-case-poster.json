@@ -1,0 +1,31 @@
+{
+  "scope": "CIRS case-study playback poster derived from the already approved supplied film. No original media was edited.",
+  "source": {
+    "url": "/media/cirs-website-launch-web.mp4",
+    "sha256": "c232f2b3b70fdd06e4ef1c657af560c09ac115d742169f54d7b5d261ba5ecc72",
+    "bytes": 21599801,
+    "durationSeconds": 38,
+    "codec": "h264",
+    "pixelFormat": "yuv420p",
+    "width": 1920,
+    "height": 1080,
+    "frameRate": "60/1",
+    "audioCodec": "aac",
+    "timeBase": "1/15360",
+    "startTimeSeconds": 0
+  },
+  "frame": {
+    "seconds": 5,
+    "sourcePTS": 76800,
+    "sourceTimeBase": "1/15360",
+    "url": "/media/cirs-launch-case-0005.webp",
+    "width": 1920,
+    "height": 1080,
+    "bytes": 160088,
+    "sha256": "d2e39767b690ff23da457f5dc506e36a7f004775acadb9ce425c659f6faa3540",
+    "caption": "Poster frame from supplied launch film \u00b7 00:05"
+  },
+  "processing": "Selected exact existing decoded PTS76800 at 1/15360, complete1920x1080 frame, WebP quality82/compression6. No crop, resizing, added text, retouching or colour treatment.",
+  "historical480DerivativeUnchanged": true,
+  "LibraryTransferAttempts": 0
+}

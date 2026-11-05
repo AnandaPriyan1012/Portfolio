@@ -117,17 +117,20 @@ test('evidence choices persist across reading cuts and case changes retain one c
   await expect(page.getByRole('progressbar')).toHaveCount(1)
 })
 
-test('CIRS launch is an approved original poster and an honest, click-only Studio handoff', async ({ page }) => {
+test('CIRS launch keeps its supplied poster and click-only media with a native Studio handoff', async ({ page }) => {
   const premature: string[] = []
   page.on('request', request => { if (/\.mp4(?:$|[?#])|google\.com|gstatic/.test(request.url())) premature.push(request.url()) })
   await ready(page, '/projects/cirs')
   const chapter = await jump(page, 'The website launch film', 'case-cirs-launch')
-  await expect(chapter.locator('img')).toHaveAttribute('src', '/media/cirs-website-launch-poster.jpg')
-  await decoded(chapter.locator('img'))
+  const video = chapter.locator('video')
+  await expect(video).toHaveAttribute('poster', '/media/cirs-launch-case-0005.webp')
+  await expect(video).not.toHaveAttribute('src', /.+/)
+  expect(await video.evaluate(node => (node as HTMLVideoElement).currentSrc)).toBe('')
+  await expect(chapter).toContainText('Poster frame from supplied launch film · 00:05')
   const link = chapter.getByRole('link', { name: 'Open the launch film in Studio · 0:38', exact: true })
   await expect(link).toHaveAttribute('href', '/studio#cirs-website-launch')
   expect((await link.boundingBox())!.height).toBeGreaterThanOrEqual(44)
-  await expect(chapter.locator('video,iframe')).toHaveCount(0)
+  await expect(chapter.locator('iframe')).toHaveCount(0)
   await expect(chapter).not.toContainText(/Crossroads|directed by|sole creator/i)
   expect(premature).toEqual([])
 })
