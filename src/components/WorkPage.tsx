@@ -6,7 +6,6 @@ import {
   projects,
   projectAssets,
   projectStatus,
-  communityStory,
 } from "../content";
 import type { Project } from "../content";
 import InterfaceAtlas from "./InterfaceAtlas";
@@ -14,6 +13,7 @@ import CirsConceptStudy from "./CirsConceptStudy";
 import CommunityLanguageStudy from "./CommunityLanguageStudy";
 import AccuFlowRouteDeck from "./AccuFlowRouteDeck";
 import WorkChapterRail from "./WorkChapterRail";
+import CommunityNarrative from "./CommunityNarrative";
 import "./work-evidence-drawers.css";
 
 type WorkPageProps = {
@@ -483,27 +483,10 @@ function Feature({
                 />
                 <span className="community-scroll-meter" aria-hidden="true" />
                 <p className="chapter-motion-caption" aria-hidden="true">
-                  The purpose <span>→</span> The contribution
+                  Service <span>→</span> The question <span>→</span> Digital work
                 </p>
               </div>
-              <div className="community-purpose">
-                <div className="service-step" data-service-step="purpose">
-                  <p className="section-label">{communityStory.purposeLabel}</p>
-                  <h3>From meal service<br />to digital work.</h3>
-                  <p>{communityStory.purpose}</p>
-                </div>
-                <div className="service-step" data-service-step="contribution">
-                  <p className="section-label">
-                    {communityStory.contributionLabel}
-                  </p>
-                  <h4 className="community-role">{communityStory.role}</h4>
-                  <ul>
-                    {communityStory.contributions.map((contribution) => (
-                      <li key={contribution}>{contribution}</li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
+              <CommunityNarrative />
             </div>
           </div>
         ) : (

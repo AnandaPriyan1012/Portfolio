@@ -282,63 +282,69 @@ function coordinateChapterScenes(element: HTMLElement) {
   const runway = find(".community-scroll-runway");
   const communityMedia = find(".community-image-reservation");
   const communityMeter = find(".community-scroll-meter");
-  const purpose = find('[data-service-step="purpose"]');
+  const service = find('[data-service-step="service"]');
+  const request = find('[data-service-step="request"]');
   const contribution = find('[data-service-step="contribution"]');
+  const narrative = find(".community-narrative");
   if (runway && communityMedia) {
-    const scene = gsap.timeline({
-      defaults: { ease: "none" },
-      scrollTrigger: {
-        id: "atelier-community-narrative",
-        trigger: runway,
-        start: "top 35%",
-        end: "bottom 70%",
-        scrub: true,
-        invalidateOnRefresh: true,
-        onUpdate: (trigger) => {
-          runway.dataset.sceneProgress = trigger.progress.toFixed(3);
-          runway.dataset.sceneStep =
-            trigger.progress < 0.48 ? "purpose" : "contribution";
+    const communityMatch = gsap.matchMedia();
+    communityMatch.add({ enhanced: "(forced-colors: none)", forced: "(forced-colors: active)" }, (context) => {
+      const clearMetadata = () => {
+        delete runway.dataset.sceneProgress;
+        delete runway.dataset.sceneStep;
+        delete runway.dataset.communityMotion;
+      };
+      if (!context.conditions?.enhanced) {
+        runway.dataset.communityMotion = "static";
+        return clearMetadata;
+      }
+      runway.dataset.communityMotion = "staged";
+      const scene = gsap.timeline({
+        defaults: { ease: "none" },
+        scrollTrigger: {
+          id: "atelier-community-narrative",
+          trigger: runway,
+          start: "top 35%",
+          end: "bottom 70%",
+          scrub: true,
+          invalidateOnRefresh: true,
+          onUpdate: (trigger) => {
+            runway.dataset.sceneProgress = trigger.progress.toFixed(3);
+            runway.dataset.sceneStep =
+              trigger.progress < 1 / 3 ? "service" : trigger.progress < 2 / 3 ? "request" : "contribution";
+          },
         },
-      },
-    });
-    scene.fromTo(
-      communityMedia,
-      {
-        scale: 0.9,
-        rotationY: -5,
-        rotationX: 2,
-        transformOrigin: "left center",
-      },
-      { scale: 1, rotationY: 0, rotationX: 0, duration: 0.58 },
-      0,
-    );
-    if (communityMeter)
+      });
       scene.fromTo(
-        communityMeter,
-        { scaleX: 0 },
-        { scaleX: 1, duration: 1 },
+        communityMedia,
+        {
+          scale: 0.9,
+          rotationY: -5,
+          rotationX: 2,
+          transformOrigin: "left center",
+        },
+        { scale: 1, rotationY: 0, rotationX: 0, duration: 0.58 },
         0,
       );
-    if (purpose)
-      scene.fromTo(
-        purpose,
-        { "--service-focus": 0.8 },
-        { "--service-focus": 0.18, duration: 0.4 },
-        0.35,
-      );
-    if (contribution)
-      scene.fromTo(
-        contribution,
-        { "--service-focus": 0.12 },
-        { "--service-focus": 1, duration: 0.46 },
-        0.48,
-      );
-    // Fix the normalized timeline even when a decorative hook is unavailable.
-    scene.to({}, { duration: 1 }, 0);
-    cleanups.push(() => {
-      delete runway.dataset.sceneProgress;
-      delete runway.dataset.sceneStep;
+      if (communityMeter)
+        scene.fromTo(
+          communityMeter,
+          { scaleX: 0 },
+          { scaleX: 1, duration: 1 },
+          0,
+        );
+      [service, request, contribution].forEach((step, index) => {
+        if (!step) return;
+        gsap.set(step, { "--service-focus": index === 0 ? 1 : 0.18 });
+        if (index > 0) scene.to(step, { "--service-focus": 1, duration: 0.12 }, index / 3);
+        if (index < 2) scene.to(step, { "--service-focus": 0.18, duration: 0.12 }, (index + 1) / 3);
+      });
+      if (narrative) scene.fromTo(narrative, { "--community-thread-progress": 0 }, { "--community-thread-progress": 1, duration: 1 }, 0);
+      // Fix the normalized timeline even when a decorative hook is unavailable.
+      scene.to({}, { duration: 1 }, 0);
+      return clearMetadata;
     });
+    cleanups.push(() => communityMatch.revert());
   }
 
   const assembly = find(".accuflow-assembly");
